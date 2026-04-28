@@ -27,7 +27,7 @@ Esperar ~30 segundos y abrir: http://localhost:8069
 |-----------------|-----------------------------------|
 | Master Password | `admin123`                        |
 | Database Name   | `iron_zone`                       |
-| Email           | `bjeferssonvinicio2005@gmail.com` |
+| Email           | `admin@ironzone.com`              |
 | Password        | `admin123`                        |
 | Language        | Spanish (Latin America)           |
 | Country         | Ecuador                           |
@@ -51,7 +51,7 @@ bash seeds/run_seeds.sh
 | Servicio     | Campo           | Valor                              |
 |--------------|-----------------|------------------------------------|
 | Odoo wizard  | Master Password | `admin123`                         |
-| Odoo         | Email           | `bjeferssonvinicio2005@gmail.com`  |
+| Odoo         | Email           | `admin@ironzone.com`               |
 | Odoo         | Password        | `admin123`                         |
 | PostgreSQL   | Usuario         | `odoo`                             |
 | PostgreSQL   | Password        | `odoo`                             |

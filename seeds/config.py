@@ -2,7 +2,7 @@ import xmlrpc.client
 
 URL      = "http://localhost:8069"
 DB       = "iron_zone"
-USERNAME = "bjeferssonvinicio2005@gmail.com"
+USERNAME = "admin@ironzone.com"
 PASSWORD = "admin123"
 
 def connect():
