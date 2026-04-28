@@ -31,8 +31,7 @@ iron_zone_odoo_das/
 ├── addons/                 # Módulos personalizados (vacío por ahora)
 ├── scripts/
 │   ├── export_db.sh        # Exportar BD a backups/
-│   ├── import_db.sh        # Importar BD desde un .sql
-│   └── expose_ngrok.sh     # Exponer Odoo públicamente con ngrok
+│   └── import_db.sh        # Importar BD desde un .sql
 └── backups/                # Archivos .sql (ignorados por git)
 ```
 
@@ -57,18 +56,11 @@ bash scripts/import_db.sh backups/iron_zone_20250428_120000.sql iron_zone
 
 ## Estrategia de compartir BD con el equipo
 
-### Opción A — Archivos .sql (recomendada para el parcial)
+Exportar `.sql` y compartir por Drive/WhatsApp:
 
 1. Exportar: `bash scripts/export_db.sh iron_zone`
-2. Subir el `.sql` generado en `backups/` al canal de grupo (WhatsApp, Drive, etc.)
-3. El compañero descarga y ejecuta: `bash scripts/import_db.sh backups/archivo.sql iron_zone`
-
-### Opción B — Ngrok (demo en vivo)
-
-1. Instalar ngrok: https://ngrok.com/download
-2. Autenticar: `ngrok config add-authtoken <tu-token>`
-3. Ejecutar: `bash scripts/expose_ngrok.sh`
-4. Compartir la URL pública que muestra ngrok
+2. Subir el `.sql` de `backups/` al grupo (Drive, WhatsApp, etc.)
+3. El compañero importa: `bash scripts/import_db.sh backups/archivo.sql iron_zone`
 
 ## Notas
 
