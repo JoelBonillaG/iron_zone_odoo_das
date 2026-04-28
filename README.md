@@ -22,6 +22,17 @@ Esperar ~30 segundos y abrir: http://localhost:8069
 
 Master password (para el wizard): `admin123`
 
+## Credenciales
+
+| Servicio | Campo | Valor |
+|---|---|---|
+| Odoo wizard | Master Password | `admin123` |
+| Odoo | Email | `bjeferssonvinicio2005@gmail.com` |
+| Odoo | Password | (la que se usó al crear la BD) |
+| PostgreSQL | Usuario | `odoo` |
+| PostgreSQL | Password | `odoo` |
+| PostgreSQL | Base de datos | `iron_zone` |
+
 ## Estructura
 
 ```
@@ -53,6 +64,20 @@ bash scripts/export_db.sh iron_zone
 
 # Importar base de datos
 bash scripts/import_db.sh backups/iron_zone_20250428_120000.sql iron_zone
+```
+
+## Acceder al contenedor de PostgreSQL
+
+```bash
+# Entrar al contenedor
+docker exec -it iron_zone_db psql -U odoo -d iron_zone
+
+# Comandos útiles dentro de psql
+\dt                        -- listar todas las tablas
+\d res_partner             -- ver estructura de una tabla
+SELECT name FROM res_partner LIMIT 10;  -- ver clientes
+SELECT name FROM product_template LIMIT 10;  -- ver productos
+\q                         -- salir
 ```
 
 ## Estrategia de compartir BD con el equipo
