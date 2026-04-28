@@ -1,10 +1,6 @@
 # Environment
 .env
 
-# Backups (share manually via Drive/Slack, not git)
-backups/*.sql
-backups/*.dump
-
 # Odoo compiled assets
 addons/**/__pycache__/
 addons/**/*.pyc
