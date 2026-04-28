@@ -9,8 +9,8 @@ if [ -z "$SQL_FILE" ]; then
 fi
 
 echo "Creating database '$DB_NAME' if not exists..."
-docker exec iron_zone_db psql -U odoo -c "CREATE DATABASE $DB_NAME OWNER odoo;" 2>/dev/null || true
+docker exec iron_zone_db psql -U odoo -d postgres -c "CREATE DATABASE $DB_NAME OWNER odoo;" 2>/dev/null || true
 
 echo "Importing $SQL_FILE into '$DB_NAME' ..."
-docker exec -i iron_zone_db psql -U odoo "$DB_NAME" < "$SQL_FILE"
+docker exec -i iron_zone_db psql -U odoo -d "$DB_NAME" < "$SQL_FILE"
 echo "Done."
