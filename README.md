@@ -19,7 +19,32 @@ docker compose up -d
 
 Esperar ~30 segundos y abrir: http://localhost:8069
 
-**Primer acceso:** crear base de datos desde el wizard.
+## Configuración inicial (una sola vez)
+
+**Paso 1 — Crear la base de datos** en el wizard de `localhost:8069`:
+
+| Campo           | Valor                             |
+|-----------------|-----------------------------------|
+| Master Password | `admin123`                        |
+| Database Name   | `iron_zone`                       |
+| Email           | `bjeferssonvinicio2005@gmail.com` |
+| Password        | `admin123`                        |
+| Language        | Spanish (Latin America)           |
+| Country         | Ecuador                           |
+| Demo Data       | desactivado                       |
+
+**Paso 2 — Instalar aplicaciones** desde `localhost:8069/odoo/apps`:
+
+- Ventas
+- Inventario
+- Facturación
+- Sitio web
+
+**Paso 3 — Cargar datos de prueba:**
+
+```bash
+bash seeds/run_seeds.sh
+```
 
 ## Credenciales
 
