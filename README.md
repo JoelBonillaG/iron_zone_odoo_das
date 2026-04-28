@@ -6,6 +6,7 @@ Gimnasio Iron Zone · Odoo 18 + PostgreSQL 15 en Docker.
 
 - Docker Desktop instalado y corriendo
 - Git
+- Python 3 instalado
 
 ## Levantar el entorno
 
@@ -18,33 +19,62 @@ docker compose up -d
 
 Esperar ~30 segundos y abrir: http://localhost:8069
 
-**Primer acceso:** crear la base de datos desde el wizard con nombre `iron_zone`.
-
-Master password (para el wizard): `admin123`
+**Primer acceso:** crear base de datos desde el wizard.
 
 ## Credenciales
 
-| Servicio | Campo | Valor |
-|---|---|---|
-| Odoo wizard | Master Password | `admin123` |
-| Odoo | Email | `bjeferssonvinicio2005@gmail.com` |
-| Odoo | Password | (la que se usó al crear la BD) |
-| PostgreSQL | Usuario | `odoo` |
-| PostgreSQL | Password | `odoo` |
-| PostgreSQL | Base de datos | `iron_zone` |
+| Servicio     | Campo           | Valor                              |
+|--------------|-----------------|------------------------------------|
+| Odoo wizard  | Master Password | `admin123`                         |
+| Odoo         | Email           | `bjeferssonvinicio2005@gmail.com`  |
+| Odoo         | Password        | `admin123`                         |
+| PostgreSQL   | Usuario         | `odoo`                             |
+| PostgreSQL   | Password        | `odoo`                             |
+| PostgreSQL   | Base de datos   | `iron_zone`                        |
 
 ## Estructura
 
 ```
 iron_zone_odoo_das/
 ├── docker-compose.yml      # Servicios Odoo 18 + PostgreSQL 15
+├── .env.example            # Variables de entorno de ejemplo
 ├── config/
 │   └── odoo.conf           # Configuración de Odoo
-├── addons/                 # Módulos personalizados (vacío por ahora)
-├── scripts/
-│   ├── export_db.sh        # Exportar BD a backups/
-│   └── import_db.sh        # Importar BD desde un .sql
-└── backups/                # Archivos .sql (ignorados por git)
+├── addons/                 # Módulos personalizados
+└── seeds/
+    ├── config.py           # Conexión XML-RPC compartida
+    ├── 01_customers.py     # 10 clientes
+    ├── 02_products.py      # 10 productos y servicios
+    ├── 03_sale_orders.py   # 10 pedidos de venta
+    └── run_seeds.sh        # Runner
+```
+
+## Cargar datos de prueba (seeds)
+
+Con Odoo corriendo y la BD creada:
+
+```bash
+# Todos los seeds en orden
+bash seeds/run_seeds.sh
+
+# Solo uno específico
+bash seeds/run_seeds.sh 01_customers
+bash seeds/run_seeds.sh 02_products
+bash seeds/run_seeds.sh 03_sale_orders
+```
+
+> Los seeds usan XML-RPC — no requieren dependencias extra, solo Python 3.
+
+## Acceder al contenedor de PostgreSQL
+
+```bash
+docker exec -it iron_zone_db psql -U odoo -d iron_zone
+
+# Comandos útiles dentro de psql
+\dt                                         -- listar tablas
+SELECT name FROM res_partner LIMIT 10;     -- ver clientes
+SELECT name FROM product_template LIMIT 10; -- ver productos
+\q                                          -- salir
 ```
 
 ## Comandos útiles
@@ -56,39 +86,11 @@ docker compose down
 # Ver logs de Odoo
 docker compose logs -f odoo
 
-# Reiniciar solo Odoo
-docker compose restart odoo
-
-# Exportar base de datos
-bash scripts/export_db.sh iron_zone
-
-# Importar base de datos
-bash scripts/import_db.sh backups/iron_zone_20250428_120000.sql iron_zone
+# Reiniciar Odoo
+docker restart iron_zone_odoo
 ```
-
-## Acceder al contenedor de PostgreSQL
-
-```bash
-# Entrar al contenedor
-docker exec -it iron_zone_db psql -U odoo -d iron_zone
-
-# Comandos útiles dentro de psql
-\dt                        -- listar todas las tablas
-\d res_partner             -- ver estructura de una tabla
-SELECT name FROM res_partner LIMIT 10;  -- ver clientes
-SELECT name FROM product_template LIMIT 10;  -- ver productos
-\q                         -- salir
-```
-
-## Estrategia de compartir BD con el equipo
-
-Exportar `.sql` y compartir por Drive/WhatsApp:
-
-1. Exportar: `bash scripts/export_db.sh iron_zone`
-2. Subir el `.sql` de `backups/` al grupo (Drive, WhatsApp, etc.)
-3. El compañero importa: `bash scripts/import_db.sh backups/archivo.sql iron_zone`
 
 ## Notas
 
-- `.env` no se versiona. Cada integrante copia `.env.example` a `.env` (`cp .env.example .env`).
-- Backups `.sql` no se versionan. Compartir por Drive/WhatsApp.
+- `.env` no se versiona. Copiar `.env.example` a `.env` antes de levantar.
+- Database Name en el wizard: `iron_zone`
