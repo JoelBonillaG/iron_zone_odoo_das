@@ -58,6 +58,27 @@ bash seeds/run_seeds.sh
 | PostgreSQL   | Password        | `odoo`                             |
 | PostgreSQL   | Base de datos   | `iron_zone`                        |
 
+## Archivos de configuración
+
+El proyecto tiene dos archivos de configuración con propósitos distintos — no confundirlos:
+
+### `config/odoo.conf` — configuración del servidor Docker
+Controla cómo arranca Odoo dentro del contenedor. **No tocar.**
+```ini
+admin_passwd = admin123   # Master Password del wizard (paso 1)
+db_host = db              # nombre interno del contenedor PostgreSQL
+db_user = odoo            # usuario de PostgreSQL (definido en .env)
+```
+
+### `seeds/config.py` — configuración de los scripts de datos
+Contiene las credenciales que los scripts usan para conectarse a Odoo vía XML-RPC.
+**Deben coincidir exactamente con lo que pusiste en el wizard (paso 1).**
+```python
+USERNAME = "admin@ironzone.com"  # email del wizard
+PASSWORD = "admin123"            # password del wizard
+```
+> Si usaste credenciales diferentes en el wizard, edita `seeds/config.py` antes de correr los seeds.
+
 ## Estructura
 
 ```
