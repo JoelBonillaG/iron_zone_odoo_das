@@ -1,10 +1,10 @@
 # Environment
 .env
 
-# Odoo compiled assets
-addons/**/__pycache__/
-addons/**/*.pyc
-addons/**/*.pyo
+# Python cache
+__pycache__/
+**/*.pyc
+**/*.pyo
 
 # OS
 .DS_Store
