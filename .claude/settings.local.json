@@ -3,7 +3,8 @@
     "allow": [
       "Bash(git *)",
       "Bash(docker --version)",
-      "Bash(docker compose *)"
+      "Bash(docker compose *)",
+      "Bash(xargs ls *)"
     ]
   }
 }
