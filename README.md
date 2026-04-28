@@ -29,6 +29,7 @@ Esperar ~30 segundos y abrir: http://localhost:8069
 | Database Name   | `iron_zone`                       |
 | Email           | `admin@ironzone.com`              |
 | Password        | `admin123`                        |
+| Phone           | `032000000` (opcional)            |
 | Language        | Spanish (Latin America)           |
 | Country         | Ecuador                           |
 | Demo Data       | desactivado                       |
