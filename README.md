@@ -12,6 +12,7 @@ Gimnasio Iron Zone · Odoo 18 + PostgreSQL 15 en Docker.
 ```bash
 git clone <repo-url>
 cd iron_zone_odoo_das
+cp .env.example .env
 docker compose up -d
 ```
 
@@ -64,5 +65,5 @@ Exportar `.sql` y compartir por Drive/WhatsApp:
 
 ## Notas
 
-- `.env` no se versiona (contiene credenciales). Cada integrante crea el suyo copiando `.env`.
+- `.env` no se versiona. Cada integrante copia `.env.example` a `.env` (`cp .env.example .env`).
 - Backups `.sql` no se versionan. Compartir por Drive/WhatsApp.
