@@ -34,18 +34,31 @@ Esperar ~30 segundos y abrir: http://localhost:8069
 | Country         | Ecuador                           |
 | Demo Data       | desactivado                       |
 
-**Paso 2 — Instalar aplicaciones** desde `localhost:8069/odoo/apps`:
+**Paso 2 — Instalar aplicaciones base:**
 
-- Ventas
-- Inventario
-- Facturación
-- Sitio web
+Este proyecto incluye un instalador por consola que ejecuta Odoo dentro del contenedor para **instalar los módulos base** en la BD (equivale a instalarlos manualmente desde Apps, pero automatizado).
+
+Desde la raíz del repo:
+
+```bash
+bash scripts/install_apps.sh
+```
+
+Qué hace:
+- Instala un conjunto de módulos base (ventas, inventario, facturación, website, etc.) en la base `iron_zone`.
+- Reinicia el contenedor de Odoo al finalizar.
+
+> Si prefieres hacerlo manualmente, puedes instalar apps desde `localhost:8069/odoo/apps`, pero para que los seeds funcionen correctamente se recomienda usar el script.
 
 **Paso 3 — Cargar datos de prueba:**
+
+Primero instala apps (Paso 2). Luego ejecuta los seeds:
 
 ```bash
 bash seeds/run_seeds.sh
 ```
+
+El primer seed (`00_company_config.py`) corre antes que los demás y configura la compañía (incluye logo).
 
 ## Credenciales
 
@@ -85,20 +98,34 @@ PASSWORD = "admin123"            # password del wizard
 iron_zone_odoo_das/
 ├── docker-compose.yml      # Servicios Odoo 18 + PostgreSQL 15
 ├── .env.example            # Variables de entorno de ejemplo
+├── scripts/
+│   └── install_apps.sh      # Instala módulos base en Odoo (Docker)
 ├── config/
 │   └── odoo.conf           # Configuración de Odoo
 ├── addons/                 # Módulos personalizados
 └── seeds/
+    ├── 00_company_config.py # Configura compañía + logo
     ├── config.py           # Conexión XML-RPC compartida
     ├── 01_customers.py     # 10 clientes
     ├── 02_products.py      # 10 productos y servicios
     ├── 03_sale_orders.py   # 10 pedidos de venta
+    ├── IronZone.png         # Logo (usado por 00_company_config.py)
     └── run_seeds.sh        # Runner
 ```
 
 ## Cargar datos de prueba (seeds)
 
 Con Odoo corriendo y la BD creada:
+
+Orden recomendado:
+
+```bash
+# 1) Instalar apps base
+bash scripts/install_apps.sh
+
+# 2) Cargar datos
+bash seeds/run_seeds.sh
+```
 
 ```bash
 # Todos los seeds en orden
@@ -111,6 +138,10 @@ bash seeds/run_seeds.sh 03_sale_orders
 ```
 
 > Los seeds usan XML-RPC — no requieren dependencias extra, solo Python 3.
+
+### Seed de compañía (00_company_config)
+
+El seed `00_company_config.py` se ejecuta primero y actualiza `res.company` con datos básicos (nombre, email, país, etc.) y carga el logo desde `seeds/IronZone.png`.
 
 ## Acceder al contenedor de PostgreSQL
 
