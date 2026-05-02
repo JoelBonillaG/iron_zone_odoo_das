@@ -34,6 +34,15 @@ Esperar ~30 segundos y abrir: http://localhost:8069
 | Country         | Ecuador                           |
 | Demo Data       | desactivado                       |
 
+---
+## Módulo implementado: Automatización
+
+Se agregó una automatización para preparar Odoo más rápido:
+
+- `scripts/install_apps.sh`: instala los módulos base en la base `iron_zone`.
+- `seeds/00_company_config.py`: configura la compañía (logo `seeds/IronZone.png` y moneda USD) antes de cargar datos.
+---
+
 **Paso 2 — Instalar aplicaciones base:**
 
 Este proyecto incluye un instalador por consola que ejecuta Odoo dentro del contenedor para **instalar los módulos base** en la BD (equivale a instalarlos manualmente desde Apps, pero automatizado).
@@ -48,7 +57,22 @@ Qué hace:
 - Instala un conjunto de módulos base (ventas, inventario, facturación, website, etc.) en la base `iron_zone`.
 - Reinicia el contenedor de Odoo al finalizar.
 
+Aplicaciones que deben quedar instaladas (Apps):
+- Ventas
+- Inventario
+- Facturación / Contabilidad
+- Sitio web
+- eCommerce (Website Sale)
+- Empleados (HR)
+- Email Marketing (Mass Mailing)
+- Citas (Appointments)
+
+Módulos técnicos que instala el script (Odoo modules):
+`website, website_sale, account, hr, mass_mailing, appointment, sale_management, stock`
+
 > Si prefieres hacerlo manualmente, puedes instalar apps desde `localhost:8069/odoo/apps`, pero para que los seeds funcionen correctamente se recomienda usar el script.
+
+---
 
 **Paso 3 — Cargar datos de prueba:**
 
@@ -59,6 +83,8 @@ bash seeds/run_seeds.sh
 ```
 
 El primer seed (`00_company_config.py`) corre antes que los demás y configura la compañía (incluye logo).
+
+---
 
 ## Credenciales
 
@@ -138,10 +164,19 @@ bash seeds/run_seeds.sh 03_sale_orders
 ```
 
 > Los seeds usan XML-RPC — no requieren dependencias extra, solo Python 3.
-
+---
 ### Seed de compañía (00_company_config)
 
-El seed `00_company_config.py` se ejecuta primero y actualiza `res.company` con datos básicos (nombre, email, país, etc.) y carga el logo desde `seeds/IronZone.png`.
+El seed `00_company_config.py` se ejecuta primero y actualiza `res.company` con datos básicos (nombre, email, país, etc.), configura la moneda en USD y carga el logo desde `seeds/IronZone.png`.
+
+Para verificar que la configuración de la empresa se aplicó correctamente en Odoo:
+
+1. Ir a **Ajustes**
+2. Abrir **Usuarios y Empresas** → **Empresas**
+3. Seleccionar **Iron Zone**
+4. Confirmar que tenga los datos configurados (nombre, email, teléfono, país, moneda USD y logo)
+
+---
 
 ## Acceder al contenedor de PostgreSQL
 
