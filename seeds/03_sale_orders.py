@@ -18,6 +18,7 @@ def run():
         return
 
     count = 0
+    import config
     for ci, pi in ORDERS:
         order_id = create(uid, models, "sale.order", {
             "partner_id": customers[ci]["id"],
@@ -28,7 +29,15 @@ def run():
             "product_uom_qty": 1,
         })
         count += 1
-        print(f"  Created order: {customers[ci]['name']} → {products[pi]['name']}")
+        
+        # Confirmar algunos pedidos para que el estado sea diferente ("sale")
+        if count % 2 == 0:
+            models.execute_kw(config.DB, uid, config.PASSWORD, "sale.order", "action_confirm", [[order_id]])
+            state = "Confirmado"
+        else:
+            state = "Borrador (Presupuesto)"
+            
+        print(f"  Created order: {customers[ci]['name']} → {products[pi]['name']} | Status: {state}")
 
     print(f"Done: {count} sale orders created.")
 

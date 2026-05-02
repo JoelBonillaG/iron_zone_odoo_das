@@ -169,14 +169,15 @@ bash seeds/run_seeds.sh 03_sale_orders
 
 El seed `00_company_config.py` se ejecuta primero y actualiza `res.company` con datos básicos (nombre, email, país, etc.), configura la moneda en USD y carga el logo desde `seeds/IronZone.png`.
 
-Para verificar que la configuración de la empresa se aplicó correctamente en Odoo:
+### Nota Técnica: Tipos de Productos (Odoo 18)
 
-1. Ir a **Ajustes**
-2. Abrir **Usuarios y Empresas** → **Empresas**
-3. Seleccionar **Iron Zone**
-4. Confirmar que tenga los datos configurados (nombre, email, teléfono, país, moneda USD y logo)
+En Odoo 18, el manejo de tipos de productos cambió ligeramente. Los seeds siguen esta convención:
+- **Almacenables (Storable):** `type="consu"` + `is_storable=True`.
+- **Consumibles:** `type="consu"` + `is_storable=False`.
+- **Servicios:** `type="service"`.
 
 ---
+
 
 ## Acceder al contenedor de PostgreSQL
 
