@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="website.homepage" model="ir.ui.view">
+        <field name="arch" type="xml">
+            <t name="Homepage" t-name="website.homepage">
+                <t t-call="website.layout">
+                    <div id="wrap" class="oe_structure oe_empty">
+                        <section class="iron-hero">
+                            <div class="container py-5">
+                                <div class="row min-vh-75 align-items-center py-5">
+                                    <div class="col-lg-8 py-5">
+                                        <span class="iron-kicker">Rendimiento. Disciplina. Tecnologia.</span>
+                                        <h1 class="display-1 mb-4 text-white fw-bold">
+                                            FORJA TU
+                                            <br/>
+                                            <span class="iron-accent">DESTINO</span>
+                                        </h1>
+                                        <p class="lead mb-5 text-white-50">
+                                            Un ecosistema digital y fisico para entrenamiento, membresias y comunidad.
+                                        </p>
+                                        <div class="d-flex flex-wrap gap-3">
+                                            <a href="/shop" class="btn iron-btn-primary btn-lg px-5">Ver catalogo</a>
+                                            <a href="/aboutus" class="btn btn-outline-light btn-lg rounded-pill px-5">Sobre nosotros</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </section>
+
+                        <section class="iron-section py-5">
+                            <div class="container py-4">
+                                <div class="row g-4 text-center">
+                                    <div class="col-lg-4">
+                                        <div class="iron-card h-100 p-4">
+                                            <i class="fa fa-bolt fa-3x iron-accent mb-4"/>
+                                            <h3 class="text-white h4 mb-3">Energia Pura</h3>
+                                            <p class="text-white-50 mb-0">Equipamiento de ultima generacion para potenciar tu entrenamiento.</p>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-4">
+                                        <div class="iron-card h-100 p-4">
+                                            <i class="fa fa-users fa-3x iron-accent mb-4"/>
+                                            <h3 class="text-white h4 mb-3">Comunidad Elite</h3>
+                                            <p class="text-white-50 mb-0">Unite a un equipo que te motiva a superar tus limites cada dia.</p>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-4">
+                                        <div class="iron-card h-100 p-4">
+                                            <i class="fa fa-line-chart fa-3x iron-accent mb-4"/>
+                                            <h3 class="text-white h4 mb-3">Resultados Reales</h3>
+                                            <p class="text-white-50 mb-0">Programas personalizados diseñados por expertos en nutricion y fitness.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </section>
+                    </div>
+                </t>
+            </t>
+        </field>
+    </record>
+
+    <record id="website.aboutus" model="ir.ui.view">
+        <field name="arch" type="xml">
+            <t name="About Us" t-name="website.aboutus">
+                <t t-call="website.layout">
+                    <div id="wrap" class="oe_structure oe_empty">
+                        <section class="iron-section py-5">
+                            <div class="container py-4">
+                                <div class="text-center mb-5">
+                                    <h6 class="iron-kicker mb-3">Nuestro equipo</h6>
+                                    <h2 class="display-4 fw-bold text-white">Mentes que construyen lo extraordinario</h2>
+                                    <p class="text-white-50 col-lg-7 mx-auto mt-3">
+                                        Trabajamos de manera cercana con nuestros clientes, entendiendo sus necesidades y transformando sus ideas en soluciones tangibles y eficientes.
+                                    </p>
+                                </div>
+
+                                <div class="row g-4">
+                                    <!-- David Barragán -->
+                                    <div class="col-lg-4 col-md-6">
+                                        <div class="iron-card iron-team-card p-4 h-100">
+                                            <div class="d-flex align-items-center gap-3 mb-3">
+                                                <div class="iron-avatar">DB</div>
+                                                <div>
+                                                    <h4 class="mb-0 h5 text-white">David Barragan</h4>
+                                                    <small class="iron-accent fw-bold">Senior Frontend Engineer</small>
+                                                </div>
+                                            </div>
+                                            <p class="small text-white-50 mb-3">Arquitectura UI de alto rendimiento con Angular y React.</p>
+                                            <div class="mt-auto">
+                                                <span class="skill-badge">Angular</span><span class="skill-badge">React</span><span class="skill-badge">TypeScript</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- Joel Bonilla -->
+                                    <div class="col-lg-4 col-md-6">
+                                        <div class="iron-card iron-team-card p-4 h-100">
+                                            <div class="d-flex align-items-center gap-3 mb-3">
+                                                <div class="iron-avatar" style="background: #333;">JB</div>
+                                                <div>
+                                                    <h4 class="mb-0 h5 text-white">Joel Bonilla</h4>
+                                                    <small class="iron-accent fw-bold">Backend Engineer</small>
+                                                </div>
+                                            </div>
+                                            <p class="small text-white-50 mb-3">Constructor de APIs resilientes y servicios distribuidos.</p>
+                                            <div class="mt-auto">
+                                                <span class="skill-badge">Node.js</span><span class="skill-badge">Go</span><span class="skill-badge">PostgreSQL</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- Carol Cañizares -->
+                                    <div class="col-lg-4 col-md-6">
+                                        <div class="iron-card iron-team-card p-4 h-100">
+                                            <div class="d-flex align-items-center gap-3 mb-3">
+                                                <div class="iron-avatar">CC</div>
+                                                <div>
+                                                    <h4 class="mb-0 h5 text-white">Carol Canizares</h4>
+                                                    <small class="iron-accent fw-bold">Fullstack Engineer</small>
+                                                </div>
+                                            </div>
+                                            <p class="small text-white-50 mb-3">Vision de producto y consistencia tecnica sin sacrificar calidad.</p>
+                                            <div class="mt-auto">
+                                                <span class="skill-badge">Vue.js</span><span class="skill-badge">Laravel</span><span class="skill-badge">Docker</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- Josué García -->
+                                    <div class="col-lg-4 col-md-6">
+                                        <div class="iron-card iron-team-card p-4 h-100">
+                                            <div class="d-flex align-items-center gap-3 mb-3">
+                                                <div class="iron-avatar" style="background: #333;">JG</div>
+                                                <div>
+                                                    <h4 class="mb-0 h5 text-white">Josue Garcia</h4>
+                                                    <small class="iron-accent fw-bold">Lead Fullstack Engineer</small>
+                                                </div>
+                                            </div>
+                                            <p class="small text-white-50 mb-3">Lider tecnico orquestando arquitecturas y microservicios.</p>
+                                            <div class="mt-auto">
+                                                <span class="skill-badge">Angular</span><span class="skill-badge">NestJS</span><span class="skill-badge">TypeScript</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- Nixon Hurtado -->
+                                    <div class="col-lg-4 col-md-6">
+                                        <div class="iron-card iron-team-card p-4 h-100">
+                                            <div class="d-flex align-items-center gap-3 mb-3">
+                                                <div class="iron-avatar">NH</div>
+                                                <div>
+                                                    <h4 class="mb-0 h5 text-white">Nixon Hurtado</h4>
+                                                    <small class="iron-accent fw-bold">DevOps &amp; Cloud Engineer</small>
+                                                </div>
+                                            </div>
+                                            <p class="small text-white-50 mb-3">Arquitecto de infraestructura y automatizacion CI/CD.</p>
+                                            <div class="mt-auto">
+                                                <span class="skill-badge">AWS</span><span class="skill-badge">Kubernetes</span><span class="skill-badge">Terraform</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- David Manjarres -->
+                                    <div class="col-lg-4 col-md-6">
+                                        <div class="iron-card iron-team-card p-4 h-100">
+                                            <div class="d-flex align-items-center gap-3 mb-3">
+                                                <div class="iron-avatar" style="background: #333;">DM</div>
+                                                <div>
+                                                    <h4 class="mb-0 h5 text-white">David Manjarres</h4>
+                                                    <small class="iron-accent fw-bold">Backend Engineer</small>
+                                                </div>
+                                            </div>
+                                            <p class="small text-white-50 mb-3">Experto en modelado de datos y rendimiento extremo de DBs.</p>
+                                            <div class="mt-auto">
+                                                <span class="skill-badge">Python</span><span class="skill-badge">FastAPI</span><span class="skill-badge">MongoDB</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- Maybelline Navarro -->
+                                    <div class="col-lg-4 col-md-6 mx-auto">
+                                        <div class="iron-card iron-team-card p-4 h-100">
+                                            <div class="d-flex align-items-center gap-3 mb-3">
+                                                <div class="iron-avatar">MN</div>
+                                                <div>
+                                                    <h4 class="mb-0 h5 text-white">Maybelline Navarro</h4>
+                                                    <small class="iron-accent fw-bold">Frontend Engineer</small>
+                                                </div>
+                                            </div>
+                                            <p class="small text-white-50 mb-3">Especialista en UX, Motion y experiencias intuitivas.</p>
+                                            <div class="mt-auto">
+                                                <span class="skill-badge">React</span><span class="skill-badge">Framer Motion</span><span class="skill-badge">UX</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </section>
+                    </div>
+                </t>
+            </t>
+        </field>
+    </record>
+</odoo>

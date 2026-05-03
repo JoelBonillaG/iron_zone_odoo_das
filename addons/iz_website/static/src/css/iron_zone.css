@@ -1,0 +1,457 @@
+:root {
+    --iron-orange: #ff5722;
+    --iron-dark: #0b0b0b;
+    --iron-card: #161616;
+    --iron-border: #2a2a2a;
+    --iron-text: #e0e0e0;
+}
+
+body,
+#wrapwrap,
+main,
+#wrap {
+    background-color: var(--iron-dark) !important;
+    color: var(--iron-text) !important;
+}
+
+.bg-light,
+.bg-white,
+.bg-200,
+.card {
+    background-color: var(--iron-card) !important;
+    color: var(--iron-text) !important;
+    border-color: var(--iron-border) !important;
+}
+
+header,
+#top,
+.navbar,
+.o_header_standard,
+.o_header_affix {
+    background-color: #000 !important;
+    border-bottom: 1px solid var(--iron-border) !important;
+}
+
+header .nav-link,
+header .navbar-brand {
+    color: #fff !important;
+}
+
+header .nav-link:hover,
+header .nav-link.active {
+    color: var(--iron-orange) !important;
+}
+
+.navbar-brand {
+    background: transparent url('/iz_website/static/src/img/IronZone.png') no-repeat left center !important;
+    background-size: contain !important;
+    min-width: 150px !important;
+    height: 50px !important;
+    padding: 0 !important;
+    display: block !important;
+}
+
+.navbar-brand * {
+    display: none !important;
+    opacity: 0 !important;
+    visibility: hidden !important;
+    width: 0 !important;
+    height: 0 !important;
+}
+
+/* Logo styling handled by background-image above */
+
+header .fa,
+header .oi,
+.navbar-toggler-icon {
+    color: #fff !important;
+}
+
+.my_cart_quantity {
+    background-color: var(--iron-orange) !important;
+}
+
+.iron-shop-hero {
+    padding: 1.5rem 0 !important;
+}
+
+.oe_product_cart {
+    background-color: var(--iron-card) !important;
+    border: 1px solid var(--iron-border) !important;
+    border-radius: 15px !important;
+}
+
+.oe_product_image {
+    background-color: #1a1a1a !important;
+    padding: 15px !important;
+}
+
+.o_wsale_product_information {
+    background: transparent !important;
+}
+
+.form-control,
+.form-select,
+.btn-light {
+    background-color: #222 !important;
+    border: 1px solid var(--iron-border) !important;
+    color: #fff !important;
+}
+
+.s_share a {
+    align-items: center;
+    background: #222 !important;
+    border: 1px solid #333 !important;
+    border-radius: 50%;
+    color: #fff !important;
+    display: inline-flex;
+    height: 40px;
+    justify-content: center;
+    width: 40px;
+}
+
+.iron-accent {
+    color: var(--iron-orange) !important;
+}
+
+.iron-hero {
+    background:
+        radial-gradient(circle at top right, rgba(255, 87, 34, 0.28), transparent 30%),
+        linear-gradient(135deg, rgba(0, 0, 0, 0.92), rgba(11, 11, 11, 0.82)),
+        repeating-linear-gradient(
+            135deg,
+            rgba(255, 255, 255, 0.03) 0,
+            rgba(255, 255, 255, 0.03) 2px,
+            transparent 2px,
+            transparent 18px
+        );
+}
+
+.min-vh-75 {
+    min-height: 75vh;
+}
+
+.iron-kicker,
+.iron-card-label {
+    color: var(--iron-orange);
+    font-size: 0.78rem;
+    font-weight: 800;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+}
+
+.iron-btn-primary,
+.btn-primary,
+.btn_cta {
+    background-color: var(--iron-orange) !important;
+    border: none !important;
+    border-radius: 999px !important;
+    color: #fff !important;
+    font-weight: 800 !important;
+}
+
+.iron-btn-primary:hover,
+.btn-primary:hover,
+.btn_cta:hover {
+    background-color: #ff6f46 !important;
+}
+
+.iron-section,
+.iron-footer {
+    background-color: var(--iron-dark);
+}
+
+.iron-card {
+    background: linear-gradient(180deg, rgba(27, 27, 27, 0.95), rgba(18, 18, 18, 0.98));
+    border: 1px solid var(--iron-border);
+    border-radius: 20px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25);
+}
+
+.iron-team-card {
+    transition: transform 0.25s ease, border-color 0.25s ease;
+}
+
+.iron-team-card:hover {
+    border-color: rgba(255, 87, 34, 0.7);
+    transform: translateY(-4px);
+}
+
+/* GLOBAL ICON FIXES */
+header .fa, 
+header .oi, 
+.navbar-toggler-icon,
+.s_share .fa {
+    color: #fff !important;
+}
+
+/* CART & CHECKOUT DARK MODE */
+#cart_products, 
+.js_cart_summary,
+.oe_cart,
+.o_wsale_order_summary {
+    background-color: var(--iron-card) !important;
+    border: 1px solid var(--iron-border) !important;
+    border-radius: 20px !important;
+    color: var(--iron-text) !important;
+}
+
+/* Fix for the white summary card on the right */
+.card, .card-body, .js_cart_summary {
+    background-color: var(--iron-card) !important;
+    color: var(--iron-text) !important;
+    border-color: var(--iron-border) !important;
+}
+
+/* Breadcrumb / Step Indicator (Wizard) */
+.o_wizard {
+    background: transparent !important;
+    margin-bottom: 2rem !important;
+}
+
+.o_wizard .nav-link {
+    color: #888 !important;
+    font-weight: 700 !important;
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    letter-spacing: 1.5px;
+    opacity: 0.6;
+}
+
+.o_wizard .nav-link.active {
+    color: var(--iron-orange) !important;
+    opacity: 1 !important;
+}
+
+.o_wizard .nav-link.disabled {
+    color: #888 !important;
+}
+
+/* Cart Table and Rows */
+.table, .table td, .table th {
+    color: var(--iron-text) !important;
+    border-color: var(--iron-border) !important;
+}
+
+.td-product_name strong, .td-price, .td-subtotal {
+    color: #fff !important;
+}
+
+/* Fix for dark descriptions in cart */
+.text-muted, .small.text-muted, .iron-product-snippet {
+    color: #aaa !important;
+}
+
+/* Summary Labels (Subtotal, Taxes) */
+.js_cart_summary .d-flex span, 
+.js_cart_summary .d-flex strong,
+.js_cart_summary .text-muted,
+#cart_products .text-muted,
+#cart_total td.text-muted,
+.js_cart_summary #cart_total td,
+.js_cart_summary #cart_total span,
+.js_cart_summary #cart_total strong,
+.js_cart_summary .card-body {
+    color: #eeeeee !important;
+}
+
+.js_cart_summary #order_total strong {
+    color: #fff !important;
+    font-size: 1.4rem;
+}
+
+/* Inputs and Forms */
+.input-group .form-control {
+    background-color: #2a2a2a !important;
+    border: 1px solid var(--iron-border) !important;
+    color: #ffffff !important;
+    padding: 0.75rem 1rem !important;
+}
+
+.input-group .form-control::placeholder {
+    color: #bbbbbb !important;
+}
+
+/* Buttons in Cart */
+.btn-primary, .btn_cta {
+    padding: 0.8rem 2rem !important;
+    letter-spacing: 0.5px;
+}
+
+.input-group .form-control {
+    background-color: #222 !important;
+    border: 1px solid var(--iron-border) !important;
+    color: #fff !important;
+}
+
+.btn-secondary {
+    background-color: #333 !important;
+    border: none !important;
+    color: #fff !important;
+    /* Removed border-radius: 50px !important to fix input-group alignment */
+}
+
+.btn-secondary:hover {
+    background-color: #444 !important;
+}
+
+/* Fix input group alignment in summary */
+.js_cart_summary .input-group {
+    display: flex;
+    align-items: stretch;
+}
+.js_cart_summary .input-group .form-control {
+    border-top-right-radius: 0 !important;
+    border-bottom-right-radius: 0 !important;
+}
+.js_cart_summary .input-group .btn {
+    border-top-left-radius: 0 !important;
+    border-bottom-left-radius: 0 !important;
+    margin-left: -1px;
+}
+
+/* AVATARS */
+.iron-avatar {
+    align-items: center;
+    background: linear-gradient(135deg, var(--iron-orange), #ff7a45);
+    border-radius: 50%;
+    color: #fff;
+    display: inline-flex;
+    font-size: 1rem;
+    font-weight: 900;
+    height: 55px;
+    justify-content: center;
+    width: 55px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+}
+
+.skill-badge {
+    background: #222;
+    border: 1px solid #333;
+    border-radius: 4px;
+    color: #999;
+    display: inline-block;
+    font-size: 0.65rem;
+    margin: 0 4px 4px 0;
+    padding: 3px 8px;
+}
+
+.iron-pill {
+    background: rgba(255, 87, 34, 0.14);
+    border: 1px solid rgba(255, 87, 34, 0.3);
+    border-radius: 999px;
+    color: #ffd3c4;
+    display: inline-flex;
+    font-size: 0.74rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    padding: 0.45rem 0.8rem;
+    text-transform: uppercase;
+}
+
+.iron-pill-soft {
+    background: rgba(255, 255, 255, 0.04);
+    border-color: rgba(255, 255, 255, 0.08);
+    color: #f5f5f5;
+}
+
+.iron-shop-hero,
+.iron-contact-hero {
+    background:
+        radial-gradient(circle at top left, rgba(255, 87, 34, 0.22), transparent 32%),
+        linear-gradient(180deg, #0d0d0d, #121212);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.iron-shop-page .oe_website_sale,
+.iron-product-detail {
+    position: relative;
+}
+
+.iron-shop-toolbar {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    padding-bottom: 1rem;
+}
+
+.iron-shop-card {
+    overflow: hidden;
+    transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+}
+
+.iron-shop-card:hover {
+    border-color: rgba(255, 87, 34, 0.45) !important;
+    box-shadow: 0 22px 50px rgba(0, 0, 0, 0.32);
+    transform: translateY(-4px);
+}
+
+.iron-shop-card .oe_product_image {
+    min-height: 260px;
+}
+
+.iron-product-snippet {
+    line-height: 1.55;
+    min-height: 3.2em;
+}
+
+.iron-products-grid {
+    --o-wsale-products-grid-gap: 1.25rem;
+}
+
+.iron-product-detail {
+    background:
+        radial-gradient(circle at top right, rgba(255, 87, 34, 0.14), transparent 28%),
+        linear-gradient(180deg, rgba(22, 22, 22, 0.94), rgba(11, 11, 11, 0.96));
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 28px;
+    padding: 1.5rem;
+}
+
+.iron-product-intro p,
+.iron-product-intro li,
+.iron-product-intro strong {
+    color: #d8d8d8;
+}
+
+.iron-feature-mini {
+    min-height: 100%;
+}
+
+.iron-contact-form .form-control::placeholder {
+    color: #8d8d8d;
+}
+
+.iron-contact-form .s_website_form_label {
+    color: #f2f2f2;
+    font-weight: 700;
+    margin-bottom: 0.45rem;
+}
+
+.iron-contact-meta {
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    margin-top: 1.5rem;
+    padding-top: 1.5rem;
+}
+
+.iron-empty-state h3,
+.iron-empty-state p {
+    color: #e5e5e5 !important;
+}
+
+@media (max-width: 767.98px) {
+    .iron-hero .display-1 {
+        font-size: 3rem;
+    }
+
+    .min-vh-75 {
+        min-height: auto;
+    }
+
+    .iron-product-detail {
+        border-radius: 22px;
+        padding: 1rem;
+    }
+
+    .iron-shop-card .oe_product_image {
+        min-height: 220px;
+    }
+}
