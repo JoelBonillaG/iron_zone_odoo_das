@@ -141,18 +141,12 @@ iron_zone_odoo_das/
     └── run_seeds.sh        # Runner automatizado
     ```
 
-    ## Automatización y Portabilidad
-
-    Este proyecto ha sido diseñado bajo estándares de **portabilidad absoluta**. La personalización avanzada se gestiona mediante módulos en `addons/`, mientras que la carga de datos se realiza mediante **Data Seeders (XML-RPC)**.
-
-    ### Módulos Personalizados (Addons)
-    - **iz_website:** Motor de UI/UX que implementa el **Dark Mode global**, rediseño del catálogo, carrito de compras y la página de equipo. Incluye lógica de **pulsación larga** en cantidades mediante JS.
-    - **iz_inventory:** Personalizaciones para la gestión de productos y stock.
-
-    ### Tareas Académicas Completadas
+    ### Tareas Completadas
 
     - **ACT003 (Desarrollador Frontend):** Diseño CMS profesional en modo oscuro. Documentación en `docs/ACT003_Diseno_Web.md`.
+    
     - **ACT004 (Especialista de Producto):** Catálogo con iconos SVG y gestión de stock. Documentación en `docs/ACT004_Inventario_Ecommerce.md`.
+    
     ## Arquitectura Técnica: Roles, REST y Auditoría
 
     Para cumplir con los requerimientos de ingeniería de software de 7mo semestre:
