@@ -2,19 +2,19 @@
 **Rol:** Especialista de Producto
 **Proyecto:** Iron Zone Gym - Odoo 18 Implementation
 
-## 1. Configuración de Catálogo
-Se han dado de alta registros que cubren la oferta comercial del gimnasio, divididos en categorías estratégicas: Membresías, Clases, Equipamiento y Suplementos.
+## 1. Gestión de Catálogo Automatizada
+Se ha implementado un sistema de **Data Seeding** que garantiza que los 11 productos/servicios se carguen con la misma consistencia en cualquier despliegue.
 
-### Gestión de Datos:
-- **Precios y Categorías:** Configurados mediante seeders automatizados vía XML-RPC.
-- **Activos Visuales:** Iconos vectoriales (SVG) consistentes para escalabilidad visual.
-- **Stock Inicial:** Configurado mediante registros de inventario para permitir la venta inmediata.
+### Especificaciones Técnicas:
+- **Iconografía SVG:** Uso de iconos vectoriales consistentes para membresías, clases y equipo.
+- **Clasificación de Recursos:** Separación clara entre *Servicios* (Clases/Membresías) y *Productos Almacenables* (Equipamiento/Suplementos).
+- **Branding:** Integración automática de imágenes y descripciones comerciales optimizadas para SEO.
 
-## 2. Inventario y Almacenamiento
-Se diferencia técnicamente entre servicios (clases/membresías) y almacenables (equipamiento/suplementos).
+## 2. Control de Inventario y Stock
+El proyecto configura automáticamente el stock inicial mediante `stock.quant`, permitiendo la validación inmediata del flujo de venta en la tienda online.
 
 ## 3. Evidencias (Capturas requeridas)
-> *Instrucciones:* Agregar aquí las capturas solicitadas:
-1. **[Captura del Módulo de Inventario]** - Título: Listado de productos y stock.
-2. **[Captura de la Tienda Online]** - Título: Vista de cliente del catálogo.
-3. **[Captura de Detalle de Producto]** - Título: Ficha de producto premium.
+> *Instrucciones para el informe final:* Agregar las siguientes imágenes:
+1. **[Captura del Módulo de Inventario]** - Título: Listado de stock inicial y categorías.
+2. **[Captura de la Tienda Online]** - Título: Catálogo completo (/shop) con iconos SVG.
+3. **[Captura de Botones de Compartir]** - Título: Integración simplificada con WhatsApp y Email.
