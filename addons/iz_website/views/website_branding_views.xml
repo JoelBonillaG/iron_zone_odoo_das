@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="iz_frontend_copyright" inherit_id="web.frontend_layout" name="Iron Zone Frontend Copyright" priority="80">
+        <xpath expr="//span[hasclass('o_footer_copyright_name')]" position="replace">
+            <span class="o_footer_copyright_name me-2">Copyright &amp;copy; <t t-esc="datetime.datetime.now().year"/> Iron Zone</span>
+        </xpath>
+    </template>
+
+    <template id="iz_brand_promotion" inherit_id="web.brand_promotion" name="Iron Zone Brand Promotion" priority="80">
+        <xpath expr="//div[hasclass('o_brand_promotion')]" position="replace">
+            <div class="o_brand_promotion">Iron Zone Management System</div>
+        </xpath>
+    </template>
+
+    <template id="iz_login_form_visible" inherit_id="web.login" name="Iron Zone Visible Login Form" priority="80">
+        <xpath expr="//form[@role='form']" position="attributes">
+            <attribute name="t-attf-class">oe_login_form</attribute>
+        </xpath>
+    </template>
+
+    <template id="iz_backend_user_dropdown_link" inherit_id="portal.user_dropdown" name="Iron Zone Backend User Dropdown Link" priority="80">
+        <xpath expr="//a[@id='o_backend_user_dropdown_link']" position="replace">
+            <a groups="base.group_user" href="/odoo" role="menuitem" class="dropdown-item ps-3" id="o_backend_user_dropdown_link">
+                <i class="fa fa-fw fa-cog me-1 small text-primary text-primary-emphasis"/> Administracion
+            </a>
+        </xpath>
+    </template>
+</odoo>

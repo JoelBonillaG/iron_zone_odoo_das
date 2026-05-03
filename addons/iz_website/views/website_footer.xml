@@ -12,10 +12,6 @@
                                     <p class="text-white-50 lh-lg" style="max-width: 400px;">
                                         El templo del fitness en Ambato. Equipamiento de elite, comunidad imparable y resultados garantizados.
                                     </p>
-                                    <div class="mt-5 small text-muted">
-                                        <p class="mb-1">© <t t-esc="datetime.datetime.now().year"/> <span t-field="res_company.name"/></p>
-                                        <p>Diseñado con ❤️ por el equipo de ingenieria.</p>
-                                    </div>
                                 </div>
                                 <div class="col-lg-3 mb-5 mb-lg-0">
                                     <h6 class="text-white fw-bold text-uppercase mb-4" style="letter-spacing: 2px;">Explorar</h6>

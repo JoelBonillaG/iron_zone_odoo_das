@@ -9,6 +9,7 @@
     "data": [
         "views/website_layout.xml",
         "views/website_footer.xml",
+        "views/website_branding_views.xml",
         "views/website_pages.xml",
         "views/website_sale_views.xml",
         "views/website_contact_views.xml",
