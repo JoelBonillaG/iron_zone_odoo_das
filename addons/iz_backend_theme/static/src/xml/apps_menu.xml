@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="iz_backend_theme.NavBar.Brand" t-inherit="web.NavBar" t-inherit-mode="extension">
+        <xpath expr="//DropdownItem[contains(@class, 'o_menu_brand')]" position="replace">
+            <DropdownItem
+                t-if="!env.isSmall and currentApp"
+                class="'o_menu_brand d-flex align-items-center o_iz_menu_brand'"
+                onSelected="() => this.onNavBarDropdownItemSelection(currentApp)"
+                attrs="{ href: getMenuItemHref(currentApp), 'data-menu-xmlid': currentApp.xmlid, 'data-section': currentApp.id }"
+            >
+                <img t-if="currentApp.webIconData" class="o_iz_menu_brand_icon" t-attf-src="{{currentApp.webIconData}}"/>
+                <span t-else="" class="o_iz_menu_brand_initial" t-esc="currentApp.name[0]"/>
+                <span class="o_iz_menu_brand_name" t-esc="currentApp.name"/>
+            </DropdownItem>
+        </xpath>
+    </t>
+
+    <t t-name="iz_backend_theme.NavBar.AppsMenu" t-inherit="web.NavBar.AppsMenu" t-inherit-mode="extension">
+        <xpath expr="//div[@class='o_navbar_apps_menu']/Dropdown" position="replace">
+            <Dropdown menuClass="'o_iz_app_launcher_menu'" position="'bottom-start'">
+                <button data-hotkey="h" title="Aplicaciones" class="o_iz_app_launcher_button">
+                    <i class="oi oi-apps"/>
+                </button>
+                <t t-set-slot="content">
+                    <div class="o_iz_launcher_shell">
+                        <div class="o_iz_launcher_header">
+                            <span class="o_iz_launcher_eyebrow">Iron Zone</span>
+                            <strong>Aplicaciones</strong>
+                        </div>
+                        <div class="o_iz_app_grid">
+                            <DropdownItem
+                                t-foreach="apps"
+                                t-as="app"
+                                t-key="app.id"
+                                class="{ 'o_app': true, 'o_iz_app_tile': true, focus: menuService.getCurrentApp() === app }"
+                                onSelected="() => this.onNavBarDropdownItemSelection(app)"
+                                attrs="{ href: getMenuItemHref(app), 'data-menu-xmlid': app.xmlid, 'data-section': app.id }"
+                            >
+                                <span class="o_iz_app_icon_frame">
+                                    <img t-if="app.webIconData" class="o_app_icon o_iz_app_icon" t-attf-src="{{app.webIconData}}"/>
+                                    <span t-else="" class="o_iz_app_initial" t-esc="app.name[0]"/>
+                                </span>
+                                <span class="o_iz_app_name" t-esc="app.name"/>
+                            </DropdownItem>
+                        </div>
+                    </div>
+                </t>
+            </Dropdown>
+        </xpath>
+    </t>
+</templates>
