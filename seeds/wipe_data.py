@@ -36,7 +36,16 @@ def run():
         try: models.execute_kw(DB, uid, PASSWORD, 'res.partner', 'write', [[c], {'active': False}])
         except: pass
 
-    # 4. Try unlink categories
+    # 4. Archive Employees
+    employee_names = [
+        "Daniela Morales", "Mateo Rivas", "Camila Torres", "Jorge Paredes"
+    ]
+    employees = models.execute_kw(DB, uid, PASSWORD, 'hr.employee', 'search', [[('name', 'in', employee_names)]])
+    for e in employees:
+        try: models.execute_kw(DB, uid, PASSWORD, 'hr.employee', 'write', [[e], {'active': False}])
+        except: pass
+
+    # 5. Try unlink categories
     categ_names = ["Membresías", "Clases", "Equipamiento", "Suplementos"]
     categories = models.execute_kw(DB, uid, PASSWORD, 'product.public.category', 'search', [[('name', 'in', categ_names)]])
     for c in categories:
