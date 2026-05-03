@@ -135,7 +135,6 @@ iron_zone_odoo_das/
     ├── 01_customers.py     # 10 clientes
     ├── 02_products.py      # 10 productos con imágenes y stock
     ├── 03_sale_orders.py   # 10 pedidos de venta
-    ├── 04_website_pages.py # Diseño CMS (Inicio, Nosotros)
     ├── IronZone.png         # Logo y fallback de imágenes
     ├── images/
     │   └── products/       # Imágenes personalizadas de productos
@@ -144,13 +143,16 @@ iron_zone_odoo_das/
 
     ## Automatización y Portabilidad
 
-    Este proyecto ha sido diseñado bajo estándares de **portabilidad absoluta**. Toda la configuración, desde el logo de la empresa hasta el diseño premium del sitio web, se realiza mediante **Data Seeders (XML-RPC)**.
+    Este proyecto ha sido diseñado bajo estándares de **portabilidad absoluta**. La personalización avanzada se gestiona mediante módulos en `addons/`, mientras que la carga de datos se realiza mediante **Data Seeders (XML-RPC)**.
+
+    ### Módulos Personalizados (Addons)
+    - **iz_website:** Motor de UI/UX que implementa el **Dark Mode global**, rediseño del catálogo, carrito de compras y la página de equipo. Incluye lógica de **pulsación larga** en cantidades mediante JS.
+    - **iz_inventory:** Personalizaciones para la gestión de productos y stock.
 
     ### Tareas Académicas Completadas
 
     - **ACT003 (Desarrollador Frontend):** Diseño CMS profesional en modo oscuro. Documentación en `docs/ACT003_Diseno_Web.md`.
     - **ACT004 (Especialista de Producto):** Catálogo con iconos SVG y gestión de stock. Documentación en `docs/ACT004_Inventario_Ecommerce.md`.
-
     ## Arquitectura Técnica: Roles, REST y Auditoría
 
     Para cumplir con los requerimientos de ingeniería de software de 7mo semestre:

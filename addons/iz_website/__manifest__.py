@@ -16,6 +16,7 @@
     "assets": {
         "web.assets_frontend": [
             "iz_website/static/src/css/iron_zone.css",
+            "iz_website/static/src/js/iron_zone.js",
         ],
     },
     "installable": True,
