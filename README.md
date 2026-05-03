@@ -41,6 +41,12 @@ Se agregó una automatización para preparar Odoo más rápido:
 
 - `scripts/install_apps.sh`: instala los módulos base en la base `iron_zone`.
 - `seeds/00_company_config.py`: configura la compañía (logo `seeds/IronZone.png` y moneda USD) antes de cargar datos.
+- `seeds/00_smtp_config.py`: configura el servidor SMTP saliente (Correo) en Odoo usando variables del `.env`.
+
+Orden de seeds recomendado:
+1. Company config (empresa)
+2. SMTP config (correo)
+3. Seeds (datos)
 ---
 
 **Paso 2 — Instalar aplicaciones base:**
@@ -82,7 +88,34 @@ Primero instala apps (Paso 2). Luego ejecuta los seeds:
 bash seeds/run_seeds.sh
 ```
 
-El primer seed (`00_company_config.py`) corre antes que los demás y configura la compañía (incluye logo).
+Los seeds se ejecutan en este orden:
+
+1) `00_company_config.py` (configura compañía)
+
+2) `00_smtp_config.py` (configura SMTP saliente desde el `.env`)
+
+3) Seeds de datos (clientes, productos, ventas, ...)
+
+Si quieres probar solo el SMTP (recomendado para validar primero), ejecuta:
+
+```bash
+# 1) Empresa
+bash seeds/run_seeds.sh 00_company_config
+
+# 2) SMTP (carga .env automáticamente dentro del runner)
+bash seeds/run_seeds.sh 00_smtp_config
+```
+
+### Verificar SMTP en Odoo
+
+1) Entra a Odoo y activa **Modo desarrollador**
+
+2) Ve a:
+`Ajustes → Técnico → Correo electrónico → Correo → Correo saliente`
+
+3) Debe aparecer el servidor: **Iron Zone SMTP**
+
+4) Abre el registro y usa el botón **Probar conexión** para validar credenciales/conectividad.
 
 ---
 
@@ -131,6 +164,7 @@ iron_zone_odoo_das/
 ├── addons/                 # Módulos personalizados
 └── seeds/
     ├── 00_company_config.py # Configura compañía + logo
+    ├── 00_smtp_config.py    # Configura SMTP saliente (ir.mail_server)
     ├── config.py           # Conexión XML-RPC compartida
     ├── 01_customers.py     # 10 clientes
     ├── 02_products.py      # 10 productos con imágenes y stock
@@ -167,7 +201,7 @@ Orden recomendado:
 # 1) Instalar apps base
 bash scripts/install_apps.sh
 
-# 2) Cargar datos
+# 2) Cargar seeds (empresa → smtp → datos)
 bash seeds/run_seeds.sh
 ```
 
@@ -176,6 +210,7 @@ bash seeds/run_seeds.sh
 bash seeds/run_seeds.sh
 
 # Solo uno específico
+bash seeds/run_seeds.sh 00_smtp_config
 bash seeds/run_seeds.sh 01_customers
 bash seeds/run_seeds.sh 02_products
 bash seeds/run_seeds.sh 03_sale_orders
