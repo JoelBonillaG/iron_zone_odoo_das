@@ -6,26 +6,9 @@
         </xpath>
         <xpath expr="//div[contains(@class, 'container oe_website_sale')]" position="before">
             <section class="iron-shop-hero">
-                <div class="container py-5">
-                    <div class="row align-items-end g-4">
-                        <div class="col-lg-8">
-                            <span class="iron-kicker">Tienda Iron Zone</span>
-                            <h1 class="display-4 text-white fw-bold mt-3 mb-3">Todo lo que tus clientes necesitan para entrenar, progresar y volver.</h1>
-                            <p class="lead text-white-50 mb-0">
-                                Membresías, clases, equipamiento y suplementos conectados con inventario real y gestión centralizada en Odoo.
-                            </p>
-                        </div>
-                        <div class="col-lg-4">
-                            <div class="iron-card iron-shop-hero-card p-4">
-                                <p class="iron-card-label mb-2">Compra con contexto</p>
-                                <ul class="list-unstyled text-white-50 mb-0">
-                                    <li class="mb-2">Stock visible para productos físicos.</li>
-                                    <li class="mb-2">Servicios y membresías listos para venta online.</li>
-                                    <li>Catálogo editable por el equipo desde el backend.</li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
+                <div class="container py-3">
+                    <h1 class="h2 text-white fw-bold mb-0">Tienda <span class="iron-accent">Iron Zone</span></h1>
+                    <p class="text-white-50 small mb-0">Catálogo oficial de membresías y equipamiento.</p>
                 </div>
             </section>
         </xpath>
@@ -120,6 +103,21 @@
                 <div class="d-flex flex-wrap gap-3">
                     <a href="/contactus" class="btn iron-btn-primary">Hablar con el equipo</a>
                     <a href="/shop" class="btn btn-outline-light rounded-pill">Seguir explorando</a>
+                </div>
+            </div>
+        </xpath>
+    </template>
+    <template id="iz_product_share_buttons" inherit_id="website_sale.product" active="True" name="Iron Share Buttons">
+        <xpath expr="//div[@id='o_product_terms_and_share']" position="replace">
+            <div id="o_product_terms_and_share" class="mt-4 pt-4 border-top">
+                <div class="s_share text-start">
+                    <h6 class="text-white-50 mb-3 small fw-bold text-uppercase">Compartir Producto:</h6>
+                    <a t-attf-href="https://wa.me/?text={{product.name}}" target="_blank" class="s_share_whatsapp" aria-label="WhatsApp">
+                        <i class="fa fa-whatsapp"/>
+                    </a>
+                    <a t-attf-href="mailto:?subject={{product.name}}" class="s_share_email" aria-label="Email">
+                        <i class="fa fa-envelope"/>
+                    </a>
                 </div>
             </div>
         </xpath>
