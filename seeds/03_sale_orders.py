@@ -37,7 +37,7 @@ def run():
         else:
             state = "Borrador (Presupuesto)"
             
-        print(f"  Created order: {customers[ci]['name']} → {products[pi]['name']} | Status: {state}")
+        print(f"  Created order: {customers[ci]['name']} -> {products[pi]['name']} | Status: {state}")
 
     print(f"Done: {count} sale orders created.")
 
