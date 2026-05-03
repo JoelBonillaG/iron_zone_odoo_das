@@ -133,13 +133,35 @@ iron_zone_odoo_das/
     ├── 00_company_config.py # Configura compañía + logo
     ├── config.py           # Conexión XML-RPC compartida
     ├── 01_customers.py     # 10 clientes
-    ├── 02_products.py      # 10 productos y servicios
+    ├── 02_products.py      # 10 productos con imágenes y stock
     ├── 03_sale_orders.py   # 10 pedidos de venta
-    ├── IronZone.png         # Logo (usado por 00_company_config.py)
-    └── run_seeds.sh        # Runner
-```
+    ├── 04_website_pages.py # Diseño CMS (Inicio, Nosotros)
+    ├── IronZone.png         # Logo y fallback de imágenes
+    ├── images/
+    │   └── products/       # Imágenes personalizadas de productos
+    └── run_seeds.sh        # Runner automatizado
+    ```
 
-## Cargar datos de prueba (seeds)
+    ## Automatización y Portabilidad
+
+    Este proyecto ha sido diseñado bajo estándares de **portabilidad absoluta**. Toda la configuración, desde el logo de la empresa hasta el diseño premium del sitio web, se realiza mediante **Data Seeders (XML-RPC)**.
+
+    ### Tareas Académicas Completadas
+
+    - **ACT003 (Desarrollador Frontend):** Diseño CMS profesional en modo oscuro. Documentación en `docs/ACT003_Diseno_Web.md`.
+    - **ACT004 (Especialista de Producto):** Catálogo con iconos SVG y gestión de stock. Documentación en `docs/ACT004_Inventario_Ecommerce.md`.
+
+    ## Arquitectura Técnica: Roles, REST y Auditoría
+
+    Para cumplir con los requerimientos de ingeniería de software de 7mo semestre:
+
+    1.  **Gestión de Roles (RBAC):** Odoo utiliza Grupos de Seguridad (`res.groups`). Los permisos se definen por modelo (`ir.model.access`) y registros (`ir.rule`).
+    2.  **Interfaz RESTful / XML-RPC:** El sistema expone todos los recursos mediante el protocolo XML-RPC (o JSON-RPC), permitiendo operaciones CRUD completas que respetan la lógica de negocio y los permisos del usuario.
+    3.  **Auditoría y Trazabilidad:** Cada cambio en los recursos críticos (Productos, Pedidos) es auditado automáticamente por el "Chatter" de Odoo (`mail.message`), registrando quién, cuándo y qué se modificó.
+
+    ---
+    ## Guía de Navegación UI
+
 
 Con Odoo corriendo y la BD creada:
 
@@ -165,10 +187,29 @@ bash seeds/run_seeds.sh 03_sale_orders
 
 > Los seeds usan XML-RPC — no requieren dependencias extra, solo Python 3.
 ---
-### Seed de compañía (00_company_config)
 
-El seed `00_company_config.py` se ejecuta primero y actualiza `res.company` con datos básicos (nombre, email, país, etc.), configura la moneda en USD y carga el logo desde `seeds/IronZone.png`.
+## Guía de Navegación UI
 
+Para validar los datos cargados y cumplir con las entregas, utiliza las siguientes rutas en Odoo:
+
+### 1. Inventario y Catálogo (ACT004)
+*   **Catálogo Backend:** `Ventas` → `Productos` → `Productos`
+    *   *Ruta:* `/odoo/action-sale.product_template_action`
+*   **Tienda Online (Vista Cliente):** Menú principal → `Sitio Web` → `Tienda`
+    *   *Ruta:* `/shop`
+*   **Stock:** `Inventario` → `Productos` → `Productos` (Ver columna "A mano")
+
+### 2. Diseño Web y CMS (ACT003)
+*   **Inicio:** `/`
+*   **Nosotros:** `/aboutus`
+*   **Contacto:** `/contactus`
+*   **Editor de Páginas:** En cualquier página del sitio, botón **"Editar"** (arriba a la derecha).
+
+### 3. Ventas y Clientes
+*   **Clientes:** `Contactos` o `Ventas` → `Pedidos` → `Clientes`
+*   **Pedidos:** `Ventas` → `Pedidos` → `Pedidos`
+
+---
 ### Nota Técnica: Tipos de Productos (Odoo 18)
 
 En Odoo 18, el manejo de tipos de productos cambió ligeramente. Los seeds siguen esta convención:

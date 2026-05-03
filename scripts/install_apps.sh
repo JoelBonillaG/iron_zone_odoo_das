@@ -3,7 +3,7 @@ set -euo pipefail
 
 DB_NAME="${DB_NAME:-iron_zone}"
 ODOO_CONTAINER="${ODOO_CONTAINER:-iron_zone_odoo}"
-MODULES="${MODULES:-website,website_sale,account,hr,mass_mailing,appointment,sale_management,stock}"
+MODULES="${MODULES:-website,website_sale,website_sale_stock,account,hr,mass_mailing,appointment,sale_management,stock,iz_website,iz_inventory}"
 ODOO_CONFIG="/etc/odoo/odoo.conf"
 
 if ! docker inspect -f '{{.State.Running}}' "$ODOO_CONTAINER" >/dev/null 2>&1; then
@@ -16,12 +16,13 @@ if ! docker exec "$ODOO_CONTAINER" test -f "$ODOO_CONFIG"; then
   exit 1
 fi
 
-echo "Installing base apps into database: $DB_NAME"
+echo "Installing or updating base apps into database: $DB_NAME"
 
 docker exec -i "$ODOO_CONTAINER" odoo \
   -c "$ODOO_CONFIG" \
   -d "$DB_NAME" \
   -i "$MODULES" \
+  -u "$MODULES" \
   --without-demo=all \
   --stop-after-init
 

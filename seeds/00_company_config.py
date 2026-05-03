@@ -64,9 +64,11 @@ currency_ids = models.execute_kw(
 
 values = {
     "name": "Iron Zone",
-    "email": "admin@ironzone.com",
-    "phone": "032000000",
-    "street": "Ambato, Ecuador",
+    "email": "contacto@ironzone.ec",
+    "phone": "+593 3 282 4450",
+    "street": "Av. Cevallos y Montalvo 245",
+    "city": "Ambato",
+    "website": "https://www.ironzone.ec",
 }
 if country_ids:
     values["country_id"] = country_ids[0]
@@ -83,5 +85,17 @@ else:
     print("Warning: logo file not found. Place 'seeds/IronZone.png' to set the company logo.")
 
 models.execute_kw(DB, uid, PASSWORD, "res.company", "write", [[company_id], values])
+
+# Also update the Website record to match
+website_ids = models.execute_kw(DB, uid, PASSWORD, "website", "search", [[]])
+if website_ids:
+    website_vals = {
+        "name": "Iron Zone",
+    }
+    if logo_base64:
+        website_vals["logo"] = logo_base64
+    
+    models.execute_kw(DB, uid, PASSWORD, "website", "write", [website_ids, website_vals])
+    print(f"Website(s) updated: {len(website_ids)}")
 
 print("Company configured successfully: Iron Zone")

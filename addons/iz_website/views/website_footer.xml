@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="iron_zone_footer" inherit_id="website.footer_custom" name="Iron Zone Footer">
+        <xpath expr="//div[@id='footer']" position="replace">
+            <div id="footer" class="oe_structure oe_structure_solo iron-footer pt64 pb32" t-ignore="true" t-if="not no_footer">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-lg-5 mb-5">
+                            <h3 class="iron-accent fw-bold mb-4">IRON ZONE</h3>
+                            <p class="text-white-50">
+                                El templo del fitness en Ambato. Equipamiento de elite, comunidad imparable.
+                            </p>
+                            <div class="mt-5 small text-muted">
+                                <p class="mb-1">© 2026 Iron Zone</p>
+                                <p>Disenado por el equipo de ingenieria.</p>
+                            </div>
+                        </div>
+                        <div class="col-lg-3 mb-5">
+                            <h6 class="text-white fw-bold text-uppercase mb-4">Explorar</h6>
+                            <ul class="list-unstyled">
+                                <li><a href="/" class="text-white-50 text-decoration-none">Inicio</a></li>
+                                <li><a href="/shop" class="text-white-50 text-decoration-none">Tienda</a></li>
+                                <li><a href="/aboutus" class="text-white-50 text-decoration-none">Nosotros</a></li>
+                            </ul>
+                        </div>
+                        <div class="col-lg-4">
+                            <h6 class="text-white fw-bold text-uppercase mb-4">Contactanos</h6>
+                            <ul class="list-unstyled text-white-50">
+                                <li class="mb-3 d-flex align-items-start">
+                                    <i class="fa fa-map-marker iron-accent mt-1 me-3"/>
+                                    <span>
+                                        <span t-field="res_company.street"/>, <span t-field="res_company.city"/>
+                                    </span>
+                                </li>
+                                <li class="mb-3 d-flex align-items-center">
+                                    <i class="fa fa-envelope iron-accent me-3"/>
+                                    <span t-field="res_company.email"/>
+                                </li>
+                                <li class="mb-3 d-flex align-items-center">
+                                    <i class="fa fa-phone iron-accent me-3"/>
+                                    <span t-field="res_company.phone"/>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </xpath>
+    </template>
+</odoo>

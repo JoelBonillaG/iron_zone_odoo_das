@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="website.contactus" model="ir.ui.view">
+        <field name="arch" type="xml">
+            <t name="Contact Us" t-name="website.contactus">
+                <t t-call="website.layout">
+                    <t t-set="logged_partner" t-value="request.env['website.visitor']._get_visitor_from_request().partner_id"/>
+                    <t t-set="contactus_form_values" t-value="{
+                        'email_to': res_company.email,
+                        'name': request.params.get('name', ''),
+                        'phone': request.params.get('phone', ''),
+                        'email_from': request.params.get('email_from', ''),
+                        'company': request.params.get('company', ''),
+                        'subject': request.params.get('subject', ''),
+                    }"/>
+                    <span class="hidden" data-for="contactus_form" t-att-data-values="contactus_form_values"/>
+                    <div id="wrap" class="oe_structure oe_empty">
+                        <section class="iron-contact-hero py-5">
+                            <div class="container py-4">
+                                <div class="row g-4 align-items-end">
+                                    <div class="col-lg-7">
+                                        <span class="iron-kicker">Contacto Iron Zone</span>
+                                        <h1 class="display-4 text-white fw-bold mt-3 mb-3">Conversemos sobre tu entrenamiento, tu membresía o la operación del gimnasio.</h1>
+                                        <p class="lead text-white-50 mb-0">
+                                            El formulario sigue el flujo nativo de Odoo para que el equipo pueda gestionar mensajes desde un backend ordenado.
+                                        </p>
+                                    </div>
+                                    <div class="col-lg-5">
+                                        <div class="iron-card p-4">
+                                            <p class="iron-card-label mb-2">Atención al cliente</p>
+                                            <ul class="list-unstyled text-white-50 mb-0">
+                                                <li class="mb-2">Consultas sobre membresías y clases.</li>
+                                                <li class="mb-2">Soporte para compras del catálogo.</li>
+                                                <li>Coordinación con recepción y administración.</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </section>
+
+                        <section class="iron-section py-5">
+                            <div class="container">
+                                <div class="row g-4">
+                                    <div class="col-lg-7">
+                                        <div class="iron-card p-4 p-lg-5">
+                                            <div class="mb-4">
+                                                <h2 class="text-white h3 mb-2">Escríbenos con contexto claro</h2>
+                                                <p class="text-white-50 mb-0">
+                                                    Mientras más específico sea el mensaje, más rápido podrá responder el equipo del gimnasio.
+                                                </p>
+                                            </div>
+                                            <section class="s_website_form" data-vcss="001" data-snippet="s_website_form">
+                                                <div class="container p-0">
+                                                    <form id="contactus_form" action="/website/form/" method="post" enctype="multipart/form-data" class="o_mark_required iron-contact-form" data-mark="*" data-model_name="mail.mail" data-success-mode="redirect" data-success-page="/contactus-thank-you" data-pre-fill="true">
+                                                        <div class="s_website_form_rows row s_col_no_bgcolor">
+                                                            <div class="mb-3 col-lg-6 s_website_form_field s_website_form_custom s_website_form_required" data-type="char" data-name="Field">
+                                                                <label class="s_website_form_label w-100" for="contact1">
+                                                                    <span class="s_website_form_label_content">Nombre completo</span>
+                                                                    <span class="s_website_form_mark"> *</span>
+                                                                </label>
+                                                                <input id="contact1" type="text" class="form-control s_website_form_input" name="name" required="" data-fill-with="name"/>
+                                                            </div>
+                                                            <div class="mb-3 col-lg-6 s_website_form_field s_website_form_custom" data-type="char" data-name="Field">
+                                                                <label class="s_website_form_label w-100" for="contact2">
+                                                                    <span class="s_website_form_label_content">Teléfono o WhatsApp</span>
+                                                                </label>
+                                                                <input id="contact2" type="tel" class="form-control s_website_form_input" name="phone" data-fill-with="phone"/>
+                                                            </div>
+                                                            <div class="mb-3 col-lg-6 s_website_form_field s_website_form_required s_website_form_model_required" data-type="email" data-name="Field">
+                                                                <label class="s_website_form_label w-100" for="contact3">
+                                                                    <span class="s_website_form_label_content">Correo electrónico</span>
+                                                                    <span class="s_website_form_mark"> *</span>
+                                                                </label>
+                                                                <input id="contact3" type="email" class="form-control s_website_form_input" name="email_from" required="" data-fill-with="email"/>
+                                                            </div>
+                                                            <div class="mb-3 col-lg-6 s_website_form_field s_website_form_custom" data-type="char" data-name="Field">
+                                                                <label class="s_website_form_label w-100" for="contact4">
+                                                                    <span class="s_website_form_label_content">Empresa u organización</span>
+                                                                </label>
+                                                                <input id="contact4" type="text" class="form-control s_website_form_input" name="company" data-fill-with="commercial_company_name"/>
+                                                            </div>
+                                                            <div class="mb-3 col-12 s_website_form_field s_website_form_required s_website_form_model_required" data-type="char" data-name="Field">
+                                                                <label class="s_website_form_label w-100" for="contact5">
+                                                                    <span class="s_website_form_label_content">Asunto</span>
+                                                                    <span class="s_website_form_mark"> *</span>
+                                                                </label>
+                                                                <input id="contact5" type="text" class="form-control s_website_form_input" name="subject" required="" placeholder="Ej. Membresía anual, stock de suplemento, soporte de compra"/>
+                                                            </div>
+                                                            <div class="mb-3 col-12 s_website_form_field s_website_form_custom s_website_form_required" data-type="text" data-name="Field">
+                                                                <label class="s_website_form_label w-100" for="contact6">
+                                                                    <span class="s_website_form_label_content">Mensaje</span>
+                                                                    <span class="s_website_form_mark"> *</span>
+                                                                </label>
+                                                                <textarea id="contact6" class="form-control s_website_form_input" name="description" required="" rows="8" placeholder="Cuéntanos qué necesitas, qué producto o servicio te interesa y cualquier detalle útil para ayudarte mejor."/>
+                                                            </div>
+                                                            <div class="mb-3 col-12 s_website_form_field s_website_form_dnone">
+                                                                <input id="contact7" type="hidden" class="form-control s_website_form_input" name="email_to"/>
+                                                            </div>
+                                                            <div class="mb-0 py-2 col-12 s_website_form_submit s_website_form_no_submit_label text-end" data-name="Submit Button">
+                                                                <a href="#" role="button" class="btn iron-btn-primary s_website_form_send">Enviar consulta</a>
+                                                                <span id="s_website_form_result"/>
+                                                            </div>
+                                                        </div>
+                                                    </form>
+                                                </div>
+                                            </section>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-5">
+                                        <div class="iron-card p-4 p-lg-5 h-100">
+                                            <h3 class="text-white h4 mb-4">Información de atención</h3>
+                                            <ul class="list-unstyled text-white-50 mb-4">
+                                                <li class="d-flex align-items-start mb-3">
+                                                    <i class="fa fa-map-marker iron-accent mt-1 me-3"/>
+                                                    <span><span t-field="res_company.street"/><t t-if="res_company.city">, <span t-field="res_company.city"/></t></span>
+                                                </li>
+                                                <li class="d-flex align-items-center mb-3">
+                                                    <i class="fa fa-phone iron-accent me-3"/>
+                                                    <span t-field="res_company.phone"/>
+                                                </li>
+                                                <li class="d-flex align-items-center mb-4">
+                                                    <i class="fa fa-envelope iron-accent me-3"/>
+                                                    <span t-field="res_company.email"/>
+                                                </li>
+                                            </ul>
+                                            <div class="iron-contact-meta">
+                                                <p class="iron-card-label mb-2">Horarios referenciales</p>
+                                                <p class="text-white-50 mb-2">Lunes a viernes: 05:30 - 22:00</p>
+                                                <p class="text-white-50 mb-2">Sábados: 07:00 - 18:00</p>
+                                                <p class="text-white-50 mb-4">Domingos: 08:00 - 13:00</p>
+                                                <p class="iron-card-label mb-2">Tipos de consulta</p>
+                                                <p class="text-white-50 mb-0">Ventas, soporte de compras, información de planes, coordinación de clases y atención administrativa.</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </section>
+                    </div>
+                </t>
+            </t>
+        </field>
+    </record>
+</odoo>
