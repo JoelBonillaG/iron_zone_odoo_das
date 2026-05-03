@@ -25,15 +25,16 @@ main,
 
 header,
 #top,
-.navbar {
+.navbar,
+.o_header_standard,
+.o_header_affix {
     background-color: #000 !important;
     border-bottom: 1px solid var(--iron-border) !important;
 }
 
-header .nav-link {
-    color: #aaa !important;
-    font-size: 0.8rem;
-    text-transform: uppercase;
+header .nav-link,
+header .navbar-brand {
+    color: #fff !important;
 }
 
 header .nav-link:hover,
@@ -41,20 +42,37 @@ header .nav-link.active {
     color: var(--iron-orange) !important;
 }
 
-header .navbar-brand img {
+.navbar-brand {
+    background: transparent url('/iz_website/static/src/img/IronZone.png') no-repeat left center !important;
+    background-size: contain !important;
+    min-width: 150px !important;
+    height: 50px !important;
+    padding: 0 !important;
     display: block !important;
-    filter: brightness(0) invert(1) !important;
-    max-height: 50px !important;
 }
+
+.navbar-brand * {
+    display: none !important;
+    opacity: 0 !important;
+    visibility: hidden !important;
+    width: 0 !important;
+    height: 0 !important;
+}
+
+/* Logo styling handled by background-image above */
 
 header .fa,
 header .oi,
-.my_cart_quantity {
+.navbar-toggler-icon {
     color: #fff !important;
 }
 
 .my_cart_quantity {
     background-color: var(--iron-orange) !important;
+}
+
+.iron-shop-hero {
+    padding: 1.5rem 0 !important;
 }
 
 .oe_product_cart {
@@ -159,17 +177,163 @@ header .oi,
     transform: translateY(-4px);
 }
 
+/* GLOBAL ICON FIXES */
+header .fa, 
+header .oi, 
+.navbar-toggler-icon,
+.s_share .fa {
+    color: #fff !important;
+}
+
+/* CART & CHECKOUT DARK MODE */
+#cart_products, 
+.js_cart_summary,
+.oe_cart,
+.o_wsale_order_summary {
+    background-color: var(--iron-card) !important;
+    border: 1px solid var(--iron-border) !important;
+    border-radius: 20px !important;
+    color: var(--iron-text) !important;
+}
+
+/* Fix for the white summary card on the right */
+.card, .card-body, .js_cart_summary {
+    background-color: var(--iron-card) !important;
+    color: var(--iron-text) !important;
+    border-color: var(--iron-border) !important;
+}
+
+/* Breadcrumb / Step Indicator (Wizard) */
+.o_wizard {
+    background: transparent !important;
+    margin-bottom: 2rem !important;
+}
+
+.o_wizard .nav-link {
+    color: #888 !important;
+    font-weight: 700 !important;
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    letter-spacing: 1.5px;
+    opacity: 0.6;
+}
+
+.o_wizard .nav-link.active {
+    color: var(--iron-orange) !important;
+    opacity: 1 !important;
+}
+
+.o_wizard .nav-link.disabled {
+    color: #888 !important;
+}
+
+/* Cart Table and Rows */
+.table, .table td, .table th {
+    color: var(--iron-text) !important;
+    border-color: var(--iron-border) !important;
+}
+
+.td-product_name strong, .td-price, .td-subtotal {
+    color: #fff !important;
+}
+
+/* Fix for dark descriptions in cart */
+.text-muted, .small.text-muted, .iron-product-snippet {
+    color: #aaa !important;
+}
+
+/* Summary Labels (Subtotal, Taxes) */
+.js_cart_summary .d-flex span, 
+.js_cart_summary .d-flex strong,
+.js_cart_summary .text-muted,
+#cart_products .text-muted,
+#cart_total td.text-muted,
+.js_cart_summary #cart_total td,
+.js_cart_summary #cart_total span,
+.js_cart_summary #cart_total strong,
+.js_cart_summary .card-body {
+    color: #eeeeee !important;
+}
+
+.js_cart_summary #order_total strong {
+    color: #fff !important;
+    font-size: 1.4rem;
+}
+
+/* Inputs and Forms */
+.input-group .form-control {
+    background-color: #2a2a2a !important;
+    border: 1px solid var(--iron-border) !important;
+    color: #ffffff !important;
+    padding: 0.75rem 1rem !important;
+}
+
+.input-group .form-control::placeholder {
+    color: #bbbbbb !important;
+}
+
+/* Buttons in Cart */
+.btn-primary, .btn_cta {
+    padding: 0.8rem 2rem !important;
+    letter-spacing: 0.5px;
+}
+
+.input-group .form-control {
+    background-color: #222 !important;
+    border: 1px solid var(--iron-border) !important;
+    color: #fff !important;
+}
+
+.btn-secondary {
+    background-color: #333 !important;
+    border: none !important;
+    color: #fff !important;
+    /* Removed border-radius: 50px !important to fix input-group alignment */
+}
+
+.btn-secondary:hover {
+    background-color: #444 !important;
+}
+
+/* Fix input group alignment in summary */
+.js_cart_summary .input-group {
+    display: flex;
+    align-items: stretch;
+}
+.js_cart_summary .input-group .form-control {
+    border-top-right-radius: 0 !important;
+    border-bottom-right-radius: 0 !important;
+}
+.js_cart_summary .input-group .btn {
+    border-top-left-radius: 0 !important;
+    border-bottom-left-radius: 0 !important;
+    margin-left: -1px;
+}
+
+/* AVATARS */
 .iron-avatar {
     align-items: center;
     background: linear-gradient(135deg, var(--iron-orange), #ff7a45);
     border-radius: 50%;
     color: #fff;
     display: inline-flex;
-    font-size: 0.9rem;
-    font-weight: 800;
-    height: 52px;
+    font-size: 1rem;
+    font-weight: 900;
+    height: 55px;
     justify-content: center;
-    width: 52px;
+    width: 55px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+}
+
+.skill-badge {
+    background: #222;
+    border: 1px solid #333;
+    border-radius: 4px;
+    color: #999;
+    display: inline-block;
+    font-size: 0.65rem;
+    margin: 0 4px 4px 0;
+    padding: 3px 8px;
 }
 
 .iron-pill {
