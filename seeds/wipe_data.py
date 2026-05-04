@@ -36,12 +36,34 @@ def run():
         try: models.execute_kw(DB, uid, PASSWORD, 'res.partner', 'write', [[c], {'active': False}])
         except: pass
 
-    # 4. Try unlink categories
+    # 4. Archive Employees
+    employee_names = [
+        "Daniela Morales", "Mateo Rivas", "Camila Torres", "Jorge Paredes"
+    ]
+    employees = models.execute_kw(DB, uid, PASSWORD, 'hr.employee', 'search', [[('name', 'in', employee_names)]])
+    for e in employees:
+        try: models.execute_kw(DB, uid, PASSWORD, 'hr.employee', 'write', [[e], {'active': False}])
+        except: pass
+
+    # 5. Try unlink categories
     categ_names = ["Membresías", "Clases", "Equipamiento", "Suplementos"]
     categories = models.execute_kw(DB, uid, PASSWORD, 'product.public.category', 'search', [[('name', 'in', categ_names)]])
     for c in categories:
         try: models.execute_kw(DB, uid, PASSWORD, 'product.public.category', 'unlink', [[c]])
         except: pass
+    
+    # 6. Archive event registrations and events (clases grupales)
+    event_registrations = models.execute_kw(DB, uid, PASSWORD, 'event.registration', 'search', [[]])
+    if event_registrations:
+        for reg_id in event_registrations:
+            try: models.execute_kw(DB, uid, PASSWORD, 'event.registration', 'unlink', [[reg_id]])
+            except: pass
+    
+    events = models.execute_kw(DB, uid, PASSWORD, 'event.event', 'search', [[]])
+    if events:
+        for event_id in events:
+            try: models.execute_kw(DB, uid, PASSWORD, 'event.event', 'unlink', [[event_id]])
+            except: pass
         
     print("Limpieza completada.\n")
 

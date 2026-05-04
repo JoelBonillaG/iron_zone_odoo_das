@@ -5,7 +5,7 @@ export MSYS_NO_PATHCONV=1
 
 DB_NAME="${DB_NAME:-iron_zone}"
 ODOO_CONTAINER="${ODOO_CONTAINER:-iron_zone_odoo}"
-MODULES="${MODULES:-website,website_sale,website_sale_stock,account,account_payment,website_payment,payment_demo,payment_custom,hr,mass_mailing,appointment,sale_management,stock,iz_website,iz_inventory,iz_backend_theme}"
+MODULES="${MODULES:-website,website_sale,website_sale_stock,account,account_payment,website_payment,payment_demo,payment_custom,hr,mass_mailing,appointment,sale_management,stock,event,iz_website,iz_inventory,iz_backend_theme}"
 ODOO_CONFIG="/etc/odoo/odoo.conf"
 
 if ! docker inspect -f '{{.State.Running}}' "$ODOO_CONTAINER" >/dev/null 2>&1; then

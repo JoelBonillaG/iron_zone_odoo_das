@@ -5,16 +5,34 @@ ORDERS = [
     (5, 5), (6, 6), (7, 7), (8, 8), (9, 9),
 ]
 
+IRON_ZONE_PRODUCTS = [
+    "Agua Mineral",
+    "Botella Proteína Whey 1kg",
+    "Clase de CrossFit",
+    "Clase de Spinning",
+    "Cuerda para Saltar",
+    "Entrenamiento Personal",
+    "Guantes de Boxeo",
+    "Membresía Anual",
+    "Membresía Mensual",
+    "Membresía Trimestral",
+]
+
 def run():
     uid, models = connect()
 
     customers = search_read(uid, models, "res.partner",
                             [["customer_rank", ">", 0]], ["id", "name"])
     products  = search_read(uid, models, "product.product",
-                            [["sale_ok", "=", True]], ["id", "name"])
+                            [["name", "in", IRON_ZONE_PRODUCTS], ["sale_ok", "=", True]], ["id", "name"])
+    products_by_name = {product["name"]: product for product in products}
+    missing_products = [name for name in IRON_ZONE_PRODUCTS if name not in products_by_name]
+    products = [products_by_name[name] for name in IRON_ZONE_PRODUCTS if name in products_by_name]
 
-    if len(customers) < 10 or len(products) < 10:
+    if len(customers) < 10 or missing_products:
         print("ERROR: Run 01_customers.py and 02_products.py first.")
+        if missing_products:
+            print("Missing Iron Zone products:", ", ".join(missing_products))
         return
 
     count = 0
