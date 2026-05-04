@@ -1,125 +1,56 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <template id="iz_shop_page" inherit_id="website_sale.products" name="IZ Shop Experience">
+    <template id="iz_shop_page" inherit_id="website_sale.products" name="Iron Zone Shop">
         <xpath expr="//div[@id='wrap']" position="attributes">
-            <attribute name="class" add="iron-shop-page" separator=" "/>
+            <attribute name="class" add="iz-shop-page" separator=" "/>
         </xpath>
-        <xpath expr="//div[contains(@class, 'container oe_website_sale')]" position="before">
-            <section class="iron-shop-hero">
-                <div class="container py-3">
-                    <h1 class="h2 text-white fw-bold mb-0">Tienda <span class="iron-accent">Iron Zone</span></h1>
-                    <p class="text-white-50 small mb-0">Catálogo oficial de membresías y equipamiento.</p>
+        <xpath expr="//div[hasclass('container', 'oe_website_sale')]" position="before">
+            <section class="iz-shop_header">
+                <div class="container">
+                    <p class="iz-eyebrow">Tienda</p>
+                    <h1>Planes, clases y productos.</h1>
                 </div>
             </section>
         </xpath>
-        <xpath expr="//div[contains(@class, 'products_header')]" position="before">
-            <div class="iron-shop-toolbar d-flex flex-wrap align-items-center justify-content-between gap-3 mb-4">
-                <div class="d-flex flex-wrap gap-2">
-                    <span class="iron-pill">Membresías flexibles</span>
-                    <span class="iron-pill">Suplementación</span>
-                    <span class="iron-pill">Equipamiento esencial</span>
-                </div>
-                <p class="small text-white-50 mb-0">Catálogo diseñado para clientes y administrable por el staff del gimnasio.</p>
-            </div>
+        <xpath expr="//div[hasclass('products_header')]" position="attributes">
+            <attribute name="class" add="iz-products_header" separator=" "/>
         </xpath>
         <xpath expr="//section[@id='o_wsale_products_grid']" position="attributes">
-            <attribute name="class" add="iron-products-grid" separator=" "/>
-        </xpath>
-        <xpath expr="//div[@t-else=''][contains(@class, 'text-center text-muted')]" position="attributes">
-            <attribute name="class" add="iron-empty-state" separator=" "/>
+            <attribute name="class" add="iz-products_grid" separator=" "/>
         </xpath>
     </template>
 
-    <template id="iz_shop_card" inherit_id="website_sale.products_item" name="IZ Shop Product Card">
-        <xpath expr="//form[contains(@class, 'oe_product_cart')]" position="attributes">
-            <attribute name="class" add="iron-shop-card" separator=" "/>
+    <template id="iz_shop_card" inherit_id="website_sale.products_item" name="Iron Zone Product Card">
+        <xpath expr="//form[hasclass('oe_product_cart')]" position="attributes">
+            <attribute name="class" add="iz-product_card" separator=" "/>
         </xpath>
-        <xpath expr="//div[contains(@class, 'o_wsale_product_information')]" position="attributes">
-            <attribute name="class" add="p-3 p-lg-4" separator=" "/>
+        <xpath expr="//div[hasclass('o_wsale_product_information')]" position="attributes">
+            <attribute name="class" add="iz-product_info" separator=" "/>
         </xpath>
-        <xpath expr="//div[contains(@class, 'o_wsale_product_information_text')]" position="inside">
-            <div class="d-flex flex-wrap gap-2 mb-2">
-                <span t-if="product.public_categ_ids" class="iron-pill iron-pill-soft">
-                    <t t-esc="product.public_categ_ids[0].name"/>
-                </span>
-                <span t-if="product.type == 'service'" class="iron-pill iron-pill-soft">Servicio</span>
-                <span t-elif="product.is_storable" class="iron-pill iron-pill-soft">Producto físico</span>
-                <span t-else="" class="iron-pill iron-pill-soft">Consumible</span>
-            </div>
-        </xpath>
-        <xpath expr="//h6[contains(@class, 'o_wsale_products_item_title')]" position="after">
-            <p class="iron-product-snippet text-white-50 small mb-3" t-if="product.description_sale" t-field="product.description_sale"/>
+        <xpath expr="//h6[hasclass('o_wsale_products_item_title')]" position="after">
+            <p class="iz-product_note" t-if="product.public_categ_ids">
+                <t t-esc="product.public_categ_ids[0].name"/>
+            </p>
         </xpath>
     </template>
 
-    <template id="iz_product_page" inherit_id="website_sale.product" name="IZ Product Page">
+    <template id="iz_product_page" inherit_id="website_sale.product" name="Iron Zone Product Detail">
         <xpath expr="//section[@id='product_detail']" position="attributes">
-            <attribute name="class" add="iron-product-detail" separator=" "/>
+            <attribute name="class" add="iz-product_detail" separator=" "/>
         </xpath>
         <xpath expr="//div[@id='product_details']/h1" position="before">
-            <div class="d-flex flex-wrap gap-2 mb-3">
-                <span t-if="product.public_categ_ids" class="iron-pill iron-pill-soft">
-                    <t t-esc="product.public_categ_ids[0].name"/>
-                </span>
-                <span t-if="product.type == 'service'" class="iron-pill iron-pill-soft">Servicio para clientes</span>
-                <span t-elif="product.is_storable" class="iron-pill iron-pill-soft">Disponible según inventario</span>
-                <span t-else="" class="iron-pill iron-pill-soft">Compra rápida en recepción o web</span>
-            </div>
+            <p class="iz-eyebrow" t-if="product.public_categ_ids">
+                <t t-esc="product.public_categ_ids[0].name"/>
+            </p>
         </xpath>
         <xpath expr="//div[@t-field='product.description_ecommerce']" position="replace">
-            <div class="iron-product-intro mb-4">
+            <div class="iz-product_description">
                 <div t-if="product.description_ecommerce" t-field="product.description_ecommerce" class="oe_structure"/>
-                <p t-elif="product.description_sale" class="text-white-50 mb-0" t-field="product.description_sale"/>
+                <p t-elif="product.description_sale" t-field="product.description_sale"/>
             </div>
         </xpath>
-        <xpath expr="//div[@id='o_wsale_cta_wrapper']" position="after">
-            <div class="iron-product-reassurance mt-3 mb-4">
-                <div class="iron-card p-3">
-                    <div class="row g-3">
-                        <div class="col-md-4">
-                            <div class="iron-feature-mini">
-                                <strong class="d-block text-white">Asesoría humana</strong>
-                                <span class="text-white-50 small">El staff puede orientar la compra y resolver dudas del entrenamiento.</span>
-                            </div>
-                        </div>
-                        <div class="col-md-4">
-                            <div class="iron-feature-mini">
-                                <strong class="d-block text-white">Gestión centralizada</strong>
-                                <span class="text-white-50 small">Catálogo, stock y ventas conectados con el backend operativo del gimnasio.</span>
-                            </div>
-                        </div>
-                        <div class="col-md-4">
-                            <div class="iron-feature-mini">
-                                <strong class="d-block text-white">Experiencia consistente</strong>
-                                <span class="text-white-50 small">Información clara para clientes en web y contexto útil para el equipo interno.</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </xpath>
-        <xpath expr="//div[@id='o_product_terms_and_share']" position="after">
-            <div class="iron-product-support mt-3 mb-4">
-                <div class="d-flex flex-wrap gap-3">
-                    <a href="/contactus" class="btn iron-btn-primary">Hablar con el equipo</a>
-                    <a href="/shop" class="btn btn-outline-light rounded-pill">Seguir explorando</a>
-                </div>
-            </div>
-        </xpath>
-    </template>
-    <template id="iz_product_share_buttons" inherit_id="website_sale.product" active="True" name="Iron Share Buttons">
-        <xpath expr="//div[@id='o_product_terms_and_share']" position="replace">
-            <div id="o_product_terms_and_share" class="mt-4 pt-4 border-top">
-                <div class="s_share text-start">
-                    <h6 class="text-white-50 mb-3 small fw-bold text-uppercase">Compartir Producto:</h6>
-                    <a t-attf-href="https://wa.me/?text={{product.name}}" target="_blank" class="s_share_whatsapp" aria-label="WhatsApp">
-                        <i class="fa fa-whatsapp"/>
-                    </a>
-                    <a t-attf-href="mailto:?subject={{product.name}}" class="s_share_email" aria-label="Email">
-                        <i class="fa fa-envelope"/>
-                    </a>
-                </div>
-            </div>
+        <xpath expr="//div[@id='o_product_terms_and_share']" position="attributes">
+            <attribute name="class">iz-product_terms_share</attribute>
         </xpath>
     </template>
 </odoo>

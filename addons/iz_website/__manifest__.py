@@ -5,7 +5,16 @@
     "category": "Website",
     "author": "Iron Zone",
     "license": "LGPL-3",
-    "depends": ["website", "website_sale"],
+    "depends": [
+        "website",
+        "website_sale",
+        "account",
+        "payment",
+        "payment_demo",
+        "payment_custom",
+        "account_payment",
+        "website_payment",
+    ],
     "data": [
         "views/website_layout.xml",
         "views/website_footer.xml",
@@ -13,11 +22,13 @@
         "views/website_pages.xml",
         "views/website_sale_views.xml",
         "views/website_contact_views.xml",
+        "views/website_terms_views.xml",
     ],
     "assets": {
         "web.assets_frontend": [
             "iz_website/static/src/css/iron_zone.css",
             "iz_website/static/src/js/iron_zone.js",
+            ("after", "payment_demo/static/src/js/payment_form.js", "iz_website/static/src/js/payment_demo_fix.js"),
         ],
     },
     "installable": True,

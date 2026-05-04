@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="iz_terms_page" inherit_id="account.account_terms_conditions_page" name="Iron Zone Terms and Conditions">
+        <xpath expr="//div[hasclass('oe_website_terms_conditions')]" position="replace">
+            <div class="iz-terms_page">
+                <div class="container">
+                    <div class="iz-page_header">
+                        <p class="iz-eyebrow">Terminos y condiciones</p>
+                        <h1>Condiciones comerciales de Iron Zone.</h1>
+                        <p class="iz-lead">
+                            Estas condiciones regulan la compra de membresias, clases, servicios de entrenamiento y productos deportivos ofrecidos por Iron Zone en sus canales digitales y punto fisico.
+                        </p>
+                    </div>
+
+                    <div class="iz-terms_content">
+                        <section>
+                            <h2>1. Identificacion del proveedor</h2>
+                            <p>
+                                Iron Zone es un establecimiento simulado para fines academicos, ubicado en Av. Cevallos y Montalvo 245, Ambato, Ecuador. Para consultas comerciales o soporte, el cliente puede escribir a contacto@ironzone.ec o comunicarse al +593 3 282 4450.
+                            </p>
+                        </section>
+
+                        <section>
+                            <h2>2. Membresias y servicios</h2>
+                            <p>
+                                Las membresias habilitan el acceso a las areas, clases o beneficios indicados en la descripcion del plan contratado. Los servicios de entrenamiento, clases grupales y asesorias estan sujetos a disponibilidad horaria, aforo, registro previo y reglas internas de seguridad.
+                            </p>
+                        </section>
+
+                        <section>
+                            <h2>3. Precios, impuestos y facturacion</h2>
+                            <p>
+                                Los precios publicados se expresan en dolares de los Estados Unidos de America. Cuando corresponda, los valores incluyen los impuestos configurados en el sistema de facturacion. Al completar una compra, Iron Zone emitira el comprobante o factura correspondiente con los datos registrados por el cliente.
+                            </p>
+                        </section>
+
+                        <section>
+                            <h2>4. Pagos</h2>
+                            <p>
+                                Los pagos pueden registrarse mediante los metodos habilitados en el sitio web o por transferencia bancaria. En pagos por transferencia, la activacion del servicio puede quedar pendiente hasta la validacion del comprobante por el equipo administrativo.
+                            </p>
+                        </section>
+
+                        <section>
+                            <h2>5. Vigencia y renovacion</h2>
+                            <p>
+                                La vigencia de cada membresia inicia desde la fecha de confirmacion del pedido o desde la fecha indicada en la factura. La renovacion no es automatica salvo que el cliente acepte expresamente un plan recurrente o una nueva orden de compra.
+                            </p>
+                        </section>
+
+                        <section>
+                            <h2>6. Cambios, cancelaciones y devoluciones</h2>
+                            <p>
+                                Las solicitudes de cambio o cancelacion deben realizarse antes de iniciar el periodo contratado. Una vez utilizada la membresia, clase o servicio, no procede devolucion total. Iron Zone podra evaluar reprogramaciones o saldos a favor en casos justificados, como enfermedad documentada o cierre temporal del establecimiento.
+                            </p>
+                        </section>
+
+                        <section>
+                            <h2>7. Uso responsable de instalaciones</h2>
+                            <p>
+                                El cliente se compromete a utilizar adecuadamente equipos, maquinas y espacios de entrenamiento, seguir las instrucciones del personal y mantener una conducta respetuosa. Iron Zone puede suspender el acceso cuando exista uso indebido, riesgo para terceros o incumplimiento de normas internas.
+                            </p>
+                        </section>
+
+                        <section>
+                            <h2>8. Salud y responsabilidad personal</h2>
+                            <p>
+                                El cliente declara encontrarse en condiciones aptas para realizar actividad fisica o, en caso de duda, consultar previamente con un profesional de salud. La informacion de entrenamiento entregada por Iron Zone no reemplaza una evaluacion medica.
+                            </p>
+                        </section>
+
+                        <section>
+                            <h2>9. Productos fisicos</h2>
+                            <p>
+                                Los productos deportivos se entregan segun disponibilidad de inventario. Cambios por talla, defecto o error de despacho deben solicitarse dentro de los siete dias posteriores a la entrega, conservando el producto sin uso indebido y con sus accesorios completos.
+                            </p>
+                        </section>
+
+                        <section>
+                            <h2>10. Proteccion de datos</h2>
+                            <p>
+                                Los datos personales registrados se usan para gestionar clientes, pedidos, facturas, comunicaciones de servicio y soporte. Iron Zone no vende informacion personal a terceros y mantiene los datos dentro del sistema de gestion utilizado para el proyecto.
+                            </p>
+                        </section>
+
+                        <section>
+                            <h2>11. Modificaciones</h2>
+                            <p>
+                                Iron Zone podra actualizar estas condiciones para reflejar cambios operativos, legales o comerciales. La version vigente sera la publicada en esta pagina al momento de realizar la compra.
+                            </p>
+                        </section>
+                    </div>
+                </div>
+            </div>
+        </xpath>
+    </template>
+</odoo>
