@@ -3,16 +3,16 @@ from datetime import datetime, timedelta
 
 
 CLASSES = [
-    {"name": "CrossFit AM", "instructor": "Mateo Rivas", "capacity": 20, "time": "06:00"},
-    {"name": "Yoga Principiantes", "instructor": "Mateo Rivas", "capacity": 15, "time": "07:00"},
-    {"name": "Spinning 18:00", "instructor": "Mateo Rivas", "capacity": 25, "time": "18:00"},
+    {"name": "CrossFit AM", "instructor": "Carlos Mendez", "capacity": 20, "time": "06:00"},
+    {"name": "Yoga Principiantes", "instructor": "Sofia Garcia", "capacity": 15, "time": "07:00"},
+    {"name": "Spinning 18:00", "instructor": "Andrea Lopez", "capacity": 25, "time": "18:00"},
     {"name": "Zumba Cardio", "instructor": "Mateo Rivas", "capacity": 30, "time": "19:00"},
-    {"name": "Pilates Avanzado", "instructor": "Mateo Rivas", "capacity": 12, "time": "09:00"},
-    {"name": "HIIT Entrenamiento", "instructor": "Mateo Rivas", "capacity": 20, "time": "17:30"},
+    {"name": "Pilates Avanzado", "instructor": "Sofia Garcia", "capacity": 12, "time": "09:00"},
+    {"name": "HIIT Entrenamiento", "instructor": "Carlos Mendez", "capacity": 20, "time": "17:30"},
     {"name": "Boxeo Técnica", "instructor": "Mateo Rivas", "capacity": 10, "time": "18:30"},
-    {"name": "Yoga Avanzado", "instructor": "Mateo Rivas", "capacity": 15, "time": "08:00"},
-    {"name": "Natación Adultos", "instructor": "Mateo Rivas", "capacity": 16, "time": "10:00"},
-    {"name": "Entrenamiento en Grupo", "instructor": "Mateo Rivas", "capacity": 22, "time": "16:00"},
+    {"name": "Yoga Avanzado", "instructor": "Sofia Garcia", "capacity": 15, "time": "08:00"},
+    {"name": "Natación Adultos", "instructor": "Andrea Lopez", "capacity": 16, "time": "10:00"},
+    {"name": "Entrenamiento en Grupo", "instructor": "Carlos Mendez", "capacity": 22, "time": "16:00"},
 ]
 
 TRAINING_PLANS = [
