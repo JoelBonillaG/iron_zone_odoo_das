@@ -51,6 +51,19 @@ def run():
     for c in categories:
         try: models.execute_kw(DB, uid, PASSWORD, 'product.public.category', 'unlink', [[c]])
         except: pass
+    
+    # 6. Archive event registrations and events (clases grupales)
+    event_registrations = models.execute_kw(DB, uid, PASSWORD, 'event.registration', 'search', [[]])
+    if event_registrations:
+        for reg_id in event_registrations:
+            try: models.execute_kw(DB, uid, PASSWORD, 'event.registration', 'unlink', [[reg_id]])
+            except: pass
+    
+    events = models.execute_kw(DB, uid, PASSWORD, 'event.event', 'search', [[]])
+    if events:
+        for event_id in events:
+            try: models.execute_kw(DB, uid, PASSWORD, 'event.event', 'unlink', [[event_id]])
+            except: pass
         
     print("Limpieza completada.\n")
 
