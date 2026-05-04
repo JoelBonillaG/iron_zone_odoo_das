@@ -4,53 +4,144 @@
         <field name="arch" type="xml">
             <t name="Homepage" t-name="website.homepage">
                 <t t-call="website.layout">
-                    <div id="wrap" class="oe_structure oe_empty">
-                        <section class="iron-hero">
-                            <div class="container py-5">
-                                <div class="row min-vh-75 align-items-center py-5">
-                                    <div class="col-lg-8 py-5">
-                                        <span class="iron-kicker">Rendimiento. Disciplina. Tecnologia.</span>
-                                        <h1 class="display-1 mb-4 text-white fw-bold">
-                                            FORJA TU
-                                            <br/>
-                                            <span class="iron-accent">DESTINO</span>
-                                        </h1>
-                                        <p class="lead mb-5 text-white-50">
-                                            Un ecosistema digital y fisico para entrenamiento, membresias y comunidad.
+                    <div id="wrap" class="iz-site">
+                        <t t-set="monthly_plan" t-value="request.env['product.template'].sudo().search([('name', '=', 'Membresía Mensual')], limit=1)"/>
+                        <t t-set="quarterly_plan" t-value="request.env['product.template'].sudo().search([('name', '=', 'Membresía Trimestral')], limit=1)"/>
+                        <t t-set="annual_plan" t-value="request.env['product.template'].sudo().search([('name', '=', 'Membresía Anual')], limit=1)"/>
+
+                        <section class="iz-hero">
+                            <div class="iz-hero_media"/>
+                            <div class="iz-hero_overlay"/>
+                            <div class="container iz-hero_content">
+                                <div class="iz-hero_copy">
+                                    <p class="iz-eyebrow">Iron Zone</p>
+                                    <div class="iz-hero_frame">
+                                        <h1>Transforma tu cuerpo.</h1>
+                                    </div>
+                                    <p>Planes flexibles, clases guiadas y productos esenciales para entrenar con constancia.</p>
+                                    <div class="iz-actions">
+                                        <a href="/shop" class="btn iz-btn iz-btn-primary">Ver planes</a>
+                                        <a href="/contactus" class="btn iz-btn iz-btn-ghost">Agendar visita</a>
+                                    </div>
+                                </div>
+                                <a href="/web/signup" class="iz-register_cta">Registrarse</a>
+                            </div>
+                        </section>
+
+                        <section class="iz-section iz-programs_section">
+                            <div class="container">
+                                <div class="iz-section_head">
+                                    <p class="iz-eyebrow">Programas</p>
+                                    <h2>Entrena con una ruta clara.</h2>
+                                </div>
+                                <div class="iz-program_grid">
+                                    <a href="/shop" class="iz-program_item">
+                                        <img src="/iz_website/static/src/img/chica_cuerdas.jpg" alt="Rutina de acondicionamiento"/>
+                                        <span>Acondicionamiento</span>
+                                        <p>Trabajo cardiovascular, resistencia y control del movimiento.</p>
+                                    </a>
+                                    <a href="/shop" class="iz-program_item">
+                                        <img src="/iz_website/static/src/img/dominadas.jpg" alt="Entrenamiento de fuerza"/>
+                                        <span>Fuerza</span>
+                                        <p>Rutinas para progresar con tecnica y cargas controladas.</p>
+                                    </a>
+                                    <a href="/shop" class="iz-program_item">
+                                        <img src="/iz_website/static/src/img/mujer_ejercicio.jpg" alt="Rutina de hipertrofia"/>
+                                        <span>Hipertrofia</span>
+                                        <p>Volumen, tecnica y progresion para desarrollo muscular.</p>
+                                    </a>
+                                </div>
+                            </div>
+                        </section>
+
+                        <section class="iz-content_band">
+                            <div class="container">
+                                <div class="row align-items-center g-5">
+                                    <div class="col-lg-6">
+                                        <div class="iz-image_panel">
+                                            <img src="/iz_website/static/src/img/instalaciones.jpg" alt="Area de entrenamiento Iron Zone"/>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-6">
+                                        <p class="iz-eyebrow">Entrenamiento</p>
+                                        <h2>Fuerza, energia y acompanamiento real.</h2>
+                                        <p class="iz-lead">
+                                            Un espacio preparado para entrenar con equipo completo, clases grupales y asesoramiento cuando lo necesites.
                                         </p>
-                                        <div class="d-flex flex-wrap gap-3">
-                                            <a href="/shop" class="btn iron-btn-primary btn-lg px-5">Ver catalogo</a>
-                                            <a href="/aboutus" class="btn btn-outline-light btn-lg rounded-pill px-5">Sobre nosotros</a>
+                                        <div class="iz-training_list">
+                                            <div><span>01</span><p>Rutinas de fuerza y acondicionamiento.</p></div>
+                                            <div><span>02</span><p>Clases grupales para mantener disciplina.</p></div>
+                                            <div><span>03</span><p>Suplementos y accesorios disponibles en tienda.</p></div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </section>
 
-                        <section class="iron-section py-5">
-                            <div class="container py-4">
-                                <div class="row g-4 text-center">
-                                    <div class="col-lg-4">
-                                        <div class="iron-card h-100 p-4">
-                                            <i class="fa fa-bolt fa-3x iron-accent mb-4"/>
-                                            <h3 class="text-white h4 mb-3">Energia Pura</h3>
-                                            <p class="text-white-50 mb-0">Equipamiento de ultima generacion para potenciar tu entrenamiento.</p>
-                                        </div>
+                        <section class="iz-gallery_band">
+                            <div class="container">
+                                <div class="row align-items-end g-4">
+                                    <div class="col-lg-5">
+                                        <p class="iz-eyebrow">Espacio</p>
+                                        <h2>Equipo, ambiente y enfoque para cada objetivo.</h2>
                                     </div>
-                                    <div class="col-lg-4">
-                                        <div class="iron-card h-100 p-4">
-                                            <i class="fa fa-users fa-3x iron-accent mb-4"/>
-                                            <h3 class="text-white h4 mb-3">Comunidad Elite</h3>
-                                            <p class="text-white-50 mb-0">Unite a un equipo que te motiva a superar tus limites cada dia.</p>
-                                        </div>
+                                    <div class="col-lg-7">
+                                        <p class="iz-lead">
+                                            Combina sala de pesas, entrenamiento personalizado, clases y productos deportivos sin salir del mismo ecosistema de Iron Zone.
+                                        </p>
                                     </div>
-                                    <div class="col-lg-4">
-                                        <div class="iron-card h-100 p-4">
-                                            <i class="fa fa-line-chart fa-3x iron-accent mb-4"/>
-                                            <h3 class="text-white h4 mb-3">Resultados Reales</h3>
-                                            <p class="text-white-50 mb-0">Programas personalizados diseñados por expertos en nutricion y fitness.</p>
-                                        </div>
-                                    </div>
+                                </div>
+                                <div class="iz-gallery_grid">
+                                    <img src="/iz_website/static/src/img/m%C3%A1quinas.jpg" alt="Maquinas de gimnasio"/>
+                                    <img src="/iz_website/static/src/img/instalaciones.jpg" alt="Instalaciones del gimnasio"/>
+                                    <img src="/iz_website/static/src/img/banner_bueno.jpg" alt="Entrenamiento con barra"/>
+                                </div>
+                            </div>
+                        </section>
+
+                        <section class="iz-section iz-pricing_section">
+                            <div class="container">
+                                <div class="iz-section_head iz-plan_intro">
+                                    <p class="iz-eyebrow">Membresias</p>
+                                    <h2>Elige el ritmo que encaja contigo.</h2>
+                                    <p class="iz-lead">Tres alternativas simples para empezar, mantener el avance o comprometerte todo el año.</p>
+                                </div>
+
+                                <div class="iz-pricing_grid">
+                                    <a t-att-href="monthly_plan.website_url or '/shop?search=Membres%C3%ADa%20Mensual'" class="iz-price_card">
+                                        <span class="iz-plan_name">Mensual</span>
+                                        <strong class="iz-price">$35</strong>
+                                        <p>Para empezar sin compromiso largo.</p>
+                                        <ul>
+                                            <li>Acceso ilimitado por 1 mes</li>
+                                            <li>Uso de sala de pesas</li>
+                                            <li>Seguimiento inicial</li>
+                                        </ul>
+                                        <span class="iz-plan_cta">Seleccionar plan</span>
+                                    </a>
+                                    <a t-att-href="quarterly_plan.website_url or '/shop?search=Membres%C3%ADa%20Trimestral'" class="iz-price_card is-featured">
+                                        <span class="iz-plan_badge">Recomendado</span>
+                                        <span class="iz-plan_name">Trimestral</span>
+                                        <strong class="iz-price">$90</strong>
+                                        <p>Para sostener progreso con mejor valor.</p>
+                                        <ul>
+                                            <li>Acceso ilimitado por 3 meses</li>
+                                            <li>Clases grupales seleccionadas</li>
+                                            <li>Control de progreso</li>
+                                        </ul>
+                                        <span class="iz-plan_cta">Seleccionar plan</span>
+                                    </a>
+                                    <a t-att-href="annual_plan.website_url or '/shop?search=Membres%C3%ADa%20Anual'" class="iz-price_card">
+                                        <span class="iz-plan_name">Anual</span>
+                                        <strong class="iz-price">$300</strong>
+                                        <p>Para entrenar todo el año con prioridad.</p>
+                                        <ul>
+                                            <li>Acceso ilimitado por 12 meses</li>
+                                            <li>Beneficios en productos</li>
+                                            <li>Atencion preferente</li>
+                                        </ul>
+                                        <span class="iz-plan_cta">Seleccionar plan</span>
+                                    </a>
                                 </div>
                             </div>
                         </section>
@@ -64,129 +155,48 @@
         <field name="arch" type="xml">
             <t name="About Us" t-name="website.aboutus">
                 <t t-call="website.layout">
-                    <div id="wrap" class="oe_structure oe_empty">
-                        <section class="iron-section py-5">
-                            <div class="container py-4">
-                                <div class="text-center mb-5">
-                                    <h6 class="iron-kicker mb-3">Nuestro equipo</h6>
-                                    <h2 class="display-4 fw-bold text-white">Mentes que construyen lo extraordinario</h2>
-                                    <p class="text-white-50 col-lg-7 mx-auto mt-3">
-                                        Trabajamos de manera cercana con nuestros clientes, entendiendo sus necesidades y transformando sus ideas en soluciones tangibles y eficientes.
-                                    </p>
-                                </div>
+                    <div id="wrap" class="iz-site">
+                        <section class="iz-page_header">
+                            <div class="container">
+                                <p class="iz-eyebrow">Nosotros</p>
+                                <h1>Un gimnasio para entrenar con disciplina y claridad.</h1>
+                            </div>
+                        </section>
 
-                                <div class="row g-4">
-                                    <!-- David Barragán -->
-                                    <div class="col-lg-4 col-md-6">
-                                        <div class="iron-card iron-team-card p-4 h-100">
-                                            <div class="d-flex align-items-center gap-3 mb-3">
-                                                <div class="iron-avatar">DB</div>
-                                                <div>
-                                                    <h4 class="mb-0 h5 text-white">David Barragan</h4>
-                                                    <small class="iron-accent fw-bold">Senior Frontend Engineer</small>
-                                                </div>
-                                            </div>
-                                            <p class="small text-white-50 mb-3">Arquitectura UI de alto rendimiento con Angular y React.</p>
-                                            <div class="mt-auto">
-                                                <span class="skill-badge">Angular</span><span class="skill-badge">React</span><span class="skill-badge">TypeScript</span>
-                                            </div>
+                        <section class="iz-section iz-section-tight">
+                            <div class="container">
+                                <div class="row g-5">
+                                    <div class="col-lg-7">
+                                        <h2>Entrenamiento, comunidad y seguimiento cercano.</h2>
+                                        <p class="iz-lead">
+                                            Iron Zone combina equipos, clases y planes de membresia para que cada socio pueda entrenar con una ruta clara desde el primer dia.
+                                        </p>
+                                    </div>
+                                    <div class="col-lg-5">
+                                        <div class="iz-fact_list">
+                                            <div><span>Ambato</span><p>Espacio local con atencion cercana.</p></div>
+                                            <div><span>Entrenadores</span><p>Acompanamiento para avanzar con tecnica.</p></div>
+                                            <div><span>Planes</span><p>Membresias y clases segun el objetivo.</p></div>
                                         </div>
                                     </div>
-                                    <!-- Joel Bonilla -->
-                                    <div class="col-lg-4 col-md-6">
-                                        <div class="iron-card iron-team-card p-4 h-100">
-                                            <div class="d-flex align-items-center gap-3 mb-3">
-                                                <div class="iron-avatar" style="background: #333;">JB</div>
-                                                <div>
-                                                    <h4 class="mb-0 h5 text-white">Joel Bonilla</h4>
-                                                    <small class="iron-accent fw-bold">Backend Engineer</small>
-                                                </div>
-                                            </div>
-                                            <p class="small text-white-50 mb-3">Constructor de APIs resilientes y servicios distribuidos.</p>
-                                            <div class="mt-auto">
-                                                <span class="skill-badge">Node.js</span><span class="skill-badge">Go</span><span class="skill-badge">PostgreSQL</span>
-                                            </div>
-                                        </div>
+                                </div>
+                            </div>
+                        </section>
+
+                        <section class="iz-band iz-band-light">
+                            <div class="container">
+                                <div class="iz-values">
+                                    <div>
+                                        <h3>Entrenamiento</h3>
+                                        <p>Planes, clases y acompanamiento personal.</p>
                                     </div>
-                                    <!-- Carol Cañizares -->
-                                    <div class="col-lg-4 col-md-6">
-                                        <div class="iron-card iron-team-card p-4 h-100">
-                                            <div class="d-flex align-items-center gap-3 mb-3">
-                                                <div class="iron-avatar">CC</div>
-                                                <div>
-                                                    <h4 class="mb-0 h5 text-white">Carol Canizares</h4>
-                                                    <small class="iron-accent fw-bold">Fullstack Engineer</small>
-                                                </div>
-                                            </div>
-                                            <p class="small text-white-50 mb-3">Vision de producto y consistencia tecnica sin sacrificar calidad.</p>
-                                            <div class="mt-auto">
-                                                <span class="skill-badge">Vue.js</span><span class="skill-badge">Laravel</span><span class="skill-badge">Docker</span>
-                                            </div>
-                                        </div>
+                                    <div>
+                                        <h3>Comunidad</h3>
+                                        <p>Un ambiente activo para mantener constancia.</p>
                                     </div>
-                                    <!-- Josué García -->
-                                    <div class="col-lg-4 col-md-6">
-                                        <div class="iron-card iron-team-card p-4 h-100">
-                                            <div class="d-flex align-items-center gap-3 mb-3">
-                                                <div class="iron-avatar" style="background: #333;">JG</div>
-                                                <div>
-                                                    <h4 class="mb-0 h5 text-white">Josue Garcia</h4>
-                                                    <small class="iron-accent fw-bold">Lead Fullstack Engineer</small>
-                                                </div>
-                                            </div>
-                                            <p class="small text-white-50 mb-3">Lider tecnico orquestando arquitecturas y microservicios.</p>
-                                            <div class="mt-auto">
-                                                <span class="skill-badge">Angular</span><span class="skill-badge">NestJS</span><span class="skill-badge">TypeScript</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <!-- Nixon Hurtado -->
-                                    <div class="col-lg-4 col-md-6">
-                                        <div class="iron-card iron-team-card p-4 h-100">
-                                            <div class="d-flex align-items-center gap-3 mb-3">
-                                                <div class="iron-avatar">NH</div>
-                                                <div>
-                                                    <h4 class="mb-0 h5 text-white">Nixon Hurtado</h4>
-                                                    <small class="iron-accent fw-bold">DevOps &amp; Cloud Engineer</small>
-                                                </div>
-                                            </div>
-                                            <p class="small text-white-50 mb-3">Arquitecto de infraestructura y automatizacion CI/CD.</p>
-                                            <div class="mt-auto">
-                                                <span class="skill-badge">AWS</span><span class="skill-badge">Kubernetes</span><span class="skill-badge">Terraform</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <!-- David Manjarres -->
-                                    <div class="col-lg-4 col-md-6">
-                                        <div class="iron-card iron-team-card p-4 h-100">
-                                            <div class="d-flex align-items-center gap-3 mb-3">
-                                                <div class="iron-avatar" style="background: #333;">DM</div>
-                                                <div>
-                                                    <h4 class="mb-0 h5 text-white">David Manjarres</h4>
-                                                    <small class="iron-accent fw-bold">Backend Engineer</small>
-                                                </div>
-                                            </div>
-                                            <p class="small text-white-50 mb-3">Experto en modelado de datos y rendimiento extremo de DBs.</p>
-                                            <div class="mt-auto">
-                                                <span class="skill-badge">Python</span><span class="skill-badge">FastAPI</span><span class="skill-badge">MongoDB</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <!-- Maybelline Navarro -->
-                                    <div class="col-lg-4 col-md-6 mx-auto">
-                                        <div class="iron-card iron-team-card p-4 h-100">
-                                            <div class="d-flex align-items-center gap-3 mb-3">
-                                                <div class="iron-avatar">MN</div>
-                                                <div>
-                                                    <h4 class="mb-0 h5 text-white">Maybelline Navarro</h4>
-                                                    <small class="iron-accent fw-bold">Frontend Engineer</small>
-                                                </div>
-                                            </div>
-                                            <p class="small text-white-50 mb-3">Especialista en UX, Motion y experiencias intuitivas.</p>
-                                            <div class="mt-auto">
-                                                <span class="skill-badge">React</span><span class="skill-badge">Framer Motion</span><span class="skill-badge">UX</span>
-                                            </div>
-                                        </div>
+                                    <div>
+                                        <h3>Productos</h3>
+                                        <p>Accesorios y suplementos para complementar la rutina.</p>
                                     </div>
                                 </div>
                             </div>
@@ -195,5 +205,12 @@
                 </t>
             </t>
         </field>
+    </record>
+
+    <record id="page_aboutus" model="website.page">
+        <field name="name">Nosotros</field>
+        <field name="url">/aboutus</field>
+        <field name="view_id" ref="website.aboutus"/>
+        <field name="website_published">True</field>
     </record>
 </odoo>
