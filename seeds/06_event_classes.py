@@ -3,16 +3,29 @@ from datetime import datetime, timedelta
 
 
 CLASSES = [
-    {"name": "CrossFit AM", "instructor": "Mateo Rivas", "capacity": 20, "time": "06:00"},
-    {"name": "Yoga Principiantes", "instructor": "Mateo Rivas", "capacity": 15, "time": "07:00"},
-    {"name": "Spinning 18:00", "instructor": "Mateo Rivas", "capacity": 25, "time": "18:00"},
+    {"name": "CrossFit AM", "instructor": "Carlos Mendez", "capacity": 20, "time": "06:00"},
+    {"name": "Yoga Principiantes", "instructor": "Sofia Garcia", "capacity": 15, "time": "07:00"},
+    {"name": "Spinning 18:00", "instructor": "Andrea Lopez", "capacity": 25, "time": "18:00"},
     {"name": "Zumba Cardio", "instructor": "Mateo Rivas", "capacity": 30, "time": "19:00"},
-    {"name": "Pilates Avanzado", "instructor": "Mateo Rivas", "capacity": 12, "time": "09:00"},
-    {"name": "HIIT Entrenamiento", "instructor": "Mateo Rivas", "capacity": 20, "time": "17:30"},
+    {"name": "Pilates Avanzado", "instructor": "Sofia Garcia", "capacity": 12, "time": "09:00"},
+    {"name": "HIIT Entrenamiento", "instructor": "Carlos Mendez", "capacity": 20, "time": "17:30"},
     {"name": "Boxeo Técnica", "instructor": "Mateo Rivas", "capacity": 10, "time": "18:30"},
-    {"name": "Yoga Avanzado", "instructor": "Mateo Rivas", "capacity": 15, "time": "08:00"},
-    {"name": "Natación Adultos", "instructor": "Mateo Rivas", "capacity": 16, "time": "10:00"},
-    {"name": "Entrenamiento en Grupo", "instructor": "Mateo Rivas", "capacity": 22, "time": "16:00"},
+    {"name": "Yoga Avanzado", "instructor": "Sofia Garcia", "capacity": 15, "time": "08:00"},
+    {"name": "Natación Adultos", "instructor": "Andrea Lopez", "capacity": 16, "time": "10:00"},
+    {"name": "Entrenamiento en Grupo", "instructor": "Carlos Mendez", "capacity": 22, "time": "16:00"},
+]
+
+TRAINING_PLANS = [
+    {"name": "Plan Básico - 4 Semanas", "description": "Plan de entrenamiento básico de 4 semanas para principiantes", "duration_weeks": 4, "intensity": "Baja"},
+    {"name": "Plan Intermedio - 8 Semanas", "description": "Plan de entrenamiento intermedio de 8 semanas para usuarios con experiencia", "duration_weeks": 8, "intensity": "Media"},
+    {"name": "Plan Avanzado - 12 Semanas", "description": "Plan de entrenamiento avanzado de 12 semanas para usuarios entrenados", "duration_weeks": 12, "intensity": "Alta"},
+    {"name": "Plan CrossFit Especializado", "description": "Plan especializado en CrossFit con enfoque en fuerza y potencia", "duration_weeks": 8, "intensity": "Alta"},
+    {"name": "Plan Yoga y Flexibilidad", "description": "Plan enfocado en yoga, meditación y mejora de flexibilidad", "duration_weeks": 6, "intensity": "Baja"},
+    {"name": "Plan Cardio Intensivo", "description": "Plan de cardio intensivo para pérdida de peso y resistencia", "duration_weeks": 10, "intensity": "Alta"},
+    {"name": "Plan Pilates Rehabilitación", "description": "Plan de pilates para rehabilitación y fortalecimiento del core", "duration_weeks": 8, "intensity": "Media"},
+    {"name": "Plan Boxeo y Defensa", "description": "Plan de boxeo técnico con enfoque en defensa personal", "duration_weeks": 10, "intensity": "Media"},
+    {"name": "Plan Natación Competitiva", "description": "Plan de natación para mejora de técnica y resistencia", "duration_weeks": 12, "intensity": "Alta"},
+    {"name": "Plan Mantenimiento General", "description": "Plan de mantenimiento general para mantener forma física y salud", "duration_weeks": 4, "intensity": "Media"},
 ]
 
 
@@ -65,6 +78,28 @@ def ensure_user_for_employee(uid, models, employee):
 
 def run():
     uid, models = connect()
+
+    # Crear planes de entrenamiento
+    print("Syncing training plans...")
+    training_plan_ids = {}
+    for plan in TRAINING_PLANS:
+        values = {
+            "name": plan["name"],
+            "description": plan["description"],
+            "duration_weeks": plan["duration_weeks"],
+            "intensity": plan["intensity"],
+        }
+        plan_id, created = create_or_update(
+            uid,
+            models,
+            "training.plan",
+            [("name", "=", plan["name"])],
+            values,
+            fields=["id", "name"],
+        )
+        training_plan_ids[plan["name"]] = plan_id
+        action = "Created" if created else "Updated"
+        print(f"  {action} training plan: {plan['name']}")
 
     # Buscar entrenadores de 05_employees.py y usar su usuario vinculado para el evento.
     instructor_user_ids = {}
