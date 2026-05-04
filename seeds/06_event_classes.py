@@ -16,6 +16,10 @@ CLASSES = [
 ]
 
 
+def odoo_datetime(value):
+    return value.replace(second=0, microsecond=0).strftime("%Y-%m-%d %H:%M:%S")
+
+
 def search_one(uid, models, model, domain, fields=None):
     records = models.execute_kw(
         DB,
@@ -37,25 +41,48 @@ def create_or_update(uid, models, model, domain, values, fields=None):
     return create(uid, models, model, values), True
 
 
+def ensure_user_for_employee(uid, models, employee):
+    if employee.get("user_id"):
+        return employee["user_id"][0]
+
+    login = employee.get("work_email") or f"{employee['name'].lower().replace(' ', '.')}@ironzone.com"
+    user_id, _ = create_or_update(
+        uid,
+        models,
+        "res.users",
+        [("login", "=", login)],
+        {
+            "name": employee["name"],
+            "login": login,
+            "email": login,
+            "active": True,
+        },
+        fields=["id", "name"],
+    )
+    models.execute_kw(DB, uid, PASSWORD, "hr.employee", "write", [[employee["id"]], {"user_id": user_id}])
+    return user_id
+
+
 def run():
     uid, models = connect()
 
-    # Buscar entrenadores de 05_employees.py
-    instructor_ids = {}
+    # Buscar entrenadores de 05_employees.py y usar su usuario vinculado para el evento.
+    instructor_user_ids = {}
     print("Mapping instructors from employees...")
     for class_info in CLASSES:
         instructor_name = class_info["instructor"]
-        if instructor_name not in instructor_ids:
+        if instructor_name not in instructor_user_ids:
             instructor = search_one(
                 uid,
                 models,
                 "hr.employee",
                 [("name", "=", instructor_name)],
-                fields=["id", "name"],
+                fields=["id", "name", "work_email", "user_id"],
             )
             if instructor:
-                instructor_ids[instructor_name] = instructor["id"]
-                print(f"  Found instructor: {instructor_name} (ID: {instructor['id']})")
+                user_id = ensure_user_for_employee(uid, models, instructor)
+                instructor_user_ids[instructor_name] = user_id
+                print(f"  Found instructor: {instructor_name} (Employee ID: {instructor['id']}, User ID: {user_id})")
             else:
                 print(f"  Warning: Instructor not found: {instructor_name}")
 
@@ -88,15 +115,15 @@ def run():
         time_parts = class_info["time"].split(":")
         event_datetime = event_date.replace(hour=int(time_parts[0]), minute=int(time_parts[1]))
         
-        instructor_id = instructor_ids.get(class_info["instructor"])
+        instructor_user_id = instructor_user_ids.get(class_info["instructor"])
         
         values = {
             "name": class_info["name"],
             "seats_available": class_info["capacity"],
             "seats_max": class_info["capacity"],
-            "date_begin": event_datetime.isoformat(),
-            "date_end": (event_datetime + timedelta(hours=1)).isoformat(),
-            "user_id": instructor_id if instructor_id else False,
+            "date_begin": odoo_datetime(event_datetime),
+            "date_end": odoo_datetime(event_datetime + timedelta(hours=1)),
+            "user_id": instructor_user_id if instructor_user_id else False,
         }
         
         event_id, created = create_or_update(
