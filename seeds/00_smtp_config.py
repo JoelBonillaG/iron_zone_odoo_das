@@ -82,7 +82,7 @@ values = {
     "smtp_pass": SMTP_PASSWORD,
     "smtp_encryption": SMTP_ENCRYPTION,
     "from_filter": SMTP_FROM,
-    "sequence": 10,
+    "sequence": 1,
     "active": True,
 }
 
@@ -106,3 +106,32 @@ else:
         [values],
     )
     print("SMTP server created successfully.")
+    existing_ids = models.execute_kw(
+        DB,
+        uid,
+        PASSWORD,
+        "ir.mail_server",
+        "search",
+        [[("smtp_host", "=", SMTP_HOST), ("smtp_user", "=", SMTP_USER)]],
+        {"limit": 1},
+    )
+
+configured_id = existing_ids[0]
+other_active_ids = models.execute_kw(
+    DB,
+    uid,
+    PASSWORD,
+    "ir.mail_server",
+    "search",
+    [[("id", "!=", configured_id), ("active", "=", True)]],
+)
+if other_active_ids:
+    models.execute_kw(
+        DB,
+        uid,
+        PASSWORD,
+        "ir.mail_server",
+        "write",
+        [other_active_ids, {"active": False}],
+    )
+    print(f"Disabled {len(other_active_ids)} old SMTP server(s).")

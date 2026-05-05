@@ -13,9 +13,11 @@ assigned events, review registrations, and update event status from the
 Human Resources menu.
 """,
     "author": "Iron Zone",
-    "depends": ["base", "hr", "event", "calendar"],
+    "depends": ["base", "hr", "event", "website_event", "calendar", "website", "portal"],
     "data": [
+        "security/training_plan_security.xml",
         "views/training_plan_views.xml",
+        "views/employee_event_portal_templates.xml",
         "security/ir.model.access.csv",
     ],
     "installable": True,

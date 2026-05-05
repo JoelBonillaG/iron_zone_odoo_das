@@ -23,7 +23,7 @@
         "views/website_sale_views.xml",
         "views/website_contact_views.xml",
         "views/website_terms_views.xml",
-        "data/website_config.xml",
+        "views/website_portal_views.xml",
     ],
     "assets": {
         "web.assets_frontend": [

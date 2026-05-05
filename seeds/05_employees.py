@@ -29,42 +29,10 @@ JOBS = [
 
 EMPLOYEES = [
     {
-        "name": "Daniela Morales",
-        "job": "Administrador del Gimnasio",
-        "department": "Administracion",
-        "work_email": "daniela.morales@ironzone.com",
-        "mobile_phone": "0991234521",
-        "work_phone": "032400101",
-    },
-    {
-        "name": "Mateo Rivas",
-        "job": "Entrenador Personal",
-        "department": "Entrenamiento",
-        "work_email": "mateo.rivas@ironzone.com",
-        "mobile_phone": "0991234522",
-        "work_phone": "032400102",
-    },
-    {
-        "name": "Camila Torres",
-        "job": "Recepcionista",
-        "department": "Atencion al Cliente",
-        "work_email": "camila.torres@ironzone.com",
-        "mobile_phone": "0991234523",
-        "work_phone": "032400103",
-    },
-    {
-        "name": "Jorge Paredes",
-        "job": "Tecnico de Mantenimiento",
-        "department": "Operaciones",
-        "work_email": "jorge.paredes@ironzone.com",
-        "mobile_phone": "0991234524",
-        "work_phone": "032400104",
-    },
-    {
         "name": "Carlos Mendez",
         "job": "Instructor de CrossFit",
         "department": "Entrenamiento",
-        "work_email": "carlos.mendez@ironzone.com",
+        "work_email": "josuegarcab2@gmail.com",
         "mobile_phone": "0991234525",
         "work_phone": "032400105",
     },
@@ -72,41 +40,9 @@ EMPLOYEES = [
         "name": "Sofia Garcia",
         "job": "Instructor de Yoga",
         "department": "Entrenamiento",
-        "work_email": "sofia.garcia@ironzone.com",
+        "work_email": "josuegarcab2@hotmail.com",
         "mobile_phone": "0991234526",
         "work_phone": "032400106",
-    },
-    {
-        "name": "Andrea Lopez",
-        "job": "Instructor de Spinning",
-        "department": "Entrenamiento",
-        "work_email": "andrea.lopez@ironzone.com",
-        "mobile_phone": "0991234527",
-        "work_phone": "032400107",
-    },
-    {
-        "name": "Roberto Fernandez",
-        "job": "Nutricionista",
-        "department": "Nutricion",
-        "work_email": "roberto.fernandez@ironzone.com",
-        "mobile_phone": "0991234528",
-        "work_phone": "032400108",
-    },
-    {
-        "name": "Patricia Sanchez",
-        "job": "Especialista en Marketing",
-        "department": "Marketing",
-        "work_email": "patricia.sanchez@ironzone.com",
-        "mobile_phone": "0991234529",
-        "work_phone": "032400109",
-    },
-    {
-        "name": "Miguel Rodriguez",
-        "job": "Especialista en Finanzas",
-        "department": "Finanzas",
-        "work_email": "miguel.rodriguez@ironzone.com",
-        "mobile_phone": "0991234530",
-        "work_phone": "032400110",
     },
 ]
 
@@ -130,6 +66,21 @@ def create_or_update(uid, models, model, domain, values, fields=None):
         models.execute_kw(DB, uid, PASSWORD, model, "write", [[record["id"]], values])
         return record["id"], False
     return create(uid, models, model, values), True
+
+
+def archive_old_demo_employees(uid, models):
+    allowed_emails = [employee["work_email"] for employee in EMPLOYEES]
+    old_ids = models.execute_kw(
+        DB,
+        uid,
+        PASSWORD,
+        "hr.employee",
+        "search",
+        [[("work_email", "!=", False), ("work_email", "not in", allowed_emails)]],
+    )
+    if old_ids:
+        models.execute_kw(DB, uid, PASSWORD, "hr.employee", "write", [old_ids, {"active": False}])
+        print(f"Archived {len(old_ids)} old demo employee(s).")
 
 
 def run():
@@ -171,6 +122,7 @@ def run():
 
     created_count = 0
     updated_count = 0
+    archive_old_demo_employees(uid, models)
     print("Syncing employees...")
     for employee in EMPLOYEES:
         values = {

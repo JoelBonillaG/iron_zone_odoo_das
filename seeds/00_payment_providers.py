@@ -68,6 +68,19 @@ def get_company(models, uid):
     return companies[0]
 
 
+def get_website(models, uid):
+    websites = execute(
+        models,
+        uid,
+        "website",
+        "search_read",
+        [],
+        fields=["id", "name"],
+        limit=1,
+    )
+    return websites[0] if websites else None
+
+
 def ensure_modules_installed(models, uid):
     modules = ["payment_demo", "payment_custom", "account_payment", "website_payment"]
     records = execute(
@@ -182,6 +195,8 @@ def configure_payment_methods(models, uid):
 
 
 def configure_payment_providers(models, uid):
+    website = get_website(models, uid)
+    journal_ids = search(models, uid, "account.journal", [["type", "in", ["bank", "cash"]]], limit=1)
     for code, values in PAYMENT_PROVIDERS.items():
         if code == "custom":
             values = {**values, "pending_msg": transfer_pending_message()}
@@ -192,6 +207,10 @@ def configure_payment_providers(models, uid):
 
         provider_id = provider_ids[0]
         clear_restrictions(models, uid, provider_id)
+        if website:
+            values["website_id"] = website["id"]
+        if journal_ids:
+            values["journal_id"] = journal_ids[0]
         execute(models, uid, "payment.provider", "write", [provider_id], values)
 
         provider = read(

@@ -85,10 +85,10 @@ def run():
     # Nombres de clases a borrar (Nueva, Reservado, Anunciado)
     class_names = [
         "CrossFit AM", "Yoga Principiantes", "Spinning 18:00", "Zumba Cardio",
-        "Pilates Avanzado", "HIIT Entrenamiento", "Boxeo Técnica", "Yoga Avanzado",
-        "Natación Adultos", "Entrenamiento en Grupo", "Tae Kwon Do Niños",
-        "Danza Contemporánea", "Musculación Personalizada", "Acuagym",
-        "Funcional Boot Camp", "Meditación Mindfulness"
+        "Pilates Avanzado", "HIIT Entrenamiento", "Boxeo Tecnica", "Yoga Avanzado",
+        "Natacion Adultos", "Entrenamiento en Grupo", "Tae Kwon Do Ninos",
+        "Danza Contemporanea", "Musculacion Personalizada", "Acuagym",
+        "Funcional Boot Camp", "Meditacion Mindfulness"
     ]
     events = models.execute_kw(DB, uid, PASSWORD, 'event.event', 'search', [[('name', 'in', class_names)]])
     if events:
