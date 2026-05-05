@@ -94,7 +94,15 @@ def run():
             try: models.execute_kw(DB, uid, PASSWORD, 'event.registration', 'unlink', [[reg_id]])
             except: pass
     
-    events = models.execute_kw(DB, uid, PASSWORD, 'event.event', 'search', [[]])
+    # Nombres de clases a borrar (Nueva, Reservado, Anunciado)
+    class_names = [
+        "CrossFit AM", "Yoga Principiantes", "Spinning 18:00", "Zumba Cardio",
+        "Pilates Avanzado", "HIIT Entrenamiento", "Boxeo Técnica", "Yoga Avanzado",
+        "Natación Adultos", "Entrenamiento en Grupo", "Tae Kwon Do Niños",
+        "Danza Contemporánea", "Musculación Personalizada", "Acuagym",
+        "Funcional Boot Camp", "Meditación Mindfulness"
+    ]
+    events = models.execute_kw(DB, uid, PASSWORD, 'event.event', 'search', [[('name', 'in', class_names)]])
     if events:
         for event_id in events:
             try: models.execute_kw(DB, uid, PASSWORD, 'event.event', 'unlink', [[event_id]])
