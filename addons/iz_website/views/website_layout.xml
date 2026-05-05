@@ -28,3 +28,23 @@
     </template>
 
 </odoo>
+
+<odoo>
+    <template id="iz_inject_orange_buttons_script" inherit_id="website.layout" name="Inject Orange Buttons CSS">
+        <xpath expr="//body" position="inside">
+            <![CDATA[
+            <script type="text/javascript">
+                (function(){
+                    try {
+                        var css = '#o_wsale_total_accordion_item .coupon_form .btn, #o_wsale_total_accordion_item button[name="o_payment_submit_button"] { background: linear-gradient(135deg, #ff6a42, #ff4f86) !important; border: 0 !important; color: #fff !important; box-shadow: 0 12px 26px rgba(255, 90, 47, 0.28) !important; } #o_wsale_total_accordion_item .coupon_form .btn:hover, #o_wsale_total_accordion_item button[name="o_payment_submit_button"]:hover { filter: brightness(0.95) !important; }';
+                        var s = document.createElement('style');
+                        s.id = 'iz-orange-buttons-inline';
+                        s.appendChild(document.createTextNode(css));
+                        document.head.appendChild(s);
+                    } catch (e) { console && console.error && console.error(e); }
+                })();
+            <\/script>
+            ]]>
+        </xpath>
+    </template>
+</odoo>

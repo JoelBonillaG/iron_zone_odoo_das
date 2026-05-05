@@ -1430,35 +1430,108 @@ textarea.form-control {
    /shop/payment  CONFIRM ORDER PAGE
    ============================================================ */
 
-/* Right side "Resumen de la orden" — force dark */
+/* Payment modal / summary wrapper used by Odoo checkout and portal payment */
+#portal_pay .modal-content,
+#portal_pay .modal-body,
+#portal_pay .modal-header,
+.o_cta_navigation_container,
+.o_cta_navigation_container .d-flex,
+.o_cta_navigation_container .btn,
 .o_payment_summary,
+.o_payment_summary .card,
+.o_payment_summary .card-body,
+.o_payment_summary .card-header,
 .o_wsale_order_summary,
 .o_wsale_order_summary .card,
 .o_wsale_order_summary .card-body,
-.o_wsale_order_summary .card-header {
+.o_wsale_order_summary .card-header,
+.o_wsale_order_summary .card-footer {
     background: var(--iz-surface) !important;
     border-color: var(--iz-line) !important;
     color: var(--iz-text) !important;
 }
 
+/* Exact checkout summary accordion elements */
+#o_wsale_total_accordion_item,
+#o_wsale_total_accordion_item .accordion-button,
+#o_wsale_total_accordion_item .accordion-button:not(.collapsed),
+#o_wsale_total_accordion_item .accordion-collapse,
+#o_wsale_total_accordion_item .accordion-body,
+#o_wsale_total_accordion_item .table,
+#o_wsale_total_accordion_item .coupon_form,
+#o_wsale_total_accordion_item .input-group,
+#o_wsale_total_accordion_item .input-group .form-control,
+#o_wsale_total_accordion_item .input-group .btn {
+    background: var(--iz-surface) !important;
+    border-color: var(--iz-line) !important;
+    color: var(--iz-text) !important;
+}
+
+#o_wsale_total_accordion_item .accordion-button::after {
+    filter: invert(1) brightness(1.4);
+}
+
+#o_wsale_total_accordion_item .coupon_form .btn,
+#o_wsale_total_accordion_item button[name="o_payment_submit_button"] {
+    background: linear-gradient(135deg, #ff6a42, #ff4f86) !important;
+    border: 0 !important;
+    color: #fff !important;
+    box-shadow: 0 12px 26px rgba(255, 90, 47, 0.28) !important;
+}
+
+#o_wsale_total_accordion_item .coupon_form .btn:hover,
+#o_wsale_total_accordion_item .coupon_form .btn:focus,
+#o_wsale_total_accordion_item button[name="o_payment_submit_button"]:hover,
+#o_wsale_total_accordion_item button[name="o_payment_submit_button"]:focus {
+    filter: brightness(0.95) !important;
+}
+
+/* Right side "Resumen de la orden" — force dark */
 .o_wsale_order_summary h5,
 .o_wsale_order_summary h6,
-.o_wsale_order_summary .fw-bold {
+.o_wsale_order_summary .fw-bold,
+.o_payment_summary h5,
+.o_payment_summary h6,
+.o_payment_summary .fw-bold {
     color: #fff !important;
 }
 
 /* Collapse icon */
-.o_wsale_order_summary .o_wsale_order_summary_toggle {
+.o_wsale_order_summary .o_wsale_order_summary_toggle,
+.o_payment_summary .o_wsale_order_summary_toggle {
     color: var(--iz-muted) !important;
 }
 
 /* Payment form left side */
 .o_payment_form,
 .o_payment_option_card,
-#payment_method .list-group-item {
+#payment_method .list-group-item,
+#portal_pay .text-bg-light,
+#portal_pay .bg-light,
+#portal_pay .bg-white,
+#portal_pay .modal .text-bg-light,
+#portal_pay .modal .bg-light,
+#portal_pay .modal .bg-white,
+.o_payment_summary .text-bg-light,
+.o_payment_summary .bg-light,
+.o_payment_summary .bg-white,
+.o_wsale_order_summary .text-bg-light,
+.o_wsale_order_summary .bg-light,
+.o_wsale_order_summary .bg-white {
     background: var(--iz-surface) !important;
     border-color: var(--iz-line) !important;
     color: var(--iz-text) !important;
+}
+
+/* Payment summary rows and modal separators */
+#portal_pay .o_payment_summary_separator,
+.o_payment_summary .o_payment_summary_separator,
+.o_wsale_order_summary .o_payment_summary_separator,
+#portal_pay hr,
+.o_payment_summary hr,
+.o_wsale_order_summary hr {
+    border-color: var(--iz-line) !important;
+    color: var(--iz-line) !important;
 }
 
 /* The beige "Los pagos serán exitosos" demo alert box */
