@@ -15,4 +15,77 @@
             <link rel="apple-touch-icon" href="/iz_website/static/src/img/iz-badge.png?v=2"/>
         </xpath>
     </template>
+
+    <!-- Hacer el logo clickeable y navegable al sitio/portal -->
+    <template id="iz_layout_clickable_logo" inherit_id="website.layout" name="Iron Zone Clickable Logo">
+        <xpath expr="//div[hasclass('navbar-brand')]//img" position="attributes">
+            <attribute name="style">cursor: pointer; transition: opacity 0.2s;</attribute>
+            <attribute name="class" add="iz-logo-clickable" separator=" "/>
+            <attribute name="alt">Iron Zone Home</attribute>
+            <attribute name="title">Ir al inicio</attribute>
+            <attribute name="onclick">window.location.href='/';</attribute>
+        </xpath>
+    </template>
+
+    <template id="iz_auth_inline_styles" inherit_id="web.frontend_layout" name="Iron Zone Auth Inline Styles" priority="95">
+        <xpath expr="//head" position="inside">
+            <t t-if="request.httprequest.path in ['/web/login', '/web/signup', '/web/reset_password']">
+                <style id="iz-auth-inline-styles">
+                    .oe_login_form,
+                    .oe_signup_form,
+                    .oe_reset_password_form {
+                        background: var(--iz-surface) !important;
+                        border: 1px solid var(--iz-line) !important;
+                        border-radius: var(--iz-radius) !important;
+                        color: var(--iz-text) !important;
+                    }
+
+                    .oe_login_form .form-control,
+                    .oe_signup_form .form-control,
+                    .oe_reset_password_form .form-control {
+                        background: var(--iz-surface-2) !important;
+                        border-color: var(--iz-line) !important;
+                        color: var(--iz-text) !important;
+                    }
+
+                    .oe_login_form .btn-primary,
+                    .oe_signup_form .btn-primary,
+                    .oe_reset_password_form .btn-primary {
+                        background: var(--iz-surface-2) !important;
+                        border: 1px solid var(--iz-line) !important;
+                        color: var(--iz-text) !important;
+                        box-shadow: none !important;
+                    }
+
+                    .oe_login_form .btn-primary:hover,
+                    .oe_signup_form .btn-primary:hover,
+                    .oe_reset_password_form .btn-primary:hover {
+                        background: var(--iz-line) !important;
+                        color: #fff !important;
+                    }
+                </style>
+            </t>
+        </xpath>
+    </template>
+
+</odoo>
+
+<odoo>
+    <template id="iz_inject_orange_buttons_script" inherit_id="website.layout" name="Inject Orange Buttons CSS">
+        <xpath expr="//body" position="inside">
+            <![CDATA[
+            <script type="text/javascript">
+                (function(){
+                    try {
+                        var css = '#o_wsale_total_accordion_item .coupon_form .btn, #o_wsale_total_accordion_item button[name="o_payment_submit_button"] { background: linear-gradient(135deg, #ff6a42, #ff4f86) !important; border: 0 !important; color: #fff !important; box-shadow: 0 12px 26px rgba(255, 90, 47, 0.28) !important; } #o_wsale_total_accordion_item .coupon_form .btn:hover, #o_wsale_total_accordion_item button[name="o_payment_submit_button"]:hover { filter: brightness(0.95) !important; }';
+                        var s = document.createElement('style');
+                        s.id = 'iz-orange-buttons-inline';
+                        s.appendChild(document.createTextNode(css));
+                        document.head.appendChild(s);
+                    } catch (e) { console && console.error && console.error(e); }
+                })();
+            <\/script>
+            ]]>
+        </xpath>
+    </template>
 </odoo>

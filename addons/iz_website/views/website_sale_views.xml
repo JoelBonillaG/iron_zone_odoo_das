@@ -53,4 +53,43 @@
             <attribute name="class">iz-product_terms_share</attribute>
         </xpath>
     </template>
+
+    <template id="iz_payment_page" inherit_id="website_sale.payment" name="Iron Zone Payment Page">
+        <xpath expr="//div[@id='o_wsale_total_accordion_item']" position="attributes">
+            <attribute name="style">background: var(--iz-surface) !important; border: 1px solid var(--iz-line) !important; color: var(--iz-text) !important; border-radius: 18px;</attribute>
+        </xpath>
+        <xpath expr="//div[@id='o_wsale_total_accordion_item']/div[contains(@class, 'accordion-header')]/button[contains(@class, 'accordion-button')]" position="attributes">
+            <attribute name="style">background: var(--iz-surface) !important; color: var(--iz-text) !important; box-shadow: none !important; padding-left: 0 !important; padding-right: 0 !important;</attribute>
+        </xpath>
+        <xpath expr="//div[@id='cart_total']" position="attributes">
+            <attribute name="style">background: var(--iz-surface) !important; color: var(--iz-text) !important; border-top: 1px solid var(--iz-line) !important;</attribute>
+        </xpath>
+        <xpath expr="//div[@id='o_wsale_total_accordion_item']//table[@id='cart_products']" position="attributes">
+            <attribute name="style">background: var(--iz-surface) !important; color: var(--iz-text) !important;</attribute>
+        </xpath>
+        <xpath expr="//div[@id='o_wsale_total_accordion_item']//div[contains(@class, 'coupon_form')]" position="attributes">
+            <attribute name="style">background: var(--iz-surface) !important; color: var(--iz-text) !important;</attribute>
+        </xpath>
+        <xpath expr="//div[@id='o_wsale_total_accordion_item']//div[contains(@class, 'input-group')]" position="attributes">
+            <attribute name="style">background: var(--iz-surface) !important; border-color: var(--iz-line) !important;</attribute>
+        </xpath>
+        <xpath expr="//div[@id='o_wsale_total_accordion_item']//div[contains(@class, 'input-group')]//input" position="attributes">
+            <attribute name="style">background: var(--iz-surface-2) !important; border-color: var(--iz-line) !important; color: var(--iz-text) !important;</attribute>
+        </xpath>
+        <xpath expr="//div[@id='o_wsale_total_accordion_item']//div[contains(@class, 'input-group')]//a[contains(@class, 'btn')]" position="attributes">
+            <attribute name="style">background: linear-gradient(135deg, #ff6a42, #ff4f86) !important; border: 0 !important; color: #fff !important;</attribute>
+        </xpath>
+        <xpath expr="//div[@id='o_wsale_total_accordion_item']//button[@name='o_payment_submit_button']" position="attributes">
+            <attribute name="style">background: linear-gradient(135deg, #ff6a42, #ff4f86) !important; border: 0 !important; color: #fff !important; box-shadow: 0 12px 26px rgba(255, 90, 47, 0.28) !important;</attribute>
+        </xpath>
+        <xpath expr="//div[@id='o_wsale_total_accordion_item']//a[@href='/shop/checkout']" position="attributes">
+            <attribute name="style">color: var(--iz-muted) !important;</attribute>
+        </xpath>
+        <xpath expr="//h4[@id='o_payment_tokens_heading']" position="attributes">
+            <attribute name="style">color: #fff !important;</attribute>
+        </xpath>
+        <xpath expr="//li[@name='o_payment_option']" position="attributes">
+            <attribute name="style">background: var(--iz-surface) !important; border: 1px solid var(--iz-line) !important; color: var(--iz-text) !important; border-radius: 16px; margin-bottom: 1rem;</attribute>
+        </xpath>
+    </template>
 </odoo>
