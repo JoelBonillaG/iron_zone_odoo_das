@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <template id="iz_shop_page" inherit_id="website_sale.products" name="Iron Zone Shop">
+        <xpath expr="//t[@t-set='additional_title']" position="replace">
+            <t t-set="additional_title" t-value="category.name if category else 'Tienda'"/>
+        </xpath>
         <xpath expr="//div[@id='wrap']" position="attributes">
             <attribute name="class" add="iz-shop-page" separator=" "/>
         </xpath>

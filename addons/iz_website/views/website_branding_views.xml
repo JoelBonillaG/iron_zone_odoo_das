@@ -8,7 +8,7 @@
 
     <template id="iz_brand_promotion" inherit_id="web.brand_promotion" name="Iron Zone Brand Promotion" priority="80">
         <xpath expr="//div[hasclass('o_brand_promotion')]" position="replace">
-            <div class="o_brand_promotion">Iron Zone Management System</div>
+            <div class="o_brand_promotion">Sistema de gestión Iron Zone</div>
         </xpath>
     </template>
 
@@ -21,7 +21,7 @@
     <template id="iz_backend_user_dropdown_link" inherit_id="portal.user_dropdown" name="Iron Zone Backend User Dropdown Link" priority="80">
         <xpath expr="//a[@id='o_backend_user_dropdown_link']" position="replace">
             <a groups="base.group_user" href="/odoo" role="menuitem" class="dropdown-item ps-3" id="o_backend_user_dropdown_link">
-                <i class="fa fa-fw fa-cog me-1 small text-primary text-primary-emphasis"/> Administracion
+                <i class="fa fa-fw fa-cog me-1 small text-primary text-primary-emphasis"/> Administración
             </a>
         </xpath>
     </template>
@@ -43,7 +43,7 @@
     <template id="iz_spanish_sign_in" inherit_id="portal.user_sign_in" name="Iron Zone Spanish Sign In" priority="90">
         <xpath expr="//a" position="replace">
             <a t-attf-href="/web/login" t-attf-class="#{_link_class}">
-                Iniciar sesion<span t-if="request.session.profile_session" class="text-danger fa fa-circle"/>
+                Iniciar sesión<span t-if="request.session.profile_session" class="text-danger fa fa-circle"/>
             </a>
         </xpath>
     </template>
