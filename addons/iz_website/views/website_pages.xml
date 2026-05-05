@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <record id="website.homepage" model="ir.ui.view">
+        <field name="name">Inicio</field>
         <field name="arch" type="xml">
-            <t name="Homepage" t-name="website.homepage">
+            <t name="Inicio" t-name="website.homepage">
                 <t t-call="website.layout">
                     <div id="wrap" class="iz-site">
                         <t t-set="monthly_plan" t-value="request.env['product.template'].sudo().search([('name', '=', 'Membresía Mensual')], limit=1)"/>
@@ -43,12 +44,12 @@
                                     <a href="/shop" class="iz-program_item">
                                         <img src="/iz_website/static/src/img/dominadas.jpg" alt="Entrenamiento de fuerza"/>
                                         <span>Fuerza</span>
-                                        <p>Rutinas para progresar con tecnica y cargas controladas.</p>
+                                        <p>Rutinas para progresar con técnica y cargas controladas.</p>
                                     </a>
                                     <a href="/shop" class="iz-program_item">
                                         <img src="/iz_website/static/src/img/mujer_ejercicio.jpg" alt="Rutina de hipertrofia"/>
                                         <span>Hipertrofia</span>
-                                        <p>Volumen, tecnica y progresion para desarrollo muscular.</p>
+                                        <p>Volumen, técnica y progresión para desarrollo muscular.</p>
                                     </a>
                                 </div>
                             </div>
@@ -64,7 +65,7 @@
                                     </div>
                                     <div class="col-lg-6">
                                         <p class="iz-eyebrow">Entrenamiento</p>
-                                        <h2>Fuerza, energia y acompanamiento real.</h2>
+                                        <h2>Fuerza, energía y acompañamiento real.</h2>
                                         <p class="iz-lead">
                                             Un espacio preparado para entrenar con equipo completo, clases grupales y asesoramiento cuando lo necesites.
                                         </p>
@@ -92,7 +93,7 @@
                                     </div>
                                 </div>
                                 <div class="iz-gallery_grid">
-                                    <img src="/iz_website/static/src/img/m%C3%A1quinas.jpg" alt="Maquinas de gimnasio"/>
+                                    <img src="/iz_website/static/src/img/m%C3%A1quinas.jpg" alt="Máquinas de gimnasio"/>
                                     <img src="/iz_website/static/src/img/instalaciones.jpg" alt="Instalaciones del gimnasio"/>
                                     <img src="/iz_website/static/src/img/banner_bueno.jpg" alt="Entrenamiento con barra"/>
                                 </div>
@@ -102,7 +103,7 @@
                         <section class="iz-section iz-pricing_section">
                             <div class="container">
                                 <div class="iz-section_head iz-plan_intro">
-                                    <p class="iz-eyebrow">Membresias</p>
+                                    <p class="iz-eyebrow">Membresías</p>
                                     <h2>Elige el ritmo que encaja contigo.</h2>
                                     <p class="iz-lead">Tres alternativas simples para empezar, mantener el avance o comprometerte todo el año.</p>
                                 </div>
@@ -152,8 +153,9 @@
     </record>
 
     <record id="website.aboutus" model="ir.ui.view">
+        <field name="name">Nosotros</field>
         <field name="arch" type="xml">
-            <t name="About Us" t-name="website.aboutus">
+            <t name="Nosotros" t-name="website.aboutus">
                 <t t-call="website.layout">
                     <div id="wrap" class="iz-site">
                         <section class="iz-page_header">
@@ -169,14 +171,14 @@
                                     <div class="col-lg-7">
                                         <h2>Entrenamiento, comunidad y seguimiento cercano.</h2>
                                         <p class="iz-lead">
-                                            Iron Zone combina equipos, clases y planes de membresia para que cada socio pueda entrenar con una ruta clara desde el primer dia.
+                                            Iron Zone combina equipos, clases y planes de membresía para que cada socio pueda entrenar con una ruta clara desde el primer día.
                                         </p>
                                     </div>
                                     <div class="col-lg-5">
                                         <div class="iz-fact_list">
-                                            <div><span>Ambato</span><p>Espacio local con atencion cercana.</p></div>
-                                            <div><span>Entrenadores</span><p>Acompanamiento para avanzar con tecnica.</p></div>
-                                            <div><span>Planes</span><p>Membresias y clases segun el objetivo.</p></div>
+                                            <div><span>Ambato</span><p>Espacio local con atención cercana.</p></div>
+                                            <div><span>Entrenadores</span><p>Acompañamiento para avanzar con técnica.</p></div>
+                                            <div><span>Planes</span><p>Membresías y clases según el objetivo.</p></div>
                                         </div>
                                     </div>
                                 </div>
@@ -188,7 +190,7 @@
                                 <div class="iz-values">
                                     <div>
                                         <h3>Entrenamiento</h3>
-                                        <p>Planes, clases y acompanamiento personal.</p>
+                                        <p>Planes, clases y acompañamiento personal.</p>
                                     </div>
                                     <div>
                                         <h3>Comunidad</h3>

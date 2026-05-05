@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <record id="website.contactus" model="ir.ui.view">
+        <field name="name">Contacto</field>
         <field name="arch" type="xml">
-            <t name="Contact Us" t-name="website.contactus">
+            <t name="Contacto" t-name="website.contactus">
                 <t t-call="website.layout">
                     <t t-set="contactus_form_values" t-value="{
                         'email_to': res_company.email,
@@ -17,7 +18,7 @@
                             <div class="container">
                                 <p class="iz-eyebrow">Contacto</p>
                                 <h1>Estamos cerca para ayudarte.</h1>
-                                <p class="iz-lead">Resuelve dudas sobre membresias, visitas, clases y productos.</p>
+                                <p class="iz-lead">Resuelve dudas sobre membresías, visitas, clases y productos.</p>
                             </div>
                         </section>
 
@@ -37,7 +38,7 @@
                                                     </div>
                                                     <div class="col-md-6 s_website_form_field s_website_form_custom" data-type="char" data-name="Field">
                                                         <label class="s_website_form_label" for="contact_phone">
-                                                            <span class="s_website_form_label_content">Telefono</span>
+                                                            <span class="s_website_form_label_content">Teléfono</span>
                                                         </label>
                                                         <input id="contact_phone" type="tel" class="form-control s_website_form_input" name="phone" data-fill-with="phone"/>
                                                     </div>
@@ -76,11 +77,11 @@
                                     <div class="col-lg-5">
                                         <div class="iz-contact_meta">
                                             <div>
-                                                <span>Direccion</span>
+                                                <span>Dirección</span>
                                                 <p><span t-field="res_company.street"/><t t-if="res_company.city">, <span t-field="res_company.city"/></t></p>
                                             </div>
                                             <div>
-                                                <span>Telefono</span>
+                                                <span>Teléfono</span>
                                                 <p t-field="res_company.phone"/>
                                             </div>
                                             <div>
@@ -89,7 +90,7 @@
                                             </div>
                                             <div>
                                                 <span>Horario</span>
-                                                <p>Lunes a sabado</p>
+                                                <p>Lunes a sábado</p>
                                             </div>
                                         </div>
                                     </div>

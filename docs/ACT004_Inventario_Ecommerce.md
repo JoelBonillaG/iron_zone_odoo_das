@@ -4,9 +4,9 @@
 
 ## 1. Gestión de Catálogo Automatizada
 Se ha implementado un sistema de **Data Seeding** que garantiza que los 11 productos/servicios se carguen con la misma consistencia en cualquier despliegue.
-
+<<<<<<<<<<>>>>>>>>>>
 ### Especificaciones Técnicas:
-- **Iconografía SVG:** Uso de iconos vectoriales consistentes para membresías, clases y equipo.
+- **Iconografía SVG:** Uso de icon<os vectoriales consistentes para membresías, <<<<<<<<<<<<<<<<<clases y equipo.
 - **Clasificación de Recursos:** Separación clara entre *Servicios* (Clases/Membresías) y *Productos Almacenables* (Equipamiento/Suplementos).
 - **Branding:** Integración automática de imágenes y descripciones comerciales optimizadas para SEO.
 
