@@ -110,6 +110,26 @@ def archive_old_demo_customers(uid, models):
         models.execute_kw(DB, uid, PASSWORD, "res.partner", "write", [old_ids, {"active": False}])
         print(f"Archived {len(old_ids)} old demo customer(s).")
 
+    allowed_contact_emails = ALLOWED_PORTAL_LOGINS + ["admin@ironzone.com", "deividjosue52@gmail.com"]
+    old_contact_ids = models.execute_kw(
+        DB,
+        uid,
+        PASSWORD,
+        "res.partner",
+        "search",
+        [
+            [
+                ("active", "=", True),
+                ("email", "!=", False),
+                ("email", "not in", allowed_contact_emails),
+                ("user_ids", "=", False),
+            ]
+        ],
+    )
+    if old_contact_ids:
+        models.execute_kw(DB, uid, PASSWORD, "res.partner", "write", [old_contact_ids, {"active": False}])
+        print(f"Archived {len(old_contact_ids)} old contact(s) without portal login.")
+
 
 def deactivate_old_portal_users(uid, models):
     old_user_ids = models.execute_kw(
