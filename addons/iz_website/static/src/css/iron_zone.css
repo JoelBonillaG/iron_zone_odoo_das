@@ -1636,10 +1636,28 @@ hr {
 
 /* Badge in orders table */
 .o_portal_wrap .badge {
-    color: #fff !important;
+    color: #111827 !important;
+}
+
+.o_portal_wrap .badge.text-bg-success,
+.o_portal_wrap .badge.bg-success {
+    color: #0f172a !important;
 }
 
 /* Security page /my/security */
+.o_portal_security {
+    background:
+        radial-gradient(circle at top right, rgba(255, 90, 47, 0.08), transparent 30%),
+        linear-gradient(180deg, rgba(255, 255, 255, 0.02), transparent 24%),
+        var(--iz-bg) !important;
+    padding-top: 0.75rem;
+    padding-bottom: 2rem;
+}
+
+.o_portal_security .container {
+    max-width: 1100px;
+}
+
 .o_portal_security .card,
 .o_portal_security .card-body {
     background: var(--iz-surface) !important;
@@ -1647,8 +1665,181 @@ hr {
     color: var(--iz-text) !important;
 }
 
+.o_portal_security .card {
+    border-radius: 18px !important;
+    box-shadow: var(--iz-shadow);
+    overflow: hidden;
+}
+
+.o_portal_security .card-body {
+    padding: 1.5rem 1.5rem 1.25rem;
+}
+
+.o_portal_security h2,
+.o_portal_security h3,
+.o_portal_security .card-header,
+.o_portal_security .o_portal_security_title {
+    color: #fff !important;
+    font-weight: 700;
+    letter-spacing: 0.01em;
+}
+
+.o_portal_security .text-muted,
+.o_portal_security small,
+.o_portal_security .small {
+    color: var(--iz-muted) !important;
+}
+
+.o_portal_security .form-control,
+.o_portal_security .form-select {
+    background: var(--iz-surface-2) !important;
+    border-color: var(--iz-line) !important;
+    border-radius: 12px;
+    min-height: 48px;
+    box-shadow: none !important;
+}
+
+.o_portal_security .form-control:focus,
+.o_portal_security .form-select:focus {
+    border-color: rgba(255, 90, 47, 0.7) !important;
+    box-shadow: 0 0 0 0.2rem rgba(255, 90, 47, 0.18) !important;
+}
+
+.o_portal_security .btn-primary {
+    background: linear-gradient(135deg, #ff6a42, #ff4f86) !important;
+    border: 0 !important;
+    box-shadow: 0 12px 26px rgba(255, 90, 47, 0.28);
+}
+
+.o_portal_security .btn-primary:hover {
+    filter: brightness(1.05);
+    transform: translateY(-1px);
+}
+
+.o_portal_security .btn-primary:focus-visible {
+    box-shadow: 0 0 0 0.2rem rgba(255, 90, 47, 0.22) !important;
+}
+
 .o_portal_security label {
     color: var(--iz-text) !important;
+    font-weight: 500;
+}
+
+/* Actual Odoo portal security template */
+.o_portal_security_body {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 0.5rem 0 2.5rem;
+}
+
+.o_portal_security_body > h3,
+.o_portal_security_body > h4,
+.o_portal_security_body > .page-header,
+.o_portal_security_body > .o_page_header {
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--iz-line);
+}
+
+.o_portal_security_body section {
+    margin-top: 1.5rem !important;
+    padding: 1.25rem 1.25rem 1.5rem !important;
+    border-top: 0 !important;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.03), rgba(255, 255, 255, 0.01)) !important;
+    border: 1px solid var(--iz-line) !important;
+    border-radius: 18px;
+    box-shadow: var(--iz-shadow);
+}
+
+.o_portal_security_body section:first-of-type {
+    margin-top: 0 !important;
+}
+
+.o_portal_security_body section h4,
+.o_portal_security_body section h5,
+.o_portal_security_body section .h4,
+.o_portal_security_body section .h5 {
+    color: #fff !important;
+    font-weight: 700;
+    margin-bottom: 1rem;
+}
+
+.o_portal_security_body section p,
+.o_portal_security_body section li,
+.o_portal_security_body section small,
+.o_portal_security_body section .text-muted {
+    color: var(--iz-muted) !important;
+}
+
+.o_portal_security_body section .alert {
+    border-radius: 14px;
+    border: 1px solid var(--iz-line);
+    margin-bottom: 1rem;
+}
+
+.o_portal_security_body section .alert-warning,
+.o_portal_security_body section .alert-danger {
+    background: rgba(255, 90, 47, 0.08) !important;
+    color: var(--iz-text) !important;
+}
+
+.o_portal_security_body form.oe_reset_password_form,
+.o_portal_security_body form {
+    max-width: 100% !important;
+    margin: 0 !important;
+}
+
+.o_portal_security_body .form-control,
+.o_portal_security_body .form-select {
+    background: var(--iz-surface-2) !important;
+    border-color: var(--iz-line) !important;
+    border-radius: 12px;
+    min-height: 48px;
+    color: var(--iz-text) !important;
+}
+
+.o_portal_security_body .form-control:focus,
+.o_portal_security_body .form-select:focus {
+    border-color: rgba(255, 90, 47, 0.7) !important;
+    box-shadow: 0 0 0 0.2rem rgba(255, 90, 47, 0.18) !important;
+}
+
+.o_portal_security_body .btn,
+.o_portal_security_body button,
+.o_portal_security_body .btn-primary,
+.o_portal_security_body .btn-secondary {
+    border-radius: 12px;
+    min-height: 44px;
+    font-weight: 600;
+}
+
+.o_portal_security_body .btn-primary {
+    background: linear-gradient(135deg, #ff6a42, #ff4f86) !important;
+    border: 0 !important;
+    box-shadow: 0 12px 26px rgba(255, 90, 47, 0.28);
+}
+
+.o_portal_security_body .btn-secondary {
+    background: var(--iz-surface-2) !important;
+    border-color: var(--iz-line) !important;
+    color: var(--iz-text) !important;
+}
+
+.o_portal_security_body .btn-primary:hover,
+.o_portal_security_body .btn-secondary:hover {
+    transform: translateY(-1px);
+}
+
+.o_portal_security_body .btn-primary:focus-visible,
+.o_portal_security_body .btn-secondary:focus-visible,
+.o_portal_security_body .form-control:focus-visible,
+.o_portal_security_body .form-select:focus-visible {
+    outline: 0;
+}
+
+.o_portal_security_body .badge,
+.o_portal_security_body .text-success {
+    color: #d1fae5 !important;
 }
 
 /* Payment methods /my/payment_method */
