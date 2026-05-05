@@ -3,16 +3,22 @@ from datetime import datetime, timedelta
 
 
 CLASSES = [
-    {"name": "CrossFit AM", "instructor": "Carlos Mendez", "capacity": 20, "time": "06:00"},
-    {"name": "Yoga Principiantes", "instructor": "Sofia Garcia", "capacity": 15, "time": "07:00"},
-    {"name": "Spinning 18:00", "instructor": "Andrea Lopez", "capacity": 25, "time": "18:00"},
-    {"name": "Zumba Cardio", "instructor": "Mateo Rivas", "capacity": 30, "time": "19:00"},
-    {"name": "Pilates Avanzado", "instructor": "Sofia Garcia", "capacity": 12, "time": "09:00"},
-    {"name": "HIIT Entrenamiento", "instructor": "Carlos Mendez", "capacity": 20, "time": "17:30"},
-    {"name": "Boxeo Técnica", "instructor": "Mateo Rivas", "capacity": 10, "time": "18:30"},
-    {"name": "Yoga Avanzado", "instructor": "Sofia Garcia", "capacity": 15, "time": "08:00"},
-    {"name": "Natación Adultos", "instructor": "Andrea Lopez", "capacity": 16, "time": "10:00"},
-    {"name": "Entrenamiento en Grupo", "instructor": "Carlos Mendez", "capacity": 22, "time": "16:00"},
+    {"name": "CrossFit AM", "instructor": "Carlos Mendez", "capacity": 20, "time": "06:00", "state": "nuevo"},
+    {"name": "Yoga Principiantes", "instructor": "Sofia Garcia", "capacity": 15, "time": "07:00", "state": "nuevo"},
+    {"name": "Spinning 18:00", "instructor": "Andrea Lopez", "capacity": 25, "time": "18:00", "state": "nuevo"},
+    {"name": "Zumba Cardio", "instructor": "Mateo Rivas", "capacity": 30, "time": "19:00", "state": "nuevo"},
+    {"name": "Pilates Avanzado", "instructor": "Sofia Garcia", "capacity": 12, "time": "09:00", "state": "nuevo"},
+    {"name": "HIIT Entrenamiento", "instructor": "Carlos Mendez", "capacity": 20, "time": "17:30", "state": "nuevo"},
+    {"name": "Boxeo Técnica", "instructor": "Mateo Rivas", "capacity": 10, "time": "18:30", "state": "nuevo"},
+    {"name": "Yoga Avanzado", "instructor": "Sofia Garcia", "capacity": 15, "time": "08:00", "state": "reservado"},
+    {"name": "Natación Adultos", "instructor": "Andrea Lopez", "capacity": 16, "time": "10:00", "state": "nuevo"},
+    {"name": "Entrenamiento en Grupo", "instructor": "Carlos Mendez", "capacity": 22, "time": "16:00", "state": "nuevo"},
+    {"name": "Tae Kwon Do Niños", "instructor": "Mateo Rivas", "capacity": 18, "time": "15:00", "state": "reservado"},
+    {"name": "Danza Contemporánea", "instructor": "Sofia Garcia", "capacity": 20, "time": "11:00", "state": "reservado"},
+    {"name": "Musculación Personalizada", "instructor": "Carlos Mendez", "capacity": 8, "time": "12:00", "state": "anunciado"},
+    {"name": "Acuagym", "instructor": "Andrea Lopez", "capacity": 25, "time": "14:00", "state": "anunciado"},
+    {"name": "Funcional Boot Camp", "instructor": "Mateo Rivas", "capacity": 15, "time": "06:30", "state": "anunciado"},
+    {"name": "Meditación Mindfulness", "instructor": "Sofia Garcia", "capacity": 12, "time": "19:30", "state": "anunciado"},
 ]
 
 TRAINING_PLANS = [
@@ -159,6 +165,7 @@ def run():
             "date_begin": odoo_datetime(event_datetime),
             "date_end": odoo_datetime(event_datetime + timedelta(hours=1)),
             "user_id": instructor_user_id if instructor_user_id else False,
+            "state": class_info.get("state", "nuevo"),
         }
         
         event_id, created = create_or_update(
@@ -177,7 +184,8 @@ def run():
             updated_count += 1
         
         action = "Created" if created else "Updated"
-        print(f"  {action} class: {class_info['name']} - Instructor: {class_info['instructor']}")
+        class_state = class_info.get("state", "nuevo")
+        print(f"  {action} class: {class_info['name']} - Instructor: {class_info['instructor']} - State: {class_state}")
 
     # Registrar miembros a las clases
     print("Registering members to classes...")
