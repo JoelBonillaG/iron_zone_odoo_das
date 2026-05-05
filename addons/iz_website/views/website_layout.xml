@@ -8,11 +8,11 @@
 
     <template id="iz_layout_favicon" inherit_id="website.layout" name="Iron Zone Favicon">
         <xpath expr="//link[@rel='shortcut icon']" position="replace">
-            <link rel="shortcut icon" type="image/png" href="/iz_website/static/src/img/iz-badge.png"/>
+            <link rel="shortcut icon" type="image/png" href="/iz_website/static/src/img/iz-badge.png?v=2"/>
         </xpath>
         <xpath expr="//head" position="inside">
-            <link rel="icon" type="image/png" href="/iz_website/static/src/img/iz-badge.png"/>
-            <link rel="apple-touch-icon" href="/iz_website/static/src/img/iz-badge.png"/>
+            <link rel="icon" type="image/png" href="/iz_website/static/src/img/iz-badge.png?v=2"/>
+            <link rel="apple-touch-icon" href="/iz_website/static/src/img/iz-badge.png?v=2"/>
         </xpath>
     </template>
 </odoo>
