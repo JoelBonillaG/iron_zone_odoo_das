@@ -98,6 +98,11 @@ if website_ids:
     models.execute_kw(DB, uid, PASSWORD, "website", "write", [website_ids, website_vals])
     print(f"Website(s) updated: {len(website_ids)}")
 
+# Configure automatic invoice for sales
+settings_id = models.execute_kw(DB, uid, PASSWORD, "res.config.settings", "create", [{"automatic_invoice": True}])
+models.execute_kw(DB, uid, PASSWORD, "res.config.settings", "execute", [[settings_id]])
+print("Enabled automatic invoice creation.")
+
 menu_labels = {
     "/": "Inicio",
     "/shop": "Tienda",

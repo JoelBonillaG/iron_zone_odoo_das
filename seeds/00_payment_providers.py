@@ -9,7 +9,7 @@ BANK_CONTACT_EMAIL = "contacto@ironzone.ec"
 
 PAYMENT_PROVIDERS = {
     "demo": {
-        "name": "Pago demo Iron Zone",
+        "name": "Pago directo",
         "state": "test",
         "is_published": True,
         "sequence": 1,
