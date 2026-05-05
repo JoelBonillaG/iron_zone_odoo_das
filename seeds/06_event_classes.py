@@ -54,6 +54,54 @@ def create_or_update(uid, models, model, domain, values, fields=None):
     return create(uid, models, model, values), True
 
 
+def xmlid_to_res_id(uid, models, xmlid):
+    module, name = xmlid.split(".", 1)
+    record = search_one(
+        uid,
+        models,
+        "ir.model.data",
+        [("module", "=", module), ("name", "=", name)],
+        fields=["res_id"],
+    )
+    if not record:
+        raise RuntimeError(f"External ID not found: {xmlid}")
+    return record["res_id"]
+
+
+def ensure_employee_website_user(uid, models, user_id):
+    portal_group_id = xmlid_to_res_id(uid, models, "base.group_portal")
+    models.execute_kw(
+        DB,
+        uid,
+        PASSWORD,
+        "res.users",
+        "write",
+        [[user_id], {"groups_id": [(6, 0, [portal_group_id])]}],
+    )
+
+
+def ensure_event_admin_rule(uid, models):
+    event_model_id = xmlid_to_res_id(uid, models, "event.model_event_event")
+    admin_group_id = xmlid_to_res_id(uid, models, "base.group_system")
+    create_or_update(
+        uid,
+        models,
+        "ir.rule",
+        [("name", "=", "Administrador ve todos los eventos"), ("model_id", "=", event_model_id)],
+        {
+            "name": "Administrador ve todos los eventos",
+            "model_id": event_model_id,
+            "groups": [(4, admin_group_id)],
+            "domain_force": "[(1, '=', 1)]",
+            "perm_read": True,
+            "perm_write": True,
+            "perm_create": True,
+            "perm_unlink": True,
+        },
+        fields=["id"],
+    )
+
+
 def ensure_event_stages(uid, models):
     stage_ids = {}
     for stage_name, sequence in STAGE_SEQUENCE.items():
@@ -72,7 +120,9 @@ def ensure_event_stages(uid, models):
 
 def ensure_user_for_employee(uid, models, employee):
     if employee.get("user_id"):
-        return employee["user_id"][0]
+        user_id = employee["user_id"][0]
+        ensure_employee_website_user(uid, models, user_id)
+        return user_id
 
     login = employee.get("work_email") or f"{employee['name'].lower().replace(' ', '.')}@ironzone.com"
     user_id, _ = create_or_update(
@@ -88,12 +138,14 @@ def ensure_user_for_employee(uid, models, employee):
         },
         fields=["id", "name"],
     )
+    ensure_employee_website_user(uid, models, user_id)
     models.execute_kw(DB, uid, PASSWORD, "hr.employee", "write", [[employee["id"]], {"user_id": user_id}])
     return user_id
 
 
 def run():
     uid, models = connect()
+    ensure_event_admin_rule(uid, models)
 
     # Buscar entrenadores de 05_employees.py y usar su usuario vinculado para el evento.
     instructor_user_ids = {}

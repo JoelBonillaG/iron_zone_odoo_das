@@ -1,9 +1,30 @@
 import base64
+import os
 from pathlib import Path
 import xmlrpc.client
 from typing import Optional
 
 from config import URL, DB, USERNAME, PASSWORD
+
+
+def get_env(name: str, default: str = "") -> str:
+    return os.getenv(name, default).strip()
+
+
+def load_env_file_if_present() -> None:
+    env_path = Path(__file__).resolve().parents[1] / ".env"
+    if not env_path.exists():
+        return
+
+    for raw_line in env_path.read_text(encoding="utf-8").splitlines():
+        line = raw_line.strip()
+        if not line or line.startswith("#") or "=" not in line:
+            continue
+        key, value = line.split("=", 1)
+        key = key.strip()
+        value = value.strip().strip('"').strip("'")
+        if key and key not in os.environ:
+            os.environ[key] = value
 
 
 def load_logo_base64() -> Optional[str]:
@@ -19,6 +40,8 @@ def load_logo_base64() -> Optional[str]:
     with logo_path.open("rb") as f:
         return base64.b64encode(f.read()).decode("utf-8")
 
+
+load_env_file_if_present()
 
 common = xmlrpc.client.ServerProxy(f"{URL}/xmlrpc/2/common")
 uid = common.authenticate(DB, USERNAME, PASSWORD, {})
@@ -64,7 +87,7 @@ currency_ids = models.execute_kw(
 
 values = {
     "name": "Iron Zone",
-    "email": "contacto@ironzone.ec",
+    "email": get_env("SMTP_FROM", get_env("SMTP_USER", "contacto@ironzone.ec")),
     "phone": "+593 3 282 4450",
     "street": "Av. Cevallos y Montalvo 245",
     "city": "Ambato",

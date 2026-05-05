@@ -16,17 +16,6 @@
         </xpath>
     </template>
 
-    <!-- Hacer el logo clickeable y navegable al sitio/portal -->
-    <template id="iz_layout_clickable_logo" inherit_id="website.layout" name="Iron Zone Clickable Logo">
-        <xpath expr="//div[hasclass('navbar-brand')]//img" position="attributes">
-            <attribute name="style">cursor: pointer; transition: opacity 0.2s;</attribute>
-            <attribute name="class" add="iz-logo-clickable" separator=" "/>
-            <attribute name="alt">Iron Zone Home</attribute>
-            <attribute name="title">Ir al inicio</attribute>
-            <attribute name="onclick">window.location.href='/';</attribute>
-        </xpath>
-    </template>
-
     <template id="iz_auth_inline_styles" inherit_id="web.frontend_layout" name="Iron Zone Auth Inline Styles" priority="95">
         <xpath expr="//head" position="inside">
             <t t-if="request.httprequest.path in ['/web/login', '/web/signup', '/web/reset_password']">
@@ -68,9 +57,6 @@
         </xpath>
     </template>
 
-</odoo>
-
-<odoo>
     <template id="iz_inject_orange_buttons_script" inherit_id="website.layout" name="Inject Orange Buttons CSS">
         <xpath expr="//body" position="inside">
             <![CDATA[
