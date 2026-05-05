@@ -1221,3 +1221,486 @@ textarea.form-control {
         right: auto;
     }
 }
+
+/* ============================================================
+   PORTAL  /my/home  /my/orders  /my/invoices  etc.
+   ============================================================ */
+
+/* Page wrapper */
+.o_portal_wrap {
+    background: var(--iz-bg) !important;
+    color: var(--iz-text) !important;
+}
+
+/* All cards inside the portal */
+.o_portal_wrap .card,
+.o_portal_wrap .card-header,
+.o_portal_wrap .card-body,
+.o_portal_wrap .card-footer,
+.o_portal_wrap .list-group-item {
+    background: var(--iz-surface) !important;
+    border-color: var(--iz-line) !important;
+    color: var(--iz-text) !important;
+}
+
+/* Portal "entry" tiles (Sus órdenes, Sus facturas…) */
+.o_portal_my_home .o_portal_doc_entry,
+.o_portal_my_home .o_portal_home_account {
+    background: var(--iz-surface) !important;
+    border: 1px solid var(--iz-line) !important;
+    color: var(--iz-text) !important;
+}
+
+.o_portal_my_home .o_portal_doc_entry:hover {
+    border-color: rgba(255, 90, 47, 0.5) !important;
+}
+
+/* Document list (orders, invoices…) */
+.o_portal_my_home h2,
+.o_portal_wrap h2,
+.o_portal_wrap h3,
+.o_portal_wrap h4,
+.o_portal_wrap h5,
+.o_portal_wrap strong {
+    color: var(--iz-text) !important;
+}
+
+.o_portal_wrap .text-muted,
+.o_portal_wrap small,
+.o_portal_wrap .small {
+    color: var(--iz-muted) !important;
+}
+
+/* Sidebar account info */
+.o_portal_wrap .o_portal_my_home .o_portal_my_home_menu,
+.o_portal_wrap .o_account_info,
+.o_portal_wrap .o_portal_sidebar_section {
+    background: var(--iz-surface) !important;
+    border-color: var(--iz-line) !important;
+    color: var(--iz-text) !important;
+}
+
+/* Avatar placeholder */
+.o_avatar,
+.o_avatar img {
+    background: var(--iz-surface-2) !important;
+    border-radius: 50%;
+}
+
+/* "Editar información" link */
+.o_portal_wrap a {
+    color: var(--iz-muted) !important;
+}
+
+.o_portal_wrap a:hover {
+    color: #fff !important;
+}
+
+/* Pagination */
+.o_portal_wrap .pagination .page-link {
+    background: var(--iz-surface) !important;
+    border-color: var(--iz-line) !important;
+    color: var(--iz-text) !important;
+}
+
+.o_portal_wrap .pagination .page-item.active .page-link {
+    background: var(--iz-accent) !important;
+    border-color: var(--iz-accent) !important;
+    color: #fff !important;
+}
+
+/* Portal table rows */
+.o_portal_wrap .table,
+.o_portal_wrap .table td,
+.o_portal_wrap .table th {
+    background: transparent !important;
+    border-color: var(--iz-line) !important;
+    color: var(--iz-text) !important;
+}
+
+/* Alerts / notices inside portal */
+.o_portal_wrap .alert-info,
+.o_portal_wrap .alert-warning {
+    background: rgba(255, 90, 47, 0.08) !important;
+    border-color: rgba(255, 90, 47, 0.25) !important;
+    color: var(--iz-text) !important;
+}
+
+/* Security page inputs */
+.o_portal_wrap .form-control,
+.o_portal_wrap .form-select {
+    background: var(--iz-surface-2) !important;
+    border-color: var(--iz-line) !important;
+    color: var(--iz-text) !important;
+}
+
+/* Payment method page */
+.o_portal_wrap .o_payment_method_form,
+.o_portal_wrap .o_payment_option_card {
+    background: var(--iz-surface) !important;
+    border-color: var(--iz-line) !important;
+    color: var(--iz-text) !important;
+}
+
+
+/* ============================================================
+   CART SUMMARY  — force all text to be readable
+   ============================================================ */
+
+/* Summary container */
+#cart_total,
+.js_cart_summary,
+.o_wsale_order_summary {
+    background: var(--iz-surface) !important;
+    border-color: var(--iz-line) !important;
+    color: var(--iz-text) !important;
+}
+
+/* Every single cell and text node inside */
+#cart_total td,
+#cart_total th,
+#cart_total span,
+#cart_total strong,
+#cart_total label,
+.js_cart_summary td,
+.js_cart_summary th,
+.js_cart_summary span,
+.js_cart_summary strong,
+.js_cart_summary label,
+.o_wsale_order_summary td,
+.o_wsale_order_summary th,
+.o_wsale_order_summary span,
+.o_wsale_order_summary strong {
+    color: var(--iz-text) !important;
+}
+
+/* "Subtotal" and "Impuestos" labels specifically */
+#order_total_untaxed td,
+#order_total_taxes td,
+#order_total_untaxed span,
+#order_total_taxes span {
+    color: var(--iz-muted) !important;
+}
+
+/* "Total" row */
+#order_total td,
+#order_total strong {
+    color: #fff !important;
+    font-size: 1.05rem;
+}
+
+
+/* ============================================================
+   /shop/payment  CONFIRM ORDER PAGE
+   ============================================================ */
+
+/* Right side "Resumen de la orden" — force dark */
+.o_payment_summary,
+.o_wsale_order_summary,
+.o_wsale_order_summary .card,
+.o_wsale_order_summary .card-body,
+.o_wsale_order_summary .card-header {
+    background: var(--iz-surface) !important;
+    border-color: var(--iz-line) !important;
+    color: var(--iz-text) !important;
+}
+
+.o_wsale_order_summary h5,
+.o_wsale_order_summary h6,
+.o_wsale_order_summary .fw-bold {
+    color: #fff !important;
+}
+
+/* Collapse icon */
+.o_wsale_order_summary .o_wsale_order_summary_toggle {
+    color: var(--iz-muted) !important;
+}
+
+/* Payment form left side */
+.o_payment_form,
+.o_payment_option_card,
+#payment_method .list-group-item {
+    background: var(--iz-surface) !important;
+    border-color: var(--iz-line) !important;
+    color: var(--iz-text) !important;
+}
+
+/* The beige "Los pagos serán exitosos" demo alert box */
+.o_payment_demo_alert,
+.alert.alert-success,
+.alert.alert-info,
+.alert.alert-warning,
+.alert.alert-light {
+    background: rgba(255, 90, 47, 0.07) !important;
+    border-color: rgba(255, 90, 47, 0.22) !important;
+    color: var(--iz-muted) !important;
+}
+
+/* "Asegurado por" badge and provider logo */
+.o_payment_provider_logo_container,
+.o_payment_provider_logo {
+    filter: brightness(0.85) !important;
+}
+
+
+/* ============================================================
+   HIDE "Pagar con demostración" button in CART
+   (it duplicates Finalizar compra & causes confusion)
+   The demo payment provider renders a direct-pay btn in cart
+   ============================================================ */
+
+/* Targets the demo-specific payment form shortcut button */
+#o_payment_demo_form,
+form[action="/web/dataset/call_kw/account.payment/pay"] button,
+.o_payment_shortcut_payment_demo,
+button.o_payment_shortcut[data-provider-code="demo"],
+.o_wsale_payment_submit_shortcut .o_payment_shortcut {
+    display: none !important;
+}
+
+/* If Odoo renders it as a simple button with text "Pagar con demostración" */
+button.o_payment_shortcut,
+.o_payment_shortcut_container > button {
+    display: none !important;
+}
+
+
+/* ============================================================
+   LOGIN  /web/login   SIGNUP  /web/signup   RESET PASSWORD
+   ============================================================ */
+
+.oe_login_form,
+.oe_signup_form,
+.oe_reset_password_form {
+    background: var(--iz-surface) !important;
+    border: 1px solid var(--iz-line) !important;
+    border-radius: var(--iz-radius) !important;
+    color: var(--iz-text) !important;
+}
+
+/* The outer page bg */
+.oe_website_login_container,
+.o_login_auth {
+    background: var(--iz-bg) !important;
+}
+
+/* Labels */
+.oe_login_form label,
+.oe_signup_form label,
+.oe_reset_password_form label {
+    color: var(--iz-text) !important;
+}
+
+/* Links (forgot password, register) */
+.oe_login_form a,
+.oe_signup_form a,
+.oe_reset_password_form a {
+    color: var(--iz-accent) !important;
+}
+
+/* Error messages */
+.oe_login_form .alert,
+.oe_signup_form .alert {
+    background: rgba(255, 90, 47, 0.1) !important;
+    border-color: rgba(255, 90, 47, 0.3) !important;
+    color: var(--iz-text) !important;
+}
+
+/* The "or" divider text */
+.oe_login_form .text-center,
+.oe_signup_form .text-center {
+    color: var(--iz-muted) !important;
+}
+
+
+/* ============================================================
+   CHECKOUT ADDRESS FORM  /shop/address
+   ============================================================ */
+
+.oe_cart .checkout,
+.checkout,
+#shipping_and_billing,
+div[id="shipping_and_billing"] {
+    background: var(--iz-bg) !important;
+    color: var(--iz-text) !important;
+}
+
+.checkout label,
+.checkout .col-form-label,
+#shipping_and_billing label {
+    color: var(--iz-text) !important;
+}
+
+.checkout select,
+.checkout input,
+.checkout textarea,
+#shipping_and_billing select,
+#shipping_and_billing input {
+    background: var(--iz-surface) !important;
+    border-color: var(--iz-line) !important;
+    color: var(--iz-text) !important;
+}
+
+.checkout h3,
+.checkout h4,
+.checkout h5 {
+    color: #fff !important;
+}
+
+/* Address cards at checkout */
+.o_wsale_address_card,
+.o_wsale_address_fill,
+.all_shipping .card {
+    background: var(--iz-surface) !important;
+    border-color: var(--iz-line) !important;
+    color: var(--iz-text) !important;
+}
+
+.all_shipping .card:hover,
+.o_wsale_address_card:hover {
+    border-color: rgba(255, 90, 47, 0.5) !important;
+}
+
+.all_shipping .card .card-body,
+.all_shipping .badge {
+    color: var(--iz-text) !important;
+}
+
+
+/* ============================================================
+   GENERIC — catch-all for remaining white backgrounds
+   ============================================================ */
+
+/* Bootstrap bg utilities overridden for dark theme */
+.bg-light,
+.bg-white,
+.bg-100,
+.bg-200,
+.text-bg-light {
+    background: var(--iz-surface) !important;
+    color: var(--iz-text) !important;
+}
+
+/* Any remaining .card not caught above */
+#wrapwrap .card,
+#wrapwrap .card-body,
+#wrapwrap .card-header,
+#wrapwrap .card-footer {
+    background: var(--iz-surface) !important;
+    border-color: var(--iz-line) !important;
+    color: var(--iz-text) !important;
+}
+
+/* Badge overrides */
+.badge.text-bg-light,
+.badge.bg-light {
+    background: var(--iz-surface-2) !important;
+    color: var(--iz-text) !important;
+}
+
+.badge.text-bg-primary,
+.badge.bg-primary {
+    background: var(--iz-accent) !important;
+    color: #fff !important;
+}
+
+/* Horizontal rules */
+hr {
+    border-color: var(--iz-line) !important;
+    opacity: 1;
+}
+
+/* All remaining text-dark overrides */
+.text-dark,
+.text-body,
+.text-black {
+    color: var(--iz-text) !important;
+}
+
+/* Border utilities */
+.border,
+.border-top,
+.border-bottom,
+.border-start,
+.border-end {
+    border-color: var(--iz-line) !important;
+}
+
+/* Portal order detail pages /my/orders/ID */
+.o_portal_wrap .row,
+.o_portal_wrap .col-lg-8,
+.o_portal_wrap .col-lg-4,
+.o_portal_wrap .container {
+    color: var(--iz-text) !important;
+}
+
+/* Badge in orders table */
+.o_portal_wrap .badge {
+    color: #fff !important;
+}
+
+/* Security page /my/security */
+.o_portal_security .card,
+.o_portal_security .card-body {
+    background: var(--iz-surface) !important;
+    border-color: var(--iz-line) !important;
+    color: var(--iz-text) !important;
+}
+
+.o_portal_security label {
+    color: var(--iz-text) !important;
+}
+
+/* Payment methods /my/payment_method */
+.o_payment_manage .card,
+.o_payment_manage .list-group-item {
+    background: var(--iz-surface) !important;
+    border-color: var(--iz-line) !important;
+    color: var(--iz-text) !important;
+}
+
+/* Breadcrumbs in portal */
+.o_portal_wrap .breadcrumb {
+    background: transparent !important;
+}
+
+.o_portal_wrap .breadcrumb-item,
+.o_portal_wrap .breadcrumb-item a,
+.o_portal_wrap .breadcrumb-item + .breadcrumb-item::before {
+    color: var(--iz-muted) !important;
+}
+
+.o_portal_wrap .breadcrumb-item.active {
+    color: #fff !important;
+}
+
+/* Ensure all inputs everywhere are dark */
+#wrapwrap input:not([type="checkbox"]):not([type="radio"]),
+#wrapwrap select,
+#wrapwrap textarea {
+    background: var(--iz-surface) !important;
+    border-color: var(--iz-line) !important;
+    color: var(--iz-text) !important;
+}
+
+#wrapwrap input::placeholder,
+#wrapwrap textarea::placeholder {
+    color: var(--iz-muted) !important;
+}
+
+/* Ensure link colors in portal don't break buttons */
+.o_portal_wrap .btn-primary,
+.o_portal_wrap .btn-primary a {
+    color: #fff !important;
+}
+
+/* Fix for Odoo's "Seguir comprando" and other muted links */
+#wrap a.text-muted,
+#wrap .text-muted a {
+    color: var(--iz-muted) !important;
+}
+
+#wrap a.text-muted:hover,
+#wrap .text-muted a:hover {
+    color: #fff !important;
+}
