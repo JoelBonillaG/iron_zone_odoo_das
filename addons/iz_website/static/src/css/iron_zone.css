@@ -44,6 +44,42 @@
     font-display: swap;
 }
 
+/* Logo clickeable - mejorado */
+.iz-logo-clickable {
+    cursor: pointer !important;
+    transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.iz-logo-clickable:hover {
+    opacity: 0.85;
+    transform: scale(1.02);
+}
+
+/* Navegación del portal - enlaces de regreso al sitio */
+.navbar.navbar-light {
+    border-bottom: 1px solid var(--iz-line) !important;
+}
+
+.navbar-brand small {
+    font-weight: 500;
+    color: var(--iz-muted) !important;
+}
+
+.navbar-brand:hover small {
+    color: var(--iz-text) !important;
+}
+
+.btn-outline-secondary {
+    border-color: var(--iz-line) !important;
+    color: var(--iz-muted) !important;
+}
+
+.btn-outline-secondary:hover {
+    background-color: rgba(255, 90, 47, 0.1) !important;
+    border-color: var(--iz-accent) !important;
+    color: var(--iz-accent) !important;
+}
+
 html,
 body,
 #wrapwrap,

@@ -15,4 +15,16 @@
             <link rel="apple-touch-icon" href="/iz_website/static/src/img/iz-badge.png?v=2"/>
         </xpath>
     </template>
+
+    <!-- Hacer el logo clickeable y navegable al sitio/portal -->
+    <template id="iz_layout_clickable_logo" inherit_id="website.layout" name="Iron Zone Clickable Logo">
+        <xpath expr="//div[hasclass('navbar-brand')]//img" position="attributes">
+            <attribute name="style">cursor: pointer; transition: opacity 0.2s;</attribute>
+            <attribute name="class" add="iz-logo-clickable" separator=" "/>
+            <attribute name="alt">Iron Zone Home</attribute>
+            <attribute name="title">Ir al inicio</attribute>
+            <attribute name="onclick">window.location.href='/';</attribute>
+        </xpath>
+    </template>
+
 </odoo>
