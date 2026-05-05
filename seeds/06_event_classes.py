@@ -3,20 +3,30 @@ from datetime import datetime, timedelta
 
 
 CLASSES = [
-    {"name": "CrossFit AM", "instructor": "Carlos Mendez", "capacity": 20, "time": "06:00"},
-    {"name": "Yoga Principiantes", "instructor": "Sofia Garcia", "capacity": 15, "time": "07:00"},
-    {"name": "Spinning 18:00", "instructor": "Andrea Lopez", "capacity": 25, "time": "18:00"},
-    {"name": "Zumba Cardio", "instructor": "Mateo Rivas", "capacity": 30, "time": "19:00"},
-    {"name": "Pilates Avanzado", "instructor": "Sofia Garcia", "capacity": 12, "time": "09:00"},
-    {"name": "HIIT Entrenamiento", "instructor": "Carlos Mendez", "capacity": 20, "time": "17:30"},
-    {"name": "Boxeo Técnica", "instructor": "Mateo Rivas", "capacity": 10, "time": "18:30"},
-    {"name": "Yoga Avanzado", "instructor": "Sofia Garcia", "capacity": 15, "time": "08:00"},
-    {"name": "Natación Adultos", "instructor": "Andrea Lopez", "capacity": 16, "time": "10:00"},
-    {"name": "Entrenamiento en Grupo", "instructor": "Carlos Mendez", "capacity": 22, "time": "16:00"},
+    {"name": "CrossFit AM", "instructor": "Carlos Mendez", "capacity": 20, "time": "06:00", "stage": "Nuevo"},
+    {"name": "Yoga Principiantes", "instructor": "Sofia Garcia", "capacity": 15, "time": "07:00", "stage": "Nuevo"},
+    {"name": "Spinning 18:00", "instructor": "Andrea Lopez", "capacity": 25, "time": "18:00", "stage": "Nuevo"},
+    {"name": "Zumba Cardio", "instructor": "Mateo Rivas", "capacity": 30, "time": "19:00", "stage": "Nuevo"},
+    {"name": "Pilates Avanzado", "instructor": "Sofia Garcia", "capacity": 12, "time": "09:00", "stage": "Nuevo"},
+    {"name": "HIIT Entrenamiento", "instructor": "Carlos Mendez", "capacity": 20, "time": "17:30", "stage": "Nuevo"},
+    {"name": "Boxeo Técnica", "instructor": "Mateo Rivas", "capacity": 10, "time": "18:30", "stage": "Nuevo"},
+    {"name": "Yoga Avanzado", "instructor": "Sofia Garcia", "capacity": 15, "time": "08:00", "stage": "Reservado"},
+    {"name": "Natación Adultos", "instructor": "Andrea Lopez", "capacity": 16, "time": "10:00", "stage": "Nuevo"},
+    {"name": "Entrenamiento en Grupo", "instructor": "Carlos Mendez", "capacity": 22, "time": "16:00", "stage": "Nuevo"},
+    {"name": "Tae Kwon Do Niños", "instructor": "Mateo Rivas", "capacity": 18, "time": "15:00", "stage": "Reservado"},
+    {"name": "Danza Contemporánea", "instructor": "Sofia Garcia", "capacity": 20, "time": "11:00", "stage": "Reservado"},
+    {"name": "Musculación Personalizada", "instructor": "Carlos Mendez", "capacity": 8, "time": "12:00", "stage": "Anunciado"},
+    {"name": "Acuagym", "instructor": "Andrea Lopez", "capacity": 25, "time": "14:00", "stage": "Anunciado"},
+    {"name": "Funcional Boot Camp", "instructor": "Mateo Rivas", "capacity": 15, "time": "06:30", "stage": "Anunciado"},
+    {"name": "Meditación Mindfulness", "instructor": "Sofia Garcia", "capacity": 12, "time": "19:30", "stage": "Anunciado"},
 ]
 
-# NOTA: Los planes de entrenamiento requieren un módulo personalizado en addons/
-# Esta versión usa solo eventos/clases que existen en Odoo estándar
+STAGE_SEQUENCE = {
+    "Nuevo": 10,
+    "Reservado": 20,
+    "Anunciado": 30,
+}
+
 
 
 def odoo_datetime(value):
@@ -42,6 +52,22 @@ def create_or_update(uid, models, model, domain, values, fields=None):
         models.execute_kw(DB, uid, PASSWORD, model, "write", [[record["id"]], values])
         return record["id"], False
     return create(uid, models, model, values), True
+
+
+def ensure_event_stages(uid, models):
+    stage_ids = {}
+    for stage_name, sequence in STAGE_SEQUENCE.items():
+        values = {"name": stage_name, "sequence": sequence}
+        stage_id, _ = create_or_update(
+            uid,
+            models,
+            "event.stage",
+            [("name", "=", stage_name)],
+            values,
+            fields=["id", "name"],
+        )
+        stage_ids[stage_name] = stage_id
+    return stage_ids
 
 
 def ensure_user_for_employee(uid, models, employee):
@@ -104,6 +130,8 @@ def run():
     member_ids = {member["name"]: member["id"] for member in all_members}
     print(f"  Found {len(member_ids)} members")
 
+    stage_ids = ensure_event_stages(uid, models)
+
     # Crear eventos (clases)
     created_count = 0
     updated_count = 0
@@ -127,6 +155,7 @@ def run():
             "date_begin": odoo_datetime(event_datetime),
             "date_end": odoo_datetime(event_datetime + timedelta(hours=1)),
             "user_id": instructor_user_id if instructor_user_id else False,
+            "stage_id": stage_ids.get(class_info.get("stage", "Nuevo")),
         }
         
         event_id, created = create_or_update(
@@ -145,7 +174,8 @@ def run():
             updated_count += 1
         
         action = "Created" if created else "Updated"
-        print(f"  {action} class: {class_info['name']} - Instructor: {class_info['instructor']}")
+        class_stage = class_info.get("stage", "Nuevo")
+        print(f"  {action} class: {class_info['name']} - Instructor: {class_info['instructor']} - Stage: {class_stage}")
 
     # Registrar miembros a las clases
     print("Registering members to classes...")
