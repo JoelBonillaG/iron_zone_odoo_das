@@ -117,6 +117,20 @@ def ensure_event_stages(uid, models):
             fields=["id", "name"],
         )
         stage_ids[stage_name] = stage_id
+
+    old_stage_ids = models.execute_kw(
+        DB, uid, PASSWORD, "event.stage", "search",
+        [[("name", "not in", list(STAGE_SEQUENCE.keys()))]],
+    )
+    deletable = []
+    for sid in old_stage_ids:
+        count = models.execute_kw(DB, uid, PASSWORD, "event.event", "search_count", [[("stage_id", "=", sid)]])
+        if count == 0:
+            deletable.append(sid)
+    if deletable:
+        models.execute_kw(DB, uid, PASSWORD, "event.stage", "unlink", [deletable])
+        print(f"Deleted {len(deletable)} old event stage(s).")
+
     return stage_ids
 
 
@@ -229,6 +243,7 @@ def run():
             "date_end": odoo_datetime(event_datetime + timedelta(hours=1)),
             "user_id": instructor_user_id or False,
             "stage_id": stage_ids.get(class_info.get("stage", "Nuevo")),
+            "website_published": True,
         }
 
         event_id, created = create_or_update(

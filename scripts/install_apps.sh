@@ -6,7 +6,7 @@ export MSYS_NO_PATHCONV=1
 DB_NAME="${DB_NAME:-iron_zone}"
 ODOO_CONTAINER="${ODOO_CONTAINER:-iron_zone_odoo}"
 DB_CONTAINER="${DB_CONTAINER:-iron_zone_db}"
-MODULES="${MODULES:-website,website_sale,website_sale_stock,account,account_payment,website_payment,payment_demo,payment_custom,hr,mass_mailing,appointment,sale_management,stock,event,iz_website,iz_inventory,iz_backend_theme,training_plans}"
+MODULES="${MODULES:-website,website_sale,website_sale_stock,account,account_payment,website_payment,payment_demo,payment_custom,hr,mass_mailing,appointment,sale_management,stock,event,website_event,iz_website,iz_inventory,iz_backend_theme,training_plans}"
 ODOO_CONFIG="/etc/odoo/odoo.conf"
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
