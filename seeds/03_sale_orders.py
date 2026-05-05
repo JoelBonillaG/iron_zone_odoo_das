@@ -1,8 +1,7 @@
 from config import connect, create, search_read
 
 ORDERS = [
-    (0, 0), (1, 1), (2, 2), (3, 3), (4, 4),
-    (5, 5), (6, 6), (7, 7), (8, 8), (9, 9),
+    (0, 0), (1, 1), (2, 2),
 ]
 
 IRON_ZONE_PRODUCTS = [
@@ -29,7 +28,7 @@ def run():
     missing_products = [name for name in IRON_ZONE_PRODUCTS if name not in products_by_name]
     products = [products_by_name[name] for name in IRON_ZONE_PRODUCTS if name in products_by_name]
 
-    if len(customers) < 10 or missing_products:
+    if len(customers) < len(ORDERS) or missing_products:
         print("ERROR: Run 01_customers.py and 02_products.py first.")
         if missing_products:
             print("Missing Iron Zone products:", ", ".join(missing_products))

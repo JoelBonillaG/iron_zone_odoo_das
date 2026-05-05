@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="iz_portal_payment_methods_card" inherit_id="portal.portal_my_home" name="Iron Zone Portal Payment Methods Card">
+        <xpath expr="//div[@id='portal_common_category']" position="inside">
+            <t t-call="portal.portal_docs_entry">
+                <t t-set="icon" t-value="'/payment/static/src/img/payment_icon.svg'"/>
+                <t t-set="title">Metodos de pago</t>
+                <t t-set="text">Gestiona tus tarjetas y formas de pago</t>
+                <t t-set="url" t-value="'/my/payment_method'"/>
+            </t>
+        </xpath>
+    </template>
+</odoo>

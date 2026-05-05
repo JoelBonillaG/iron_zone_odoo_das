@@ -6,7 +6,7 @@ from config import DB, PASSWORD, connect
 
 IVA_RATE = 15.0
 PAYMENT_RATIO = 0.5
-TARGET_ORDER_COUNT = 10
+TARGET_ORDER_COUNT = 3
 ACT006_REF_PREFIX = "ACT006-MEMBERSHIP"
 MEMBERSHIP_PRODUCT_KEYWORDS = ["Membresía", "Plan Nutrición"]
 
@@ -91,7 +91,7 @@ def get_customers(models):
         order="id asc",
     )
     if len(customers) < TARGET_ORDER_COUNT:
-        raise RuntimeError("Run 01_customers.py first. ACT006 requires 10 customer/member records.")
+        raise RuntimeError(f"Run 01_customers.py first. ACT006 requires {TARGET_ORDER_COUNT} customer/member records.")
     return customers
 
 

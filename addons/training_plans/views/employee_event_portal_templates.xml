@@ -4,6 +4,7 @@
         <field name="name">Mis eventos</field>
         <field name="url">/my/events</field>
         <field name="parent_id" ref="website.main_menu"/>
+        <field name="group_ids" eval="[(3, ref('website.group_website_designer')), (4, ref('group_training_instructor_portal'))]"/>
         <field name="sequence" type="int">70</field>
     </record>
 
@@ -121,5 +122,16 @@
                 </section>
             </div>
         </t>
+    </template>
+
+    <template id="employee_events_portal_home_card" inherit_id="portal.portal_my_home" name="Employee Events Portal Home Card">
+        <xpath expr="//div[@id='portal_common_category']" position="inside">
+            <t t-if="request.env.user.has_group('training_plans.group_training_instructor_portal')" t-call="portal.portal_docs_entry">
+                <t t-set="icon" t-value="'/event/static/src/img/event.svg'"/>
+                <t t-set="title">Mis eventos</t>
+                <t t-set="text">Consulta tus clases asignadas</t>
+                <t t-set="url" t-value="'/my/events'"/>
+            </t>
+        </xpath>
     </template>
 </odoo>

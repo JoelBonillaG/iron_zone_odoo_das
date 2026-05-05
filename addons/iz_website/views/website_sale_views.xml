@@ -54,4 +54,24 @@
         </xpath>
     </template>
 
+    <template id="iz_payment_methods_fallback" inherit_id="website_sale.payment" name="Iron Zone Payment Methods Fallback">
+        <xpath expr="//div[@id='payment_method']/t[@t-call='payment.form']" position="before">
+            <t t-if="not payment_methods_sudo and not tokens_sudo">
+                <t t-set="providers_sudo" t-value="request.env['payment.provider'].sudo().search([
+                    ('company_id', '=', order.company_id.id),
+                    ('state', 'in', ['enabled', 'test']),
+                    ('is_published', '=', True),
+                    '|',
+                    ('website_id', '=', False),
+                    ('website_id', '=', request.website.id),
+                ], order='sequence, id')"/>
+                <t t-set="payment_methods_sudo" t-value="request.env['payment.method'].sudo().search([
+                    ('active', '=', True),
+                    ('is_primary', '=', True),
+                    ('provider_ids', 'in', providers_sudo.ids),
+                ], order='sequence, id')"/>
+            </t>
+        </xpath>
+    </template>
+
 </odoo>
