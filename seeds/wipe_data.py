@@ -68,26 +68,14 @@ def run():
         try: models.execute_kw(DB, uid, PASSWORD, 'hr.department', 'unlink', [[d]])
         except: pass
     
-    # 7. Archive Training Plans
-    plan_names = [
-        "Plan Básico - 4 Semanas", "Plan Intermedio - 8 Semanas", "Plan Avanzado - 12 Semanas",
-        "Plan CrossFit Especializado", "Plan Yoga y Flexibilidad", "Plan Cardio Intensivo",
-        "Plan Pilates Rehabilitación", "Plan Boxeo y Defensa", "Plan Natación Competitiva",
-        "Plan Mantenimiento General"
-    ]
-    plans = models.execute_kw(DB, uid, PASSWORD, 'training.plan', 'search', [[('name', 'in', plan_names)]])
-    for p in plans:
-        try: models.execute_kw(DB, uid, PASSWORD, 'training.plan', 'unlink', [[p]])
-        except: pass
-    
-    # 8. Try unlink categories
+    # 7. Try unlink categories
     categ_names = ["Membresías", "Clases", "Equipamiento", "Suplementos"]
     categories = models.execute_kw(DB, uid, PASSWORD, 'product.public.category', 'search', [[('name', 'in', categ_names)]])
     for c in categories:
         try: models.execute_kw(DB, uid, PASSWORD, 'product.public.category', 'unlink', [[c]])
         except: pass
     
-    # 9. Archive event registrations and events (clases grupales)
+    # 8. Archive event registrations and events (clases grupales)
     event_registrations = models.execute_kw(DB, uid, PASSWORD, 'event.registration', 'search', [[]])
     if event_registrations:
         for reg_id in event_registrations:

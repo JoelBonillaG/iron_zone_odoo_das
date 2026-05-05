@@ -3,36 +3,30 @@ from datetime import datetime, timedelta
 
 
 CLASSES = [
-    {"name": "CrossFit AM", "instructor": "Carlos Mendez", "capacity": 20, "time": "06:00", "state": "nuevo"},
-    {"name": "Yoga Principiantes", "instructor": "Sofia Garcia", "capacity": 15, "time": "07:00", "state": "nuevo"},
-    {"name": "Spinning 18:00", "instructor": "Andrea Lopez", "capacity": 25, "time": "18:00", "state": "nuevo"},
-    {"name": "Zumba Cardio", "instructor": "Mateo Rivas", "capacity": 30, "time": "19:00", "state": "nuevo"},
-    {"name": "Pilates Avanzado", "instructor": "Sofia Garcia", "capacity": 12, "time": "09:00", "state": "nuevo"},
-    {"name": "HIIT Entrenamiento", "instructor": "Carlos Mendez", "capacity": 20, "time": "17:30", "state": "nuevo"},
-    {"name": "Boxeo Técnica", "instructor": "Mateo Rivas", "capacity": 10, "time": "18:30", "state": "nuevo"},
-    {"name": "Yoga Avanzado", "instructor": "Sofia Garcia", "capacity": 15, "time": "08:00", "state": "reservado"},
-    {"name": "Natación Adultos", "instructor": "Andrea Lopez", "capacity": 16, "time": "10:00", "state": "nuevo"},
-    {"name": "Entrenamiento en Grupo", "instructor": "Carlos Mendez", "capacity": 22, "time": "16:00", "state": "nuevo"},
-    {"name": "Tae Kwon Do Niños", "instructor": "Mateo Rivas", "capacity": 18, "time": "15:00", "state": "reservado"},
-    {"name": "Danza Contemporánea", "instructor": "Sofia Garcia", "capacity": 20, "time": "11:00", "state": "reservado"},
-    {"name": "Musculación Personalizada", "instructor": "Carlos Mendez", "capacity": 8, "time": "12:00", "state": "anunciado"},
-    {"name": "Acuagym", "instructor": "Andrea Lopez", "capacity": 25, "time": "14:00", "state": "anunciado"},
-    {"name": "Funcional Boot Camp", "instructor": "Mateo Rivas", "capacity": 15, "time": "06:30", "state": "anunciado"},
-    {"name": "Meditación Mindfulness", "instructor": "Sofia Garcia", "capacity": 12, "time": "19:30", "state": "anunciado"},
+    {"name": "CrossFit AM", "instructor": "Carlos Mendez", "capacity": 20, "time": "06:00", "stage": "Nuevo"},
+    {"name": "Yoga Principiantes", "instructor": "Sofia Garcia", "capacity": 15, "time": "07:00", "stage": "Nuevo"},
+    {"name": "Spinning 18:00", "instructor": "Andrea Lopez", "capacity": 25, "time": "18:00", "stage": "Nuevo"},
+    {"name": "Zumba Cardio", "instructor": "Mateo Rivas", "capacity": 30, "time": "19:00", "stage": "Nuevo"},
+    {"name": "Pilates Avanzado", "instructor": "Sofia Garcia", "capacity": 12, "time": "09:00", "stage": "Nuevo"},
+    {"name": "HIIT Entrenamiento", "instructor": "Carlos Mendez", "capacity": 20, "time": "17:30", "stage": "Nuevo"},
+    {"name": "Boxeo Técnica", "instructor": "Mateo Rivas", "capacity": 10, "time": "18:30", "stage": "Nuevo"},
+    {"name": "Yoga Avanzado", "instructor": "Sofia Garcia", "capacity": 15, "time": "08:00", "stage": "Reservado"},
+    {"name": "Natación Adultos", "instructor": "Andrea Lopez", "capacity": 16, "time": "10:00", "stage": "Nuevo"},
+    {"name": "Entrenamiento en Grupo", "instructor": "Carlos Mendez", "capacity": 22, "time": "16:00", "stage": "Nuevo"},
+    {"name": "Tae Kwon Do Niños", "instructor": "Mateo Rivas", "capacity": 18, "time": "15:00", "stage": "Reservado"},
+    {"name": "Danza Contemporánea", "instructor": "Sofia Garcia", "capacity": 20, "time": "11:00", "stage": "Reservado"},
+    {"name": "Musculación Personalizada", "instructor": "Carlos Mendez", "capacity": 8, "time": "12:00", "stage": "Anunciado"},
+    {"name": "Acuagym", "instructor": "Andrea Lopez", "capacity": 25, "time": "14:00", "stage": "Anunciado"},
+    {"name": "Funcional Boot Camp", "instructor": "Mateo Rivas", "capacity": 15, "time": "06:30", "stage": "Anunciado"},
+    {"name": "Meditación Mindfulness", "instructor": "Sofia Garcia", "capacity": 12, "time": "19:30", "stage": "Anunciado"},
 ]
 
-TRAINING_PLANS = [
-    {"name": "Plan Básico - 4 Semanas", "description": "Plan de entrenamiento básico de 4 semanas para principiantes", "duration_weeks": 4, "intensity": "Baja"},
-    {"name": "Plan Intermedio - 8 Semanas", "description": "Plan de entrenamiento intermedio de 8 semanas para usuarios con experiencia", "duration_weeks": 8, "intensity": "Media"},
-    {"name": "Plan Avanzado - 12 Semanas", "description": "Plan de entrenamiento avanzado de 12 semanas para usuarios entrenados", "duration_weeks": 12, "intensity": "Alta"},
-    {"name": "Plan CrossFit Especializado", "description": "Plan especializado en CrossFit con enfoque en fuerza y potencia", "duration_weeks": 8, "intensity": "Alta"},
-    {"name": "Plan Yoga y Flexibilidad", "description": "Plan enfocado en yoga, meditación y mejora de flexibilidad", "duration_weeks": 6, "intensity": "Baja"},
-    {"name": "Plan Cardio Intensivo", "description": "Plan de cardio intensivo para pérdida de peso y resistencia", "duration_weeks": 10, "intensity": "Alta"},
-    {"name": "Plan Pilates Rehabilitación", "description": "Plan de pilates para rehabilitación y fortalecimiento del core", "duration_weeks": 8, "intensity": "Media"},
-    {"name": "Plan Boxeo y Defensa", "description": "Plan de boxeo técnico con enfoque en defensa personal", "duration_weeks": 10, "intensity": "Media"},
-    {"name": "Plan Natación Competitiva", "description": "Plan de natación para mejora de técnica y resistencia", "duration_weeks": 12, "intensity": "Alta"},
-    {"name": "Plan Mantenimiento General", "description": "Plan de mantenimiento general para mantener forma física y salud", "duration_weeks": 4, "intensity": "Media"},
-]
+STAGE_SEQUENCE = {
+    "Nuevo": 10,
+    "Reservado": 20,
+    "Anunciado": 30,
+}
+
 
 
 def odoo_datetime(value):
@@ -60,6 +54,22 @@ def create_or_update(uid, models, model, domain, values, fields=None):
     return create(uid, models, model, values), True
 
 
+def ensure_event_stages(uid, models):
+    stage_ids = {}
+    for stage_name, sequence in STAGE_SEQUENCE.items():
+        values = {"name": stage_name, "sequence": sequence}
+        stage_id, _ = create_or_update(
+            uid,
+            models,
+            "event.stage",
+            [("name", "=", stage_name)],
+            values,
+            fields=["id", "name"],
+        )
+        stage_ids[stage_name] = stage_id
+    return stage_ids
+
+
 def ensure_user_for_employee(uid, models, employee):
     if employee.get("user_id"):
         return employee["user_id"][0]
@@ -84,28 +94,6 @@ def ensure_user_for_employee(uid, models, employee):
 
 def run():
     uid, models = connect()
-
-    # Crear planes de entrenamiento
-    print("Syncing training plans...")
-    training_plan_ids = {}
-    for plan in TRAINING_PLANS:
-        values = {
-            "name": plan["name"],
-            "description": plan["description"],
-            "duration_weeks": plan["duration_weeks"],
-            "intensity": plan["intensity"],
-        }
-        plan_id, created = create_or_update(
-            uid,
-            models,
-            "training.plan",
-            [("name", "=", plan["name"])],
-            values,
-            fields=["id", "name"],
-        )
-        training_plan_ids[plan["name"]] = plan_id
-        action = "Created" if created else "Updated"
-        print(f"  {action} training plan: {plan['name']}")
 
     # Buscar entrenadores de 05_employees.py y usar su usuario vinculado para el evento.
     instructor_user_ids = {}
@@ -142,6 +130,8 @@ def run():
     member_ids = {member["name"]: member["id"] for member in all_members}
     print(f"  Found {len(member_ids)} members")
 
+    stage_ids = ensure_event_stages(uid, models)
+
     # Crear eventos (clases)
     created_count = 0
     updated_count = 0
@@ -165,7 +155,7 @@ def run():
             "date_begin": odoo_datetime(event_datetime),
             "date_end": odoo_datetime(event_datetime + timedelta(hours=1)),
             "user_id": instructor_user_id if instructor_user_id else False,
-            "state": class_info.get("state", "nuevo"),
+            "stage_id": stage_ids.get(class_info.get("stage", "Nuevo")),
         }
         
         event_id, created = create_or_update(
@@ -184,8 +174,8 @@ def run():
             updated_count += 1
         
         action = "Created" if created else "Updated"
-        class_state = class_info.get("state", "nuevo")
-        print(f"  {action} class: {class_info['name']} - Instructor: {class_info['instructor']} - State: {class_state}")
+        class_stage = class_info.get("stage", "Nuevo")
+        print(f"  {action} class: {class_info['name']} - Instructor: {class_info['instructor']} - Stage: {class_stage}")
 
     # Registrar miembros a las clases
     print("Registering members to classes...")
