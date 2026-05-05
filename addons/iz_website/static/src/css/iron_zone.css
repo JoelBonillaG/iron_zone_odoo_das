@@ -111,16 +111,29 @@ header,
 }
 
 .navbar-brand {
-    background: transparent url("/iz_website/static/src/img/IronZone.png") no-repeat left center !important;
-    background-size: contain !important;
+    align-items: center;
+    background: transparent url("/iz_website/static/src/img/iz-mark.png") no-repeat center center !important;
+    background-size: 58px auto !important;
     display: block !important;
-    height: 50px !important;
-    min-width: 150px !important;
+    filter: drop-shadow(0 6px 18px rgba(0, 0, 0, 0.3));
+    height: 58px !important;
+    min-width: 64px !important;
+    position: relative;
     padding: 0 !important;
+    width: 64px !important;
+    z-index: 2;
 }
 
+header .navbar-brand.logo span,
+header .navbar-brand.logo img,
 .navbar-brand * {
     display: none !important;
+    height: 0 !important;
+    max-height: 0 !important;
+    opacity: 0 !important;
+    overflow: hidden !important;
+    visibility: hidden !important;
+    width: 0 !important;
 }
 
 header .nav-link,
@@ -787,6 +800,86 @@ header .dropdown-item:hover,
     --o-wsale-products-grid-gap: 1rem;
 }
 
+.iz-shop-page #products_grid_before,
+.iz-shop-page #products_grid_before b,
+.iz-shop-page #products_grid_before label,
+.iz-shop-page #products_grid_before .form-check-label,
+.iz-shop-page #products_grid_before .text-muted,
+.iz-shop-page .products_attributes_filters,
+.iz-shop-page .accordion-button,
+.iz-shop-page .accordion-button b {
+    color: var(--iz-text) !important;
+}
+
+.iz-shop-page .accordion-button {
+    background: transparent !important;
+}
+
+.iz-shop-page .btn.btn-light,
+.iz-shop-page .dropdown-toggle.btn-light,
+.iz-shop-page .oe_search_button,
+.iz-shop-page .o_wsale_products_searchbar_form .form-control,
+.iz-shop-page .o_wsale_products_searchbar_form .text-bg-light,
+.iz-shop-page .search-query.text-bg-light,
+.iz-shop-page .search-query.bg-light {
+    background: var(--iz-surface-2) !important;
+    border: 1px solid var(--iz-line) !important;
+    box-shadow: none !important;
+    color: var(--iz-text) !important;
+}
+
+.iz-shop-page .btn.btn-light:hover,
+.iz-shop-page .dropdown-toggle.btn-light:hover,
+.iz-shop-page .oe_search_button:hover {
+    background: #2a2f38 !important;
+    border-color: rgba(255, 90, 47, 0.4) !important;
+    color: #fff !important;
+}
+
+.iz-shop-page .btn-check:checked + .btn.btn-light,
+.iz-shop-page .btn-check:active + .btn.btn-light {
+    background: var(--iz-accent) !important;
+    border-color: var(--iz-accent) !important;
+    color: #fff !important;
+}
+
+.iz-shop-page .dropdown-toggle.btn-light small,
+.iz-shop-page .dropdown-toggle.btn-light .text-muted {
+    color: var(--iz-muted) !important;
+}
+
+.iz-shop-page .dropdown-menu .dropdown-item.active,
+.iz-shop-page .dropdown-menu .dropdown-item:active {
+    background: rgba(255, 90, 47, 0.16) !important;
+    color: #111318 !important;
+}
+
+.iz-shop-page .form-control::placeholder {
+    color: #8f8a94 !important;
+}
+
+.iz-shop-page .noUi-target {
+    background: rgba(255, 255, 255, 0.08) !important;
+    border: 0 !important;
+    box-shadow: none !important;
+}
+
+.iz-shop-page .noUi-connect {
+    background: var(--iz-accent) !important;
+}
+
+.iz-shop-page .noUi-handle {
+    background: #fff !important;
+    border: 2px solid var(--iz-accent) !important;
+    border-radius: 999px !important;
+    box-shadow: 0 0 0 4px rgba(255, 90, 47, 0.12) !important;
+}
+
+.iz-shop-page .noUi-handle::before,
+.iz-shop-page .noUi-handle::after {
+    display: none !important;
+}
+
 .oe_product_cart,
 .iz-product_card {
     background: transparent !important;
@@ -1085,7 +1178,8 @@ textarea.form-control {
 
 @media (max-width: 575.98px) {
     .navbar-brand {
-        min-width: 112px !important;
+        background-size: 44px auto !important;
+        min-width: 52px !important;
         height: 44px !important;
     }
 
