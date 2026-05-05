@@ -1585,6 +1585,15 @@ button.o_payment_shortcut,
     border: 1px solid var(--iz-line) !important;
     border-radius: var(--iz-radius) !important;
     color: var(--iz-text) !important;
+    box-sizing: border-box !important;
+    width: min(100%, 440px) !important;
+    max-width: 440px !important;
+    padding: 1.6rem 1.6rem 1.35rem !important;
+    margin: 0 auto !important;
+}
+
+.iz-auth-page main {
+    padding: 2.5rem 0 3rem !important;
 }
 
 /* The outer page bg */
@@ -1605,6 +1614,53 @@ button.o_payment_shortcut,
 .oe_signup_form a,
 .oe_reset_password_form a {
     color: var(--iz-accent) !important;
+}
+
+.oe_login_form .form-control,
+.oe_signup_form .form-control,
+.oe_reset_password_form .form-control {
+    background: var(--iz-surface-2) !important;
+    border-color: var(--iz-line) !important;
+    color: var(--iz-text) !important;
+}
+
+.oe_login_form .btn-primary,
+.oe_signup_form .btn-primary,
+.oe_reset_password_form .btn-primary {
+    background: linear-gradient(135deg, #ff6a42, #ff4f86) !important;
+    border: 0 !important;
+    color: #fff !important;
+    box-shadow: 0 12px 26px rgba(255, 90, 47, 0.28) !important;
+}
+
+.oe_login_form .btn-primary:hover,
+.oe_signup_form .btn-primary:hover,
+.oe_reset_password_form .btn-primary:hover,
+.oe_login_form .btn-primary:focus,
+.oe_signup_form .btn-primary:focus,
+.oe_reset_password_form .btn-primary:focus {
+    filter: brightness(0.95) !important;
+    color: #fff !important;
+}
+
+.oe_login_form > div,
+.oe_signup_form > div,
+.oe_reset_password_form > div {
+    margin-bottom: 1rem !important;
+}
+
+.oe_login_form .form-control,
+.oe_signup_form .form-control,
+.oe_reset_password_form .form-control {
+    min-height: 48px !important;
+    padding: 0.85rem 1rem !important;
+}
+
+.oe_login_form .btn-primary,
+.oe_signup_form .btn-primary,
+.oe_reset_password_form .btn-primary {
+    width: 100% !important;
+    min-height: 48px !important;
 }
 
 /* Error messages */

@@ -2,6 +2,12 @@
 
 import { publicWidget } from "@web/legacy/js/public/public_widget";
 
+const isAuthPage = ["/web/login", "/web/signup", "/web/reset_password"].some((path) => location.pathname.startsWith(path));
+
+if (isAuthPage) {
+    document.body.classList.add("iz-auth-page");
+}
+
 if (publicWidget && publicWidget.registry) {
     publicWidget.registry.IronZoneQuantity = publicWidget.Widget.extend({
         selector: ".js_add_cart_json",

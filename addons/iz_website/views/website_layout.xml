@@ -27,6 +27,47 @@
         </xpath>
     </template>
 
+    <template id="iz_auth_inline_styles" inherit_id="web.frontend_layout" name="Iron Zone Auth Inline Styles" priority="95">
+        <xpath expr="//head" position="inside">
+            <t t-if="request.httprequest.path in ['/web/login', '/web/signup', '/web/reset_password']">
+                <style id="iz-auth-inline-styles">
+                    .oe_login_form,
+                    .oe_signup_form,
+                    .oe_reset_password_form {
+                        background: var(--iz-surface) !important;
+                        border: 1px solid var(--iz-line) !important;
+                        border-radius: var(--iz-radius) !important;
+                        color: var(--iz-text) !important;
+                    }
+
+                    .oe_login_form .form-control,
+                    .oe_signup_form .form-control,
+                    .oe_reset_password_form .form-control {
+                        background: var(--iz-surface-2) !important;
+                        border-color: var(--iz-line) !important;
+                        color: var(--iz-text) !important;
+                    }
+
+                    .oe_login_form .btn-primary,
+                    .oe_signup_form .btn-primary,
+                    .oe_reset_password_form .btn-primary {
+                        background: var(--iz-surface-2) !important;
+                        border: 1px solid var(--iz-line) !important;
+                        color: var(--iz-text) !important;
+                        box-shadow: none !important;
+                    }
+
+                    .oe_login_form .btn-primary:hover,
+                    .oe_signup_form .btn-primary:hover,
+                    .oe_reset_password_form .btn-primary:hover {
+                        background: var(--iz-line) !important;
+                        color: #fff !important;
+                    }
+                </style>
+            </t>
+        </xpath>
+    </template>
+
 </odoo>
 
 <odoo>
