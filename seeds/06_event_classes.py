@@ -4,23 +4,142 @@ from datetime import datetime, timedelta
 
 PORTAL_PASSWORD = "admin123"
 
+COMPANY_ADDRESS = {
+    "street": "Av. Cevallos y Montalvo 245",
+    "city": "Ambato",
+    "phone": "+593 3 282 4450",
+    "email": "contacto@ironzone.ec",
+}
+
 CLASSES = [
-    {"name": "CrossFit AM", "instructor": "Carlos Mendez", "capacity": 20, "time": "06:00", "stage": "Nuevo"},
-    {"name": "Yoga Principiantes", "instructor": "Sofia Garcia", "capacity": 15, "time": "07:00", "stage": "Nuevo"},
-    {"name": "Spinning 18:00", "instructor": "Carlos Mendez", "capacity": 25, "time": "18:00", "stage": "Nuevo"},
-    {"name": "Zumba Cardio", "instructor": "Sofia Garcia", "capacity": 30, "time": "19:00", "stage": "Nuevo"},
-    {"name": "Pilates Avanzado", "instructor": "Sofia Garcia", "capacity": 12, "time": "09:00", "stage": "Nuevo"},
-    {"name": "HIIT Entrenamiento", "instructor": "Carlos Mendez", "capacity": 20, "time": "17:30", "stage": "Nuevo"},
-    {"name": "Boxeo Tecnica", "instructor": "Carlos Mendez", "capacity": 10, "time": "18:30", "stage": "Nuevo"},
-    {"name": "Yoga Avanzado", "instructor": "Sofia Garcia", "capacity": 15, "time": "08:00", "stage": "Reservado"},
-    {"name": "Natacion Adultos", "instructor": "Sofia Garcia", "capacity": 16, "time": "10:00", "stage": "Nuevo"},
-    {"name": "Entrenamiento en Grupo", "instructor": "Carlos Mendez", "capacity": 22, "time": "16:00", "stage": "Nuevo"},
-    {"name": "Tae Kwon Do Ninos", "instructor": "Carlos Mendez", "capacity": 18, "time": "15:00", "stage": "Reservado"},
-    {"name": "Danza Contemporanea", "instructor": "Sofia Garcia", "capacity": 20, "time": "11:00", "stage": "Reservado"},
-    {"name": "Musculacion Personalizada", "instructor": "Carlos Mendez", "capacity": 8, "time": "12:00", "stage": "Anunciado"},
-    {"name": "Acuagym", "instructor": "Sofia Garcia", "capacity": 25, "time": "14:00", "stage": "Anunciado"},
-    {"name": "Funcional Boot Camp", "instructor": "Carlos Mendez", "capacity": 15, "time": "06:30", "stage": "Anunciado"},
-    {"name": "Meditacion Mindfulness", "instructor": "Sofia Garcia", "capacity": 12, "time": "19:30", "stage": "Anunciado"},
+    {
+        "name": "CrossFit AM",
+        "instructor": "Carlos Mendez",
+        "capacity": 20,
+        "time": "06:00",
+        "stage": "Nuevo",
+        "description": "Entrena con intensidad. CrossFit es un programa de acondicionamiento físico de alto nivel que combina levantamiento de pesas, gimnasia y cardio.",
+    },
+    {
+        "name": "Yoga Principiantes",
+        "instructor": "Sofia Garcia",
+        "capacity": 15,
+        "time": "07:00",
+        "stage": "Nuevo",
+        "description": "Iniciación al yoga. Perfecta para quienes inician su viaje en el yoga. Aprenderás posturas básicas, respiración y meditación.",
+    },
+    {
+        "name": "Spinning 18:00",
+        "instructor": "Carlos Mendez",
+        "capacity": 25,
+        "time": "18:00",
+        "stage": "Nuevo",
+        "description": "Clases de bicicleta estática de alta energía. Quema calorías mientras disfrutas de la música y la motivación del grupo.",
+    },
+    {
+        "name": "Zumba Cardio",
+        "instructor": "Sofia Garcia",
+        "capacity": 30,
+        "time": "19:00",
+        "stage": "Nuevo",
+        "description": "Baila al ritmo de la música latina. Mejora tu coordinación, quema calorías y diviértete con nuestros instructores certificados.",
+    },
+    {
+        "name": "Pilates Avanzado",
+        "instructor": "Sofia Garcia",
+        "capacity": 12,
+        "time": "09:00",
+        "stage": "Nuevo",
+        "description": "Fortalecimiento del core y flexibilidad. Requiere experiencia previa en pilates. Trabajaremos con mayor intensidad.",
+    },
+    {
+        "name": "HIIT Entrenamiento",
+        "instructor": "Carlos Mendez",
+        "capacity": 20,
+        "time": "17:30",
+        "stage": "Nuevo",
+        "description": "Entrenamiento de intervalos de alta intensidad. Máximo rendimiento en mínimo tiempo. Para atletas motivados.",
+    },
+    {
+        "name": "Boxeo Tecnica",
+        "instructor": "Carlos Mendez",
+        "capacity": 10,
+        "time": "18:30",
+        "stage": "Nuevo",
+        "description": "Aprende técnica de boxeo desde cero. Desarrollo de defensa personal, cardio y confianza.",
+    },
+    {
+        "name": "Yoga Avanzado",
+        "instructor": "Sofia Garcia",
+        "capacity": 15,
+        "time": "08:00",
+        "stage": "Reservado",
+        "description": "Posturas avanzadas y meditación profunda. Requiere práctica previa en yoga. Nivel intermedio-avanzado.",
+    },
+    {
+        "name": "Natacion Adultos",
+        "instructor": "Sofia Garcia",
+        "capacity": 16,
+        "time": "10:00",
+        "stage": "Nuevo",
+        "description": "Clases de natación para adultos. Aprende o mejora tu técnica con nuestros instructores certificados en piscina.",
+    },
+    {
+        "name": "Entrenamiento en Grupo",
+        "instructor": "Carlos Mendez",
+        "capacity": 22,
+        "time": "16:00",
+        "stage": "Nuevo",
+        "description": "Sesiones de acondicionamiento grupal. Motivación compartida, objetivos comunes. Apto para todos los niveles.",
+    },
+    {
+        "name": "Tae Kwon Do Ninos",
+        "instructor": "Carlos Mendez",
+        "capacity": 18,
+        "time": "15:00",
+        "stage": "Reservado",
+        "description": "Artes marciales para niños. Disciplina, defensa personal y diversión. Clases adaptadas por edad.",
+    },
+    {
+        "name": "Danza Contemporanea",
+        "instructor": "Sofia Garcia",
+        "capacity": 20,
+        "time": "11:00",
+        "stage": "Reservado",
+        "description": "Expresión artística a través del movimiento. Danza moderna contemporánea. Apto para todos los niveles.",
+    },
+    {
+        "name": "Musculacion Personalizada",
+        "instructor": "Carlos Mendez",
+        "capacity": 8,
+        "time": "12:00",
+        "stage": "Anunciado",
+        "description": "Entrenamiento de musculación con plan personalizado. Máximo 8 participantes para atención individual.",
+    },
+    {
+        "name": "Acuagym",
+        "instructor": "Sofia Garcia",
+        "capacity": 25,
+        "time": "14:00",
+        "stage": "Anunciado",
+        "description": "Gym acuático de bajo impacto. Ideal para recuperación, flexibilidad y cardio sin estrés articular.",
+    },
+    {
+        "name": "Funcional Boot Camp",
+        "instructor": "Carlos Mendez",
+        "capacity": 15,
+        "time": "06:30",
+        "stage": "Anunciado",
+        "description": "Join us for this 24 hours Event. Every year we invite our community, partners and end-users to come and meet us! It's the ideal event to get together and present new features, roadmap of future versions, achievements of the software, workshops, training sessions, etc. This event is also an opportunity to showcase our partners' case studies, methodology or developments. Be there and see directly from the source the features of the new version!",
+    },
+    {
+        "name": "Meditacion Mindfulness",
+        "instructor": "Sofia Garcia",
+        "capacity": 12,
+        "time": "19:30",
+        "stage": "Anunciado",
+        "description": "Meditación y mindfulness para reducir estrés. Técnicas de respiración, relajación y bienestar mental.",
+    },
 ]
 
 STAGE_SEQUENCE = {
@@ -187,6 +306,44 @@ def run():
     ensure_event_admin_rule(uid, models)
     archive_old_demo_events(uid, models)
 
+    # Get company info
+    company_id = models.execute_kw(
+        DB,
+        uid,
+        PASSWORD,
+        "res.company",
+        "search",
+        [[]],
+        {"limit": 1},
+    )[0]
+    
+    company_data = models.execute_kw(
+        DB,
+        uid,
+        PASSWORD,
+        "res.company",
+        "read",
+        [[company_id], ["name", "phone", "email", "street", "city", "country_id"]],
+    )[0]
+
+    # Get or create location address
+    location_partner_id, _ = create_or_update(
+        uid,
+        models,
+        "res.partner",
+        [("name", "=", "Iron Zone - Sede Ambato")],
+        {
+            "name": "Iron Zone - Sede Ambato",
+            "type": "other",
+            "street": COMPANY_ADDRESS.get("street", ""),
+            "city": COMPANY_ADDRESS.get("city", ""),
+            "email": COMPANY_ADDRESS.get("email", ""),
+            "phone": COMPANY_ADDRESS.get("phone", ""),
+            "country_id": company_data.get("country_id", (False,))[0],
+        },
+        fields=["id"],
+    )
+
     instructor_user_ids = {}
     print("Mapping instructors from employees...")
     for class_info in CLASSES:
@@ -237,6 +394,7 @@ def run():
 
         values = {
             "name": class_info["name"],
+            "description": class_info.get("description", ""),
             "seats_available": class_info["capacity"],
             "seats_max": class_info["capacity"],
             "date_begin": odoo_datetime(event_datetime),
@@ -244,6 +402,10 @@ def run():
             "user_id": instructor_user_id or False,
             "stage_id": stage_ids.get(class_info.get("stage", "Nuevo")),
             "website_published": True,
+            "address_id": location_partner_id,
+            "contact_phone": COMPANY_ADDRESS.get("phone", ""),
+            "contact_email": COMPANY_ADDRESS.get("email", ""),
+            "event_type_id": False,  # Puede ser personalizado si existe
         }
 
         event_id, created = create_or_update(
