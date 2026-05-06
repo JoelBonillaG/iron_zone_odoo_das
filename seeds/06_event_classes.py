@@ -1,5 +1,8 @@
 from config import DB, PASSWORD, connect, create
 from datetime import datetime, timedelta
+import os
+import base64
+import json
 
 
 PORTAL_PASSWORD = "admin123"
@@ -19,6 +22,7 @@ CLASSES = [
         "time": "06:00",
         "stage": "Nuevo",
         "description": "Entrena con intensidad. CrossFit es un programa de acondicionamiento físico de alto nivel que combina levantamiento de pesas, gimnasia y cardio.",
+        "image": "crossfit.jpg",
     },
     {
         "name": "Yoga Principiantes",
@@ -27,6 +31,7 @@ CLASSES = [
         "time": "07:00",
         "stage": "Nuevo",
         "description": "Iniciación al yoga. Perfecta para quienes inician su viaje en el yoga. Aprenderás posturas básicas, respiración y meditación.",
+        "image": "yoga.jpg",
     },
     {
         "name": "Spinning 18:00",
@@ -35,6 +40,7 @@ CLASSES = [
         "time": "18:00",
         "stage": "Nuevo",
         "description": "Clases de bicicleta estática de alta energía. Quema calorías mientras disfrutas de la música y la motivación del grupo.",
+        "image": "spinig.jpg",
     },
     {
         "name": "Zumba Cardio",
@@ -43,6 +49,7 @@ CLASSES = [
         "time": "19:00",
         "stage": "Nuevo",
         "description": "Baila al ritmo de la música latina. Mejora tu coordinación, quema calorías y diviértete con nuestros instructores certificados.",
+        "image": "zumba.jpg",
     },
     {
         "name": "Pilates Avanzado",
@@ -51,6 +58,7 @@ CLASSES = [
         "time": "09:00",
         "stage": "Nuevo",
         "description": "Fortalecimiento del core y flexibilidad. Requiere experiencia previa en pilates. Trabajaremos con mayor intensidad.",
+        "image": "pilates.jpg",
     },
     {
         "name": "HIIT Entrenamiento",
@@ -59,6 +67,7 @@ CLASSES = [
         "time": "17:30",
         "stage": "Nuevo",
         "description": "Entrenamiento de intervalos de alta intensidad. Máximo rendimiento en mínimo tiempo. Para atletas motivados.",
+        "image": "hiit.jpg",
     },
     {
         "name": "Boxeo Tecnica",
@@ -67,6 +76,7 @@ CLASSES = [
         "time": "18:30",
         "stage": "Nuevo",
         "description": "Aprende técnica de boxeo desde cero. Desarrollo de defensa personal, cardio y confianza.",
+        "image": "boxeo.jpg",
     },
     {
         "name": "Yoga Avanzado",
@@ -75,6 +85,7 @@ CLASSES = [
         "time": "08:00",
         "stage": "Reservado",
         "description": "Posturas avanzadas y meditación profunda. Requiere práctica previa en yoga. Nivel intermedio-avanzado.",
+        "image": "yoga.jpg",
     },
     {
         "name": "Natacion Adultos",
@@ -83,6 +94,7 @@ CLASSES = [
         "time": "10:00",
         "stage": "Nuevo",
         "description": "Clases de natación para adultos. Aprende o mejora tu técnica con nuestros instructores certificados en piscina.",
+        "image": "natacion_adultos.jpg",
     },
     {
         "name": "Entrenamiento en Grupo",
@@ -91,6 +103,7 @@ CLASSES = [
         "time": "16:00",
         "stage": "Nuevo",
         "description": "Sesiones de acondicionamiento grupal. Motivación compartida, objetivos comunes. Apto para todos los niveles.",
+        "image": "funcional_boot_camp.jpg",
     },
     {
         "name": "Tae Kwon Do Ninos",
@@ -99,6 +112,7 @@ CLASSES = [
         "time": "15:00",
         "stage": "Reservado",
         "description": "Artes marciales para niños. Disciplina, defensa personal y diversión. Clases adaptadas por edad.",
+        "image": "taekwondo_ninos.jpg",
     },
     {
         "name": "Danza Contemporanea",
@@ -107,6 +121,7 @@ CLASSES = [
         "time": "11:00",
         "stage": "Reservado",
         "description": "Expresión artística a través del movimiento. Danza moderna contemporánea. Apto para todos los niveles.",
+        "image": "danza_contemporanea.jpg",
     },
     {
         "name": "Musculacion Personalizada",
@@ -115,6 +130,7 @@ CLASSES = [
         "time": "12:00",
         "stage": "Anunciado",
         "description": "Entrenamiento de musculación con plan personalizado. Máximo 8 participantes para atención individual.",
+        "image": "musculacion_personalizada.jpg",
     },
     {
         "name": "Acuagym",
@@ -123,6 +139,7 @@ CLASSES = [
         "time": "14:00",
         "stage": "Anunciado",
         "description": "Gym acuático de bajo impacto. Ideal para recuperación, flexibilidad y cardio sin estrés articular.",
+        "image": "acuagym.jpg",
     },
     {
         "name": "Funcional Boot Camp",
@@ -131,6 +148,7 @@ CLASSES = [
         "time": "06:30",
         "stage": "Anunciado",
         "description": "Join us for this 24 hours Event. Every year we invite our community, partners and end-users to come and meet us! It's the ideal event to get together and present new features, roadmap of future versions, achievements of the software, workshops, training sessions, etc. This event is also an opportunity to showcase our partners' case studies, methodology or developments. Be there and see directly from the source the features of the new version!",
+        "image": "funcional_boot_camp.jpg",
     },
     {
         "name": "Meditacion Mindfulness",
@@ -139,6 +157,7 @@ CLASSES = [
         "time": "19:30",
         "stage": "Anunciado",
         "description": "Meditación y mindfulness para reducir estrés. Técnicas de respiración, relajación y bienestar mental.",
+        "image": "meditacion.jpg",
     },
 ]
 
@@ -403,8 +422,6 @@ def run():
             "stage_id": stage_ids.get(class_info.get("stage", "Nuevo")),
             "website_published": True,
             "address_id": location_partner_id,
-            "contact_phone": COMPANY_ADDRESS.get("phone", ""),
-            "contact_email": COMPANY_ADDRESS.get("email", ""),
             "event_type_id": False,  # Puede ser personalizado si existe
         }
 
@@ -417,6 +434,37 @@ def run():
             fields=["id", "name"],
         )
         event_ids[class_info["name"]] = event_id
+
+        image_filename = class_info.get("image")
+        if image_filename:
+            image_path = os.path.join(os.path.dirname(__file__), "images", "events", image_filename)
+            if os.path.exists(image_path):
+                with open(image_path, "rb") as f:
+                    img_base64 = base64.b64encode(f.read()).decode("utf-8")
+                    
+                attachment_id, att_created = create_or_update(
+                    uid,
+                    models,
+                    "ir.attachment",
+                    [("res_model", "=", "event.event"), ("res_id", "=", event_id), ("name", "=", "event_cover")],
+                    {
+                        "name": "event_cover",
+                        "datas": img_base64,
+                        "res_model": "event.event",
+                        "res_id": event_id,
+                        "type": "binary",
+                        "public": True,
+                    },
+                    fields=["id"]
+                )
+                
+                cover_properties = {
+                    "background_color_class": "o_cc3",
+                    "background-image": f"url('/web/image/{attachment_id}')",
+                    "opacity": "0.4",
+                    "resize_class": "cover_auto"
+                }
+                models.execute_kw(DB, uid, PASSWORD, "event.event", "write", [[event_id], {"cover_properties": json.dumps(cover_properties)}])
 
         if created:
             created_count += 1
