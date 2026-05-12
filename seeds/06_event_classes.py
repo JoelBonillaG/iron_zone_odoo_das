@@ -1,26 +1,164 @@
 from config import DB, PASSWORD, connect, create
 from datetime import datetime, timedelta
+import os
+import base64
+import json
 
 
 PORTAL_PASSWORD = "admin123"
 
+COMPANY_ADDRESS = {
+    "street": "Av. Cevallos y Montalvo 245",
+    "city": "Ambato",
+    "phone": "+593 3 282 4450",
+    "email": "contacto@ironzone.ec",
+}
+
 CLASSES = [
-    {"name": "CrossFit AM", "instructor": "Carlos Mendez", "capacity": 20, "time": "06:00", "stage": "Nuevo"},
-    {"name": "Yoga Principiantes", "instructor": "Sofia Garcia", "capacity": 15, "time": "07:00", "stage": "Nuevo"},
-    {"name": "Spinning 18:00", "instructor": "Carlos Mendez", "capacity": 25, "time": "18:00", "stage": "Nuevo"},
-    {"name": "Zumba Cardio", "instructor": "Sofia Garcia", "capacity": 30, "time": "19:00", "stage": "Nuevo"},
-    {"name": "Pilates Avanzado", "instructor": "Sofia Garcia", "capacity": 12, "time": "09:00", "stage": "Nuevo"},
-    {"name": "HIIT Entrenamiento", "instructor": "Carlos Mendez", "capacity": 20, "time": "17:30", "stage": "Nuevo"},
-    {"name": "Boxeo Tecnica", "instructor": "Carlos Mendez", "capacity": 10, "time": "18:30", "stage": "Nuevo"},
-    {"name": "Yoga Avanzado", "instructor": "Sofia Garcia", "capacity": 15, "time": "08:00", "stage": "Reservado"},
-    {"name": "Natacion Adultos", "instructor": "Sofia Garcia", "capacity": 16, "time": "10:00", "stage": "Nuevo"},
-    {"name": "Entrenamiento en Grupo", "instructor": "Carlos Mendez", "capacity": 22, "time": "16:00", "stage": "Nuevo"},
-    {"name": "Tae Kwon Do Ninos", "instructor": "Carlos Mendez", "capacity": 18, "time": "15:00", "stage": "Reservado"},
-    {"name": "Danza Contemporanea", "instructor": "Sofia Garcia", "capacity": 20, "time": "11:00", "stage": "Reservado"},
-    {"name": "Musculacion Personalizada", "instructor": "Carlos Mendez", "capacity": 8, "time": "12:00", "stage": "Anunciado"},
-    {"name": "Acuagym", "instructor": "Sofia Garcia", "capacity": 25, "time": "14:00", "stage": "Anunciado"},
-    {"name": "Funcional Boot Camp", "instructor": "Carlos Mendez", "capacity": 15, "time": "06:30", "stage": "Anunciado"},
-    {"name": "Meditacion Mindfulness", "instructor": "Sofia Garcia", "capacity": 12, "time": "19:30", "stage": "Anunciado"},
+    {
+        "name": "CrossFit AM",
+        "instructor": "Carlos Mendez",
+        "capacity": 20,
+        "time": "06:00",
+        "stage": "Nuevo",
+        "description": "¡Despierta tu cuerpo y mente con CrossFit AM! Este programa de acondicionamiento físico de alta intensidad está diseñado para llevarte al límite. Combinamos movimientos funcionales constantemente variados, incluyendo levantamiento de pesas olímpico, ejercicios gimnásticos y entrenamiento cardiovascular riguroso. Cada sesión es un desafío nuevo que te ayudará a desarrollar fuerza, resistencia, agilidad y potencia. Únete a nuestra comunidad madrugadora y empieza tu día con la energía al máximo. No importa tu nivel actual, nuestros entrenadores adaptarán los ejercicios para que progreses de forma segura.",
+        "image": "crossfit.jpg",
+    },
+    {
+        "name": "Yoga Principiantes",
+        "instructor": "Sofia Garcia",
+        "capacity": 15,
+        "time": "07:00",
+        "stage": "Nuevo",
+        "description": "Descubre la paz interior y la flexibilidad en nuestra clase de Yoga para Principiantes. Ideal para quienes dan sus primeros pasos en esta disciplina milenaria. Aprenderás las asanas (posturas) fundamentales, técnicas de respiración (pranayama) y relajación profunda. Nuestro enfoque guiado te permitirá conectar cuerpo y mente en un ambiente libre de juicios y lleno de tranquilidad. Aumenta tu flexibilidad, reduce el estrés diario y mejora tu postura con la ayuda de nuestra instructora experta. Ven con ropa cómoda y déjate llevar por esta experiencia revitalizante.",
+        "image": "yoga.jpg",
+    },
+    {
+        "name": "Spinning 18:00",
+        "instructor": "Carlos Mendez",
+        "capacity": 25,
+        "time": "18:00",
+        "stage": "Nuevo",
+        "description": "Prepárate para sudar y quemar calorías al ritmo de la mejor música en nuestra sesión de Spinning. Esta clase de ciclismo indoor de alta energía te transportará a través de rutas virtuales con subidas intensas, sprints explosivos y descensos recuperadores. Mejora tu capacidad cardiovascular y tonifica tus piernas de manera divertida y desafiante. La motivación del grupo y de nuestro instructor te empujarán a dar ese esfuerzo extra. Es la manera perfecta de liberar tensiones después de un largo día de trabajo. ¡Ajusta tu bicicleta y prepárate para pedalear con fuerza!",
+        "image": "spinig.jpg",
+    },
+    {
+        "name": "Zumba Cardio",
+        "instructor": "Sofia Garcia",
+        "capacity": 30,
+        "time": "19:00",
+        "stage": "Nuevo",
+        "description": "¡La fiesta más saludable te espera en Zumba Cardio! Olvídate de que estás haciendo ejercicio mientras te mueves al ritmo vibrante de la música latina e internacional. Esta clase combina movimientos de baile con rutinas aeróbicas para crear un entrenamiento dinámico, emocionante y súper efectivo. Mejorarás tu coordinación, quemarás calorías a montones y liberarás endorfinas que te harán sentir increíble. No necesitas saber bailar, solo tener ganas de divertirte y mover todo el cuerpo. Ven a contagiarte de alegría y energía positiva con nosotros.",
+        "image": "zumba.jpg",
+    },
+    {
+        "name": "Pilates Avanzado",
+        "instructor": "Sofia Garcia",
+        "capacity": 12,
+        "time": "09:00",
+        "stage": "Nuevo",
+        "description": "Lleva tu práctica al siguiente nivel con nuestra clase de Pilates Avanzado. Diseñada para quienes ya dominan los principios básicos, esta sesión intensificará el trabajo en tu 'powerhouse' (core). Realizaremos secuencias fluidas y complejas que exigen mayor control, equilibrio y precisión en cada movimiento. Fortalecerás la musculatura profunda, mejorarás drásticamente tu flexibilidad y perfeccionarás tu alineación postural. Experimentarás un entrenamiento integral que desafiará tu mente y cuerpo, esculpiendo tu figura de manera armoniosa y elegante. ¡Exígete más y nota la diferencia!",
+        "image": "pilates.jpg",
+    },
+    {
+        "name": "HIIT Entrenamiento",
+        "instructor": "Carlos Mendez",
+        "capacity": 20,
+        "time": "17:30",
+        "stage": "Nuevo",
+        "description": "Maximiza tus resultados en tiempo récord con HIIT (High Intensity Interval Training). Esta sesión alterna ráfagas de ejercicio intenso con breves períodos de recuperación, llevando tu frecuencia cardíaca a su punto óptimo para la quema de grasa. Es un entrenamiento exigente que acelerará tu metabolismo incluso horas después de haber terminado. Mejorarás tu resistencia cardiovascular y muscular de forma espectacular. Diseñado para personas motivadas que buscan un reto real. Prepárate para dar tu 100% y descubrir de lo que realmente eres capaz.",
+        "image": "hiit.jpg",
+    },
+    {
+        "name": "Boxeo Tecnica",
+        "instructor": "Carlos Mendez",
+        "capacity": 10,
+        "time": "18:30",
+        "stage": "Nuevo",
+        "description": "Domina el arte del boxeo en nuestra clase enfocada en la técnica. Aprenderás los fundamentos esenciales: paradas, desplazamientos, jabs, crosses, ganchos y uppercuts, siempre con un enfoque en la ejecución correcta. No solo es un excelente ejercicio cardiovascular que tonifica todo el cuerpo, sino que también fomenta la disciplina, la concentración y la confianza en uno mismo. Practicaremos frente al espejo, con sacos y manoplas para afinar tus reflejos y potencia. Ideal tanto para principiantes que quieren aprender desde cero como para quienes desean perfeccionar su estilo.",
+        "image": "boxeo.jpg",
+    },
+    {
+        "name": "Yoga Avanzado",
+        "instructor": "Sofia Garcia",
+        "capacity": 15,
+        "time": "08:00",
+        "stage": "Reservado",
+        "description": "Profundiza en tu práctica espiritual y física en nuestra clase de Yoga Avanzado. Exploraremos asanas desafiantes, incluyendo inversiones, equilibrios de brazos y flexiones profundas, requiriendo fuerza, concentración y fluidez. La clase también abarca prácticas de pranayama complejas y períodos más largos de meditación profunda para lograr un estado de conciencia plena. Está dirigida a practicantes con experiencia que buscan superar sus límites y encontrar una mayor armonía interna. Acompáñanos en este viaje de autodescubrimiento y expansión personal.",
+        "image": "yoga.jpg",
+    },
+    {
+        "name": "Natacion Adultos",
+        "instructor": "Sofia Garcia",
+        "capacity": 16,
+        "time": "10:00",
+        "stage": "Nuevo",
+        "description": "Sumérgete en la salud y el bienestar con nuestras clases de Natación para Adultos. Ya sea que quieras perder el miedo al agua, aprender a nadar desde cero o perfeccionar tus estilos (crol, espalda, pecho, mariposa), tenemos un espacio para ti. La natación es el ejercicio cardiovascular más completo y de menor impacto, ideal para proteger tus articulaciones mientras fortaleces todos los grupos musculares. Recibe atención personalizada en un ambiente seguro y relajado. Disfruta de la sensación de ingravidez y los beneficios terapéuticos del agua.",
+        "image": "natacion_adultos.jpg",
+    },
+    {
+        "name": "Entrenamiento en Grupo",
+        "instructor": "Carlos Mendez",
+        "capacity": 22,
+        "time": "16:00",
+        "stage": "Nuevo",
+        "description": "Descubre el poder de la comunidad en nuestro Entrenamiento en Grupo. Estas sesiones de acondicionamiento físico general combinan fuerza, resistencia y movilidad en rutinas variadas para que nunca te aburras. La energía colectiva es el motor principal: entrenar junto a otros te motivará a superar la pereza y alcanzar tus metas. Fomentamos un ambiente de compañerismo, apoyo mutuo y competencia sana. Es perfecto para cualquier nivel, ya que los ejercicios pueden escalarse según tus capacidades. ¡Ven a hacer amigos mientras te pones en forma!",
+        "image": "funcional_boot_camp.jpg",
+    },
+    {
+        "name": "Tae Kwon Do Ninos",
+        "instructor": "Carlos Mendez",
+        "capacity": 18,
+        "time": "15:00",
+        "stage": "Reservado",
+        "description": "Inicia a tus hijos en el fascinante mundo del Tae Kwon Do. Más que un deporte de combate, es una escuela de vida que inculca valores fundamentales como el respeto, la disciplina, la perseverancia y el autocontrol. Los niños aprenderán técnicas de defensa personal, mejorarán su coordinación motriz, elasticidad y agilidad mental a través de juegos y ejercicios adaptados a su edad. Todo en un entorno seguro y divertido donde canalizarán su energía de forma positiva. Fomenta la autoconfianza y el desarrollo integral de los más pequeños.",
+        "image": "taekwondo_ninos.jpg",
+    },
+    {
+        "name": "Danza Contemporanea",
+        "instructor": "Sofia Garcia",
+        "capacity": 20,
+        "time": "11:00",
+        "stage": "Reservado",
+        "description": "Libera tus emociones y exprésate a través del movimiento en nuestras clases de Danza Contemporánea. Esta disciplina fusiona elementos del ballet clásico con técnicas modernas, priorizando la fluidez, la conexión con el suelo y la improvisación. Exploraremos el uso del peso del cuerpo, la respiración y el espacio para crear coreografías emotivas y orgánicas. No importa tu complexión física o si tienes experiencia previa, lo importante es tu disposición para explorar y sentir. Descubre una forma hermosa y artística de ejercitar tu cuerpo y alma.",
+        "image": "danza_contemporanea.jpg",
+    },
+    {
+        "name": "Musculacion Personalizada",
+        "instructor": "Carlos Mendez",
+        "capacity": 8,
+        "time": "12:00",
+        "stage": "Anunciado",
+        "description": "Alcanza tus objetivos específicos de hipertrofia o tonificación en nuestra sesión de Musculación Personalizada. Con un cupo limitado a solo 8 personas, garantizamos una atención casi individualizada por parte de nuestro entrenador. Evaluaremos tus metas, nivel actual y posibles limitaciones para diseñar un plan de entrenamiento adaptado estrictamente a ti. Aprenderás la biomecánica correcta de cada ejercicio de levantamiento, asegurando resultados óptimos y previniendo lesiones. Si buscas un cambio físico real y medible, este es el lugar para empezar.",
+        "image": "musculacion_personalizada.jpg",
+    },
+    {
+        "name": "Acuagym",
+        "instructor": "Sofia Garcia",
+        "capacity": 25,
+        "time": "14:00",
+        "stage": "Anunciado",
+        "description": "Refréscate y ejercítate sin impacto en nuestras clases de Acuagym. Aprovechando la resistencia natural que ofrece el agua, realizarás un trabajo cardiovascular y de tonificación muscular sumamente efectivo pero gentil con tus articulaciones. Es la opción perfecta para personas en procesos de rehabilitación, mujeres embarazadas, adultos mayores o cualquiera que busque una alternativa divertida al gimnasio tradicional. Mejora tu circulación, flexibilidad y capacidad aeróbica al ritmo de música animada. ¡Siente los beneficios de entrenar en el medio acuático!",
+        "image": "acuagym.jpg",
+    },
+    {
+        "name": "Funcional Boot Camp",
+        "instructor": "Carlos Mendez",
+        "capacity": 15,
+        "time": "06:30",
+        "stage": "Anunciado",
+        "description": "¡Únete a nuestro Funcional Boot Camp y transforma tu cuerpo! Inspirado en el entrenamiento militar, este programa intensivo al aire libre o en sala te llevará a superar tus límites. Combina calistenia, ejercicios con peso corporal, carreras y circuitos de agilidad. Construirás una resistencia de hierro, ganarás fuerza funcional aplicable a tu día a día y forjarás una mentalidad inquebrantable. Prepárate para sudar, ensuciarte y trabajar en equipo para superar cada obstáculo. No prometemos que será fácil, pero te garantizamos que valdrá la pena.",
+        "image": "funcional_boot_camp.jpg",
+    },
+    {
+        "name": "Meditacion Mindfulness",
+        "instructor": "Sofia Garcia",
+        "capacity": 12,
+        "time": "19:30",
+        "stage": "Anunciado",
+        "description": "Encuentra tu oasis de calma en medio del caos diario con nuestra clase de Meditación Mindfulness. Aprende a vivir el momento presente con atención plena y sin juicios. Guiados por nuestra instructora, practicaremos diferentes técnicas de respiración consciente, escaneo corporal y visualización para calmar la mente y reducir la ansiedad y el estrés. Desarrollarás herramientas prácticas para manejar las emociones, mejorar la concentración y fomentar un profundo estado de bienestar y serenidad interior. Date el regalo de una pausa regeneradora para tu salud mental.",
+        "image": "meditacion.jpg",
+    },
 ]
 
 STAGE_SEQUENCE = {
@@ -103,6 +241,28 @@ def ensure_event_admin_rule(uid, models):
         },
         fields=["id"],
     )
+
+def ensure_event_admin_rule(uid, models):
+    event_model_id = xmlid_to_res_id(uid, models, "event.model_event_event")
+    admin_group_id = xmlid_to_res_id(uid, models, "base.group_system")
+    create_or_update(
+        uid,
+        models,
+        "ir.rule",
+        [("name", "=", "Administrador ve todos los eventos"), ("model_id", "=", event_model_id)],
+        {
+            "name": "Administrador ve todos los eventos",
+            "model_id": event_model_id,
+            "groups": [(4, admin_group_id)],
+            "domain_force": "[(1, '=', 1)]",
+            "perm_read": True,
+            "perm_write": True,
+            "perm_create": True,
+            "perm_unlink": True,
+        },
+        fields=["id"],
+    )
+
 
 
 def ensure_event_stages(uid, models):
@@ -187,6 +347,44 @@ def run():
     ensure_event_admin_rule(uid, models)
     archive_old_demo_events(uid, models)
 
+    # Get company info
+    company_id = models.execute_kw(
+        DB,
+        uid,
+        PASSWORD,
+        "res.company",
+        "search",
+        [[]],
+        {"limit": 1},
+    )[0]
+    
+    company_data = models.execute_kw(
+        DB,
+        uid,
+        PASSWORD,
+        "res.company",
+        "read",
+        [[company_id], ["name", "phone", "email", "street", "city", "country_id"]],
+    )[0]
+
+    # Get or create location address
+    location_partner_id, _ = create_or_update(
+        uid,
+        models,
+        "res.partner",
+        [("name", "=", "Iron Zone - Sede Ambato")],
+        {
+            "name": "Iron Zone - Sede Ambato",
+            "type": "other",
+            "street": COMPANY_ADDRESS.get("street", ""),
+            "city": COMPANY_ADDRESS.get("city", ""),
+            "email": COMPANY_ADDRESS.get("email", ""),
+            "phone": COMPANY_ADDRESS.get("phone", ""),
+            "country_id": company_data.get("country_id", (False,))[0],
+        },
+        fields=["id"],
+    )
+
     instructor_user_ids = {}
     print("Mapping instructors from employees...")
     for class_info in CLASSES:
@@ -235,8 +433,22 @@ def run():
         event_datetime = event_date.replace(hour=hour, minute=minute)
         instructor_user_id = instructor_user_ids.get(class_info["instructor"])
 
+        img_base64 = False
+        image_filename = class_info.get("image")
+        if image_filename:
+            image_path = os.path.join(os.path.dirname(__file__), "images", "events", image_filename)
+            if os.path.exists(image_path):
+                with open(image_path, "rb") as f:
+                    img_base64 = base64.b64encode(f.read()).decode("utf-8")
+
+        # CSS para ocultar el banner pixelado solo en la página de detalles
+        desc_html = '<div style="font-size: 1.3rem; line-height: 1.8; color: #cfcfcf; padding: 15px;">'
+        desc_html += f'<p>{class_info.get("description", "")}</p></div>'
+
         values = {
             "name": class_info["name"],
+            "description": desc_html,
+            "seats_limited": True,
             "seats_available": class_info["capacity"],
             "seats_max": class_info["capacity"],
             "date_begin": odoo_datetime(event_datetime),
@@ -244,6 +456,8 @@ def run():
             "user_id": instructor_user_id or False,
             "stage_id": stage_ids.get(class_info.get("stage", "Nuevo")),
             "website_published": True,
+            "address_id": location_partner_id,
+            "event_type_id": False,
         }
 
         event_id, created = create_or_update(
@@ -255,6 +469,52 @@ def run():
             fields=["id", "name"],
         )
         event_ids[class_info["name"]] = event_id
+
+        if img_base64:
+            attachment_id, att_created = create_or_update(
+                uid,
+                models,
+                "ir.attachment",
+                [("res_model", "=", "event.event"), ("res_id", "=", event_id), ("name", "=", "event_cover")],
+                {
+                    "name": "event_cover",
+                    "datas": img_base64,
+                    "res_model": "event.event",
+                    "res_id": event_id,
+                    "type": "binary",
+                    "public": True,
+                },
+                fields=["id"]
+            )
+            cover_properties = {
+                "background_color_class": "o_cc3",
+                "background-image": f"url('/web/image/{attachment_id}')",
+                "opacity": "0.4",
+                "resize_class": "cover_auto"
+            }
+        else:
+            cover_properties = {
+                "background_color_class": "o_cc3",
+                "background-image": "none",
+                "opacity": "1.0",
+                "resize_class": "cover_auto"
+            }
+        models.execute_kw(DB, uid, PASSWORD, "event.event", "write", [[event_id], {"cover_properties": json.dumps(cover_properties)}])
+
+        ticket_values = {
+            "name": "Entrada General",
+            "event_id": event_id,
+            "seats_max": class_info["capacity"],
+            "price": 0.0,
+        }
+        create_or_update(
+            uid,
+            models,
+            "event.event.ticket",
+            [("event_id", "=", event_id), ("name", "=", "Entrada General")],
+            ticket_values,
+            fields=["id"]
+        )
 
         if created:
             created_count += 1
