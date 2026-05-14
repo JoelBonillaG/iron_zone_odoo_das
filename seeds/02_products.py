@@ -28,6 +28,95 @@ def get_model_fields(uid, models, model):
     return models.execute_kw(DB, uid, PASSWORD, model, "fields_get", [], {"attributes": ["type"]})
 
 
+def xmlid_to_res_id(uid, models, xmlid):
+    if "." not in xmlid:
+        return False
+    module, name = xmlid.split(".", 1)
+    record = search_one(
+        uid,
+        models,
+        "ir.model.data",
+        [("module", "=", module), ("name", "=", name)],
+        fields=["res_id"],
+    )
+    return record["res_id"] if record else False
+
+
+def find_tax(uid, models, type_tax_use, amount, name_fragments):
+    taxes = search_read(
+        uid,
+        models,
+        "account.tax",
+        [("type_tax_use", "=", type_tax_use), ("amount", "=", amount), ("active", "=", True)],
+        ["id", "name"],
+    )
+    for fragment in name_fragments:
+        fragment = fragment.lower()
+        for tax in taxes:
+            if fragment in str(tax["name"]).lower():
+                return tax["id"]
+    return taxes[0]["id"] if taxes else False
+
+
+def ensure_vendor(uid, models):
+    country_ec = xmlid_to_res_id(uid, models, "base.ec")
+    id_type_ruc = xmlid_to_res_id(uid, models, "l10n_ec.ec_ruc")
+    contributor_type = xmlid_to_res_id(uid, models, "l10n_ec_base.contrib_sociedad")
+
+    values = {
+        "name": "Proveedor Iron Zone",
+        "company_type": "company",
+        "is_company": True,
+        "supplier_rank": 1,
+        "street": "Av. Los Shyris N37-25",
+        "city": "Quito",
+        "phone": "022345678",
+        "email": "proveedor@ironzone.example",
+        "vat": "1790016919001",
+        "l10n_ec_taxpayer_type": "general",
+    }
+    if country_ec:
+        values["country_id"] = country_ec
+    if id_type_ruc:
+        values["l10n_latam_identification_type_id"] = id_type_ruc
+    if contributor_type:
+        values["l10n_ec_contributor_type_id"] = contributor_type
+
+    vendor_id, _ = create_or_update(
+        uid,
+        models,
+        "res.partner",
+        [("name", "=", values["name"])],
+        values,
+        fields=["id"],
+    )
+    return vendor_id
+
+
+def sync_supplierinfo(uid, models, product_tmpl_id, vendor_id, price, currency_id=False):
+    if not vendor_id or price <= 0:
+        return
+
+    values = {
+        "partner_id": vendor_id,
+        "product_tmpl_id": product_tmpl_id,
+        "min_qty": 1.0,
+        "price": price,
+        "delay": 2,
+    }
+    if currency_id:
+        values["currency_id"] = currency_id
+
+    create_or_update(
+        uid,
+        models,
+        "product.supplierinfo",
+        [("partner_id", "=", vendor_id), ("product_tmpl_id", "=", product_tmpl_id), ("min_qty", "=", 1.0)],
+        values,
+        fields=["id"],
+    )
+
+
 def unpublish_duplicate_templates(uid, models, product_names, product_fields):
     publish_field = "website_published" if "website_published" in product_fields else "is_published"
 
@@ -64,6 +153,14 @@ def unpublish_duplicate_templates(uid, models, product_names, product_fields):
 def run():
     uid, models = connect()
     product_fields = get_model_fields(uid, models, "product.template")
+    vendor_id = ensure_vendor(uid, models)
+    usd = search_one(uid, models, "res.currency", [("name", "=", "USD")], fields=["id"])
+    currency_id = usd["id"] if usd else False
+
+    sale_goods_tax = find_tax(uid, models, "sale", 15, ["VAT 15% G", "411, B"])
+    sale_services_tax = find_tax(uid, models, "sale", 15, ["VAT 15% S", "411, S"])
+    purchase_inventory_tax = find_tax(uid, models, "purchase", 15, ["510 06 I", "Inv Créd", "Inv. Cred"])
+    purchase_default_tax = find_tax(uid, models, "purchase", 15, ["510 01", "Créd"])
     
     # Path for images
     IMAGE_PATH = os.path.join(os.path.dirname(__file__), "images", "products")
@@ -328,13 +425,27 @@ def run():
 
     created_count = 0
     updated_count = 0
-    for p in PRODUCTS:
+    product_names = [product["name"] for product in PRODUCTS]
+    for product in PRODUCTS:
+        p = dict(product)
         stock_to_add = p.pop("_stock", None)
-        img_file     = p.pop("_img", None)
+        img_file = p.pop("_img", None)
         
         p["sale_ok"]     = True
         p["purchase_ok"] = True
         p["is_published"] = True
+        if "invoice_policy" in product_fields:
+            p["invoice_policy"] = "order"
+        if "purchase_method" in product_fields:
+            p["purchase_method"] = "receive" if p.get("is_storable") else "purchase"
+        if "taxes_id" in product_fields:
+            sale_tax = sale_services_tax if p.get("type") == "service" else sale_goods_tax
+            if sale_tax:
+                p["taxes_id"] = [(6, 0, [sale_tax])]
+        if "supplier_taxes_id" in product_fields:
+            purchase_tax = purchase_inventory_tax if p.get("is_storable") else purchase_default_tax
+            if purchase_tax:
+                p["supplier_taxes_id"] = [(6, 0, [purchase_tax])]
         if "website_published" in product_fields:
             p["website_published"] = True
         p.update(PRODUCT_CONTENT.get(p["name"], {}))
@@ -360,6 +471,7 @@ def run():
             p,
             fields=["id", "name"],
         )
+        sync_supplierinfo(uid, models, template_id, vendor_id, p.get("standard_price", 0.0), currency_id)
 
         if stock_to_add and stock_location_id and p.get("is_storable"):
             products = search_read(uid, models, "product.product", [("product_tmpl_id", "=", template_id)], ["id"])
@@ -397,7 +509,7 @@ def run():
         action = "Created" if created else "Updated"
         print(f"  {action} product/service: {p['name']} (Type: {p['type']}, Cost: {p['standard_price']})")
 
-    unpublish_duplicate_templates(uid, models, [p["name"] for p in PRODUCTS], product_fields)
+    unpublish_duplicate_templates(uid, models, product_names, product_fields)
     print(f"Done: {created_count} created, {updated_count} updated.")
 
 if __name__ == "__main__":
