@@ -132,13 +132,14 @@ class AccountRetention(models.Model):
                         % (record.date, inv_date)
                     )
 
-    @api.model
-    def create(self, vals):
-        if vals.get("name", "Draft") == "Draft":
-            vals["name"] = (
-                self.env["ir.sequence"].next_by_code("account.retention") or "Draft"
-            )
-        return super(AccountRetention, self).create(vals)
+    @api.model_create_multi
+    def create(self, vals_list):
+        for vals in vals_list:
+            if vals.get("name", "Draft") == "Draft":
+                vals["name"] = (
+                    self.env["ir.sequence"].next_by_code("account.retention") or "Draft"
+                )
+        return super().create(vals_list)
 
     def action_post(self):
         self.write({"state": "posted"})
