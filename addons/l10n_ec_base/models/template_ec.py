@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from odoo import models
+from odoo import Command, models
 from odoo.addons.account.models.chart_template import template
 
 
@@ -36,7 +36,7 @@ class AccountChartTemplate(models.AbstractModel):
 
     @template("ec", "account.account")
     def _get_ec_account_account(self):
-        return {
+        accounts = {
             "1010101": {
                 "name": "Caja General",
                 "account_type": "asset_cash",
@@ -79,7 +79,7 @@ class AccountChartTemplate(models.AbstractModel):
             },
             "1020201": {
                 "name": "Provisión Cuentas Incobrables",
-                "account_type": "asset_receivable",
+                "account_type": "asset_current",
                 "reconcile": False,
             },
             "1030101": {
@@ -309,22 +309,22 @@ class AccountChartTemplate(models.AbstractModel):
             },
             "3010301": {
                 "name": "Utilidad de Ejercicios Anteriores",
-                "account_type": "equity_unaffected",
+                "account_type": "equity",
                 "reconcile": False,
             },
             "3010302": {
                 "name": "Pérdida de Ejercicios Anteriores",
-                "account_type": "equity_unaffected",
+                "account_type": "equity",
                 "reconcile": False,
             },
             "3010401": {
                 "name": "Utilidad del Ejercicio",
-                "account_type": "equity_unaffected",
+                "account_type": "equity",
                 "reconcile": False,
             },
             "3010402": {
                 "name": "Pérdida del Ejercicio",
-                "account_type": "equity_unaffected",
+                "account_type": "equity",
                 "reconcile": False,
             },
             "4010101": {
@@ -553,10 +553,17 @@ class AccountChartTemplate(models.AbstractModel):
                 "reconcile": False,
             },
         }
+        return {
+            f"account_{code}": {
+                "code": code,
+                **values,
+            }
+            for code, values in accounts.items()
+        }
 
     @template("ec", "account.tax")
     def _get_ec_account_tax(self):
-        return {
+        taxes = {
             "tax_iva_15_sale": {
                 "name": "IVA 15% (Ventas)",
                 "amount": 15.0,
@@ -791,6 +798,31 @@ class AccountChartTemplate(models.AbstractModel):
                 "refund_repartition_line_ids": [("2010402", 0.0), ("2010402", 100.0)],
             },
         }
+
+        def repartition_lines(account_code=None):
+            tax_line = {
+                "repartition_type": "tax",
+                "factor_percent": 100,
+            }
+            if account_code:
+                tax_line["account_id"] = f"account_{account_code}"
+            return [
+                Command.create({
+                    "repartition_type": "base",
+                    "factor_percent": 100,
+                }),
+                Command.create(tax_line),
+            ]
+
+        for values in taxes.values():
+            for field_name in ("invoice_repartition_line_ids", "refund_repartition_line_ids"):
+                lines = values.get(field_name)
+                if lines and isinstance(lines[0], tuple):
+                    values[field_name] = repartition_lines(lines[1][0])
+                elif not lines:
+                    values[field_name] = repartition_lines()
+
+        return taxes
 
     @template("ec", "account.tax.group")
     def _get_ec_account_tax_group(self):
