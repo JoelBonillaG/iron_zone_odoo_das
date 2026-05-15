@@ -306,31 +306,57 @@ class AccountMove(models.Model):
                 "account.email_template_edi_invoice", raise_if_not_found=False
             )
             try:
-                if template:
-                    template.with_context(lang=move.partner_id.lang).send_mail(
-                        move.id,
-                        email_values={
-                            "attachment_ids": [(6, 0, attachments.ids)],
-                        },
-                        force_send=True,
-                    )
-                else:
-                    self.env["mail.mail"].sudo().create(
-                        {
-                            "subject": _("Electronic Invoice %s") % move.name,
-                            "body_html": _(
-                                "<p>Attached are your electronic invoice PDF and XML.</p>"
-                            ),
-                            "email_to": move.partner_id.email,
-                            "attachment_ids": [(6, 0, attachments.ids)],
-                        }
-                    ).send()
+                move._l10n_ec_post_and_send_authorized_documents(
+                    attachments, template
+                )
             except Exception:
                 move.l10n_ec_authorized_email_sent = False
                 move.l10n_ec_authorized_email_sent_date = False
                 raise
 
             move.is_move_sent = True
+
+    def _l10n_ec_get_authorized_documents_message_values(self, template=False):
+        self.ensure_one()
+
+        subject = _("Electronic Invoice %s") % self.name
+        body = _("<p>Attached are your electronic invoice PDF and XML.</p>")
+        if template:
+            values = template.with_context(lang=self.partner_id.lang)._generate_template(
+                [self.id], ["subject", "body_html"]
+            ).get(self.id, {})
+            subject = values.get("subject") or subject
+            body = values.get("body_html") or body
+
+        return subject, body
+
+    def _l10n_ec_post_and_send_authorized_documents(self, attachments, template=False):
+        self.ensure_one()
+        subject, body = self._l10n_ec_get_authorized_documents_message_values(template)
+
+        existing_message = self.message_ids.filtered(
+            lambda message: message.subject == subject
+        )
+        if existing_message:
+            return
+
+        self.with_context(
+            mail_create_nosubscribe=True,
+            mail_notify_force_send=True,
+            email_notification_allow_footer=True,
+        ).message_post(
+            body=body,
+            subject=subject,
+            message_type="comment",
+            subtype_xmlid="mail.mt_comment",
+            partner_ids=[self.partner_id.id],
+            email_layout_xmlid="mail.mail_notification_layout_with_responsible_signature",
+            mail_auto_delete=True,
+            attachments=[
+                (attachment.name, attachment.raw)
+                for attachment in attachments.sudo()
+            ],
+        )
 
     def _l10n_ec_prepare_authorized_attachments(self):
         self.ensure_one()

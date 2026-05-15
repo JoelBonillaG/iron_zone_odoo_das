@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <template id="report_invoice_document_l10n_ec_ride" inherit_id="account.report_invoice_document">
-        <xpath expr="//t[@t-set='forced_vat']/following-sibling::div[contains(@class, 'row')][1]" position="attributes">
+        <xpath expr="//t[@t-set='forced_vat']/following-sibling::div[hasclass('row')][1]" position="attributes">
             <attribute name="t-if">not (o.company_id.country_id.code == 'EC' and o.move_type in ('out_invoice', 'out_refund') and o.l10n_ec_sri_access_key)</attribute>
         </xpath>
         <xpath expr="//t[@t-set='layout_document_title']" position="replace">
@@ -33,7 +33,7 @@
         <xpath expr="//div[@name='reference']" position="attributes">
             <attribute name="t-if">o.ref and not (o.company_id.country_id.code == 'EC' and o.move_type in ('out_invoice', 'out_refund') and o.l10n_ec_sri_access_key)</attribute>
         </xpath>
-        <xpath expr="//div[@class='oe_structure']" position="after">
+        <xpath expr="//div[hasclass('oe_structure')]" position="after">
             <div t-if="o.company_id.country_id.code == 'EC' and o.move_type in ('out_invoice', 'out_refund') and o.l10n_ec_sri_access_key"
                  style="clear: both; padding-top: 28px; margin-bottom: 18px; font-size: 11px; color: #111;">
                 <style>

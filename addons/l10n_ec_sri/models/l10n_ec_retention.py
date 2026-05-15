@@ -58,14 +58,15 @@ class L10nEcRetention(models.Model):
         default=lambda self: self.env.company,
     )
 
-    @api.model
-    def create(self, vals):
-        if vals.get("name", _("New")) == _("New"):
-            # Use Native Odoo Sequence Engine
-            vals["name"] = self.env["ir.sequence"].next_by_code(
-                "l10n_ec.retention"
-            ) or _("New")
-        return super(L10nEcRetention, self).create(vals)
+    @api.model_create_multi
+    def create(self, vals_list):
+        for vals in vals_list:
+            if vals.get("name", _("New")) == _("New"):
+                # Use Native Odoo Sequence Engine
+                vals["name"] = self.env["ir.sequence"].next_by_code(
+                    "l10n_ec.retention"
+                ) or _("New")
+        return super().create(vals_list)
 
     def action_post(self):
         self.l10n_ec_sri_status = "draft"  # Ready to send
