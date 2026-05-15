@@ -10,7 +10,7 @@
                  <button name="action_generate_demo_xml" string="Generate Demo XML" type="object" class="oe_highlight"
                          invisible="state != 'posted' or l10n_ec_sri_environment != 'demo'"/>
                  <button name="action_send_sri" string="Send to SRI" type="object" class="oe_highlight"
-                         invisible="state != 'posted' or l10n_ec_sri_environment == 'demo' or l10n_ec_sri_status in ('sent', 'authorized')"/>
+                         invisible="state != 'posted' or l10n_ec_sri_environment == 'demo' or l10n_ec_sri_status in ('signed', 'sent', 'authorized')"/>
                  <button name="action_check_sri" string="Check SRI Status" type="object"
                          invisible="l10n_ec_sri_status != 'sent'"/>
             </xpath>
@@ -24,9 +24,13 @@
                             <field name="l10n_ec_sri_status" widget="Badge"
                                    decoration-success="l10n_ec_sri_status == 'authorized'"
                                    decoration-danger="l10n_ec_sri_status == 'rejected'"
-                                   decoration-info="l10n_ec_sri_status in ('sent', 'signed')"/>
+                                   decoration-warning="l10n_ec_sri_status == 'signed'"
+                                   decoration-info="l10n_ec_sri_status == 'sent'"/>
                             <field name="l10n_ec_sri_access_key"/>
                             <field name="l10n_ec_authorization_date"/>
+                            <field name="l10n_ec_authorized_email_sent"/>
+                            <field name="l10n_ec_authorized_email_sent_date"
+                                   invisible="not l10n_ec_authorized_email_sent"/>
                             <field name="l10n_ec_xml_data" filename="name"/>
                         </group>
                         <group>

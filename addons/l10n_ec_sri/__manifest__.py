@@ -40,10 +40,12 @@ Complete SRI (Servicio de Rentas Internas) integration:
     "data": [
         "security/ir.model.access.csv",
         "data/ir_sequence_data.xml",
+        "data/ir_cron_data.xml",
         "views/account_move_views.xml",
         "views/account_move_purchase_views.xml",
         "views/l10n_ec_retention_views.xml",
         "views/l10n_ec_retention_xml_template.xml",
+        "report/account_move_ride_templates.xml",
     ],
     "assets": {
         "web.assets_backend": [
