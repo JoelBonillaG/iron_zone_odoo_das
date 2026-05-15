@@ -2,6 +2,7 @@ from config import DB, PASSWORD, connect, create
 
 
 PORTAL_PASSWORD = "admin123"
+DEFAULT_CUSTOMER_LANG = "es_EC"
 
 CUSTOMERS = [
     {
@@ -95,6 +96,7 @@ def ensure_portal_user(uid, models, partner_id, customer):
         "name": customer["name"],
         "login": customer["email"],
         "email": customer["email"],
+        "lang": customer.get("lang", DEFAULT_CUSTOMER_LANG),
         "partner_id": partner_id,
         "groups_id": [(6, 0, [portal_group_id])],
         "active": True,
@@ -181,6 +183,7 @@ def run():
             "l10n_ec_identifier_type": customer["l10n_ec_identifier_type"],
             "l10n_ec_taxpayer_type": customer["l10n_ec_taxpayer_type"],
             "l10n_ec_related_party": customer["l10n_ec_related_party"],
+            "lang": customer.get("lang", DEFAULT_CUSTOMER_LANG),
             "customer_rank": 1,
             "active": True,
         }

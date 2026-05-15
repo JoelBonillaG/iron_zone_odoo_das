@@ -117,6 +117,52 @@ def sync_supplierinfo(uid, models, product_tmpl_id, vendor_id, price, currency_i
     )
 
 
+def configure_delivery_products(uid, models, sale_services_tax, product_fields):
+    if not sale_services_tax:
+        return
+
+    delivery_templates = models.execute_kw(
+        DB,
+        uid,
+        PASSWORD,
+        "product.template",
+        "search_read",
+        [[
+            "|",
+            "|",
+            ("default_code", "ilike", "Delivery"),
+            ("name", "ilike", "delivery"),
+            ("name", "ilike", "envío"),
+        ]],
+        {"fields": ["id", "name", "default_code"], "limit": 50},
+    )
+    values = {
+        "name": "Envío estándar",
+        "default_code": "SHIP-STD",
+        "type": "service",
+        "sale_ok": False,
+        "purchase_ok": False,
+        "description_sale": "Servicio de envío estándar.",
+        "taxes_id": [(6, 0, [sale_services_tax])],
+    }
+    if "invoice_policy" in product_fields:
+        values["invoice_policy"] = "order"
+
+    for template in delivery_templates:
+        models.execute_kw(
+            DB,
+            uid,
+            PASSWORD,
+            "product.template",
+            "write",
+            [[template["id"]], values],
+        )
+        print(
+            "  Configured delivery product: "
+            f"{template.get('default_code') or ''} {template['name']} -> SHIP-STD Envío estándar"
+        )
+
+
 def unpublish_duplicate_templates(uid, models, product_names, product_fields):
     publish_field = "website_published" if "website_published" in product_fields else "is_published"
 
@@ -161,6 +207,7 @@ def run():
     sale_services_tax = find_tax(uid, models, "sale", 15, ["VAT 15% S", "411, S"])
     purchase_inventory_tax = find_tax(uid, models, "purchase", 15, ["510 06 I", "Inv Créd", "Inv. Cred"])
     purchase_default_tax = find_tax(uid, models, "purchase", 15, ["510 01", "Créd"])
+    configure_delivery_products(uid, models, sale_services_tax, product_fields)
     
     # Path for images
     IMAGE_PATH = os.path.join(os.path.dirname(__file__), "images", "products")
