@@ -5,7 +5,7 @@ import base64
 import json
 
 
-PORTAL_PASSWORD = "admin123"
+DEFAULT_PASSWORD = "admin123"
 
 COMPANY_ADDRESS = {
     "street": "Av. Cevallos y Montalvo 245",
@@ -195,7 +195,7 @@ def create_or_update(uid, models, model, domain, values, fields=None):
     return create(uid, models, model, values), True
 
 
-def xmlid_to_res_id(uid, models, xmlid):
+def xmlid_to_res_id(uid, models, xmlid, required=True):
     module, name = xmlid.split(".", 1)
     record = search_one(
         uid,
@@ -205,19 +205,47 @@ def xmlid_to_res_id(uid, models, xmlid):
         fields=["res_id"],
     )
     if not record:
+        if not required:
+            print(f"  Warning: external ID not found, skipped: {xmlid}")
+            return None
         raise RuntimeError(f"External ID not found: {xmlid}")
     return record["res_id"]
 
 
-def ensure_instructor_portal_user(uid, models, user_id):
-    instructor_group_id = xmlid_to_res_id(uid, models, "training_plans.group_training_instructor_portal")
+def ensure_user_groups(uid, models, user_id, group_xmlids):
+    group_ids = []
+    for xmlid in group_xmlids:
+        group_id = xmlid_to_res_id(uid, models, xmlid, required=False)
+        if group_id:
+            group_ids.append(group_id)
+    if not group_ids:
+        return
+    commands = []
+    if "base.group_user" in group_xmlids:
+        portal_group_id = xmlid_to_res_id(uid, models, "base.group_portal", required=False)
+        if portal_group_id:
+            commands.append((3, portal_group_id))
+    commands.extend((4, group_id) for group_id in group_ids)
     models.execute_kw(
         DB,
         uid,
         PASSWORD,
         "res.users",
         "write",
-        [[user_id], {"groups_id": [(6, 0, [instructor_group_id])], "password": PORTAL_PASSWORD}],
+        [[user_id], {"groups_id": commands}],
+    )
+
+
+def ensure_instructor_user(uid, models, user_id):
+    ensure_user_groups(
+        uid,
+        models,
+        user_id,
+        [
+            "base.group_user",
+            "event.group_event_registration_desk",
+            "iz_backend_theme.group_ironzone_trainers",
+        ],
     )
 
 
@@ -295,23 +323,13 @@ def ensure_event_stages(uid, models):
 
 
 def archive_old_demo_events(uid, models):
-    old_event_ids = models.execute_kw(
-        DB,
-        uid,
-        PASSWORD,
-        "event.event",
-        "search",
-        [[("name", "not in", CLASS_NAMES), ("active", "=", True)]],
-    )
-    if old_event_ids:
-        models.execute_kw(DB, uid, PASSWORD, "event.event", "write", [old_event_ids, {"active": False}])
-        print(f"Archived {len(old_event_ids)} old demo event(s).")
+    print("Skipping archive of unrelated events; existing manual events are preserved.")
 
 
 def ensure_user_for_employee(uid, models, employee):
     if employee.get("user_id"):
         user_id = employee["user_id"][0]
-        ensure_instructor_portal_user(uid, models, user_id)
+        ensure_instructor_user(uid, models, user_id)
         return user_id
 
     login = employee.get("work_email") or f"{employee['name'].lower().replace(' ', '.')}@ironzone.com"
@@ -333,11 +351,12 @@ def ensure_user_for_employee(uid, models, employee):
             "login": login,
             "email": login,
             "partner_id": partner_id,
+            "password": DEFAULT_PASSWORD,
             "active": True,
         },
         fields=["id", "name"],
     )
-    ensure_instructor_portal_user(uid, models, user_id)
+    ensure_instructor_user(uid, models, user_id)
     models.execute_kw(DB, uid, PASSWORD, "hr.employee", "write", [[employee["id"]], {"user_id": user_id}])
     return user_id
 

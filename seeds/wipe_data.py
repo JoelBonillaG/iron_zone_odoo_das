@@ -38,20 +38,40 @@ def run():
 
     # 4. Archive Employees
     employee_names = [
-        "Daniela Morales", "Mateo Rivas", "Camila Torres", "Jorge Paredes",
-        "Carlos Mendez", "Sofia Garcia", "Andrea Lopez", "Roberto Fernandez",
-        "Patricia Sanchez", "Miguel Rodriguez"
+        "Carlos Mendez", "Sofia Garcia", "Ana Torres", "Luis Herrera",
+        "Mateo Ruiz", "Valentina Paredes", "Gabriela Salazar", "Diego Molina",
+        "Elena Castro", "Roberto Lima", "Paula Naranjo", "Andres Vega",
+        "Camila Ortiz", "Nicolas Benitez", "Isabel Romero", "Ricardo Ponce"
     ]
     employees = models.execute_kw(DB, uid, PASSWORD, 'hr.employee', 'search', [[('name', 'in', employee_names)]])
     for e in employees:
         try: models.execute_kw(DB, uid, PASSWORD, 'hr.employee', 'write', [[e], {'active': False}])
         except: pass
 
+    employee_logins = [
+        "carlos.mendez@ironzone.ec", "sofia.garcia@ironzone.ec",
+        "ana.torres@ironzone.ec", "luis.herrera@ironzone.ec",
+        "mateo.ruiz@ironzone.ec", "valentina.paredes@ironzone.ec",
+        "gabriela.salazar@ironzone.ec", "diego.molina@ironzone.ec",
+        "elena.castro@ironzone.ec", "roberto.lima@ironzone.ec",
+        "paula.naranjo@ironzone.ec", "andres.vega@ironzone.ec",
+        "camila.ortiz@ironzone.ec", "nicolas.benitez@ironzone.ec",
+        "isabel.romero@ironzone.ec", "ricardo.ponce@ironzone.ec"
+    ]
+    users = models.execute_kw(DB, uid, PASSWORD, 'res.users', 'search', [[('login', 'in', employee_logins)]])
+    for user in users:
+        try: models.execute_kw(DB, uid, PASSWORD, 'res.users', 'write', [[user], {'active': False}])
+        except: pass
+
     # 5. Archive Job Positions
     job_names = [
-        "Administrador del Gimnasio", "Entrenador Personal", "Recepcionista", "Tecnico de Mantenimiento",
-        "Instructor de CrossFit", "Instructor de Yoga", "Instructor de Spinning",
-        "Nutricionista", "Especialista en Marketing", "Especialista en Finanzas"
+        "Instructor de CrossFit", "Instructor de Yoga", "Recepcionista de Membresias",
+        "Administrador de Membresias", "Asesor Comercial", "Ejecutivo de Ventas",
+        "Analista de Facturacion", "Contador", "Analista de Recursos Humanos",
+        "Coordinador de Recursos Humanos", "Coordinador de Operaciones",
+        "Tecnico de Mantenimiento", "Especialista en Email Marketing",
+        "Coordinador de Campanas", "Editor de Sitio web y eCommerce",
+        "Coordinador de Eventos"
     ]
     jobs = models.execute_kw(DB, uid, PASSWORD, 'hr.job', 'search', [[('name', 'in', job_names)]])
     for j in jobs:
@@ -60,8 +80,9 @@ def run():
     
     # 6. Archive Departments
     dept_names = [
-        "Administracion", "Entrenamiento", "Atencion al Cliente", "Operaciones",
-        "Nutricion", "Marketing", "Finanzas", "Recursos Humanos", "Mantenimiento", "Seguridad"
+        "Administracion", "Entrenamiento", "Atencion al Cliente", "Ventas",
+        "Finanzas", "Recursos Humanos", "Operaciones", "Mantenimiento",
+        "Marketing", "Seguridad"
     ]
     departments = models.execute_kw(DB, uid, PASSWORD, 'hr.department', 'search', [[('name', 'in', dept_names)]])
     for d in departments:
