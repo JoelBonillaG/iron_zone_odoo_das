@@ -28,6 +28,7 @@ DEFAULT_MODULES=(
   purchase
   event
   website_event
+  calendar
 
   # Iron Zone custom modules
   iz_website
