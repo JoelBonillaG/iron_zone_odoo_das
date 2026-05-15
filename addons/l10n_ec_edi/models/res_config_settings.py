@@ -41,3 +41,11 @@ class ResConfigSettings(models.TransientModel):
         related="company_id.l10n_ec_sri_authorization_url",
         readonly=False,
     )
+    l10n_ec_sri_pending_cron_interval_minutes = fields.Integer(
+        related="company_id.l10n_ec_sri_pending_cron_interval_minutes",
+        readonly=False,
+    )
+    l10n_ec_sri_first_check_delay_seconds = fields.Integer(
+        related="company_id.l10n_ec_sri_first_check_delay_seconds",
+        readonly=False,
+    )

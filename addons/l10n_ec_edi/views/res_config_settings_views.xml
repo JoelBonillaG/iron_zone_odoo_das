@@ -40,6 +40,26 @@
                             </div>
                         </div>
                     </setting>
+                    <setting string="Procesamiento automático" help="Controla el primer intento de autorización y la cola de facturas recibidas por el SRI.">
+                        <div class="content-group">
+                            <div class="row mt8">
+                                <label for="l10n_ec_sri_first_check_delay_seconds" class="col-lg-4 o_light_label"/>
+                                <field name="l10n_ec_sri_first_check_delay_seconds"/>
+                                <span class="ms-2">segundos</span>
+                            </div>
+                            <div class="text-muted">
+                                Espera después de que el SRI devuelve RECIBIDA antes de consultar autorización por primera vez.
+                            </div>
+                            <div class="row mt8">
+                                <label for="l10n_ec_sri_pending_cron_interval_minutes" class="col-lg-4 o_light_label"/>
+                                <field name="l10n_ec_sri_pending_cron_interval_minutes"/>
+                                <span class="ms-2">minutos</span>
+                            </div>
+                            <div class="text-muted">
+                                Frecuencia del cron que reprocesa facturas pendientes en estado RECIBIDA.
+                            </div>
+                        </div>
+                    </setting>
                     <setting string="Datos fiscales" help="Datos usados en el XML electrónico ecuatoriano.">
                         <div class="content-group">
                             <div class="row mt8">

@@ -45,6 +45,16 @@ class ResCompany(models.Model):
     l10n_ec_special_resolution = fields.Char("Special Contributor Resolution")
     l10n_ec_forced_accounting = fields.Boolean("Forced to keep Accounting")
     l10n_ec_commercial_name = fields.Char("Commercial Name")
+    l10n_ec_sri_pending_cron_interval_minutes = fields.Integer(
+        string="Pending Invoice Check Interval",
+        default=30,
+        help="Minutes between automatic checks for invoices already received by SRI.",
+    )
+    l10n_ec_sri_first_check_delay_seconds = fields.Integer(
+        string="First Authorization Check Delay",
+        default=5,
+        help="Seconds to wait after SRI reception before the first authorization check.",
+    )
 
     # URLs
     l10n_ec_sri_reception_url = fields.Char(
@@ -64,4 +74,13 @@ class ResCompany(models.Model):
         if "l10n_ec_sri_environment" in vals:
             vals = dict(vals)
             vals.update(self._l10n_ec_sri_urls_for_environment(vals["l10n_ec_sri_environment"]))
-        return super().write(vals)
+        result = super().write(vals)
+        if "l10n_ec_sri_pending_cron_interval_minutes" in vals:
+            cron = self.env.ref(
+                "l10n_ec_sri.ir_cron_l10n_ec_sri_process_pending",
+                raise_if_not_found=False,
+            )
+            if cron:
+                interval = max(vals["l10n_ec_sri_pending_cron_interval_minutes"], 1)
+                cron.sudo().write({"interval_number": interval, "interval_type": "minutes"})
+        return result

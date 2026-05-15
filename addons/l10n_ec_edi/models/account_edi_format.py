@@ -11,6 +11,77 @@ _logger = logging.getLogger(__name__)
 class AccountEdiFormat(models.Model):
     _inherit = "account.edi.format"
 
+    def _get_l10n_ec_fallback_payment_code(self, invoice):
+        journal_type = invoice.journal_id.type
+        if journal_type == "cash":
+            return "01"
+        return "20"
+
+    def _get_l10n_ec_payment_code_from_method(self, payment_method):
+        if (
+            payment_method
+            and "l10n_ec_sri_payment_id" in payment_method._fields
+            and payment_method.l10n_ec_sri_payment_id
+        ):
+            return payment_method.l10n_ec_sri_payment_id.code
+        return False
+
+    def _get_l10n_ec_payment_code_from_payment(self, payment):
+        if payment.payment_transaction_id:
+            code = self._get_l10n_ec_payment_code_from_method(
+                payment.payment_transaction_id.payment_method_id
+            )
+            if code:
+                return code
+        if payment.journal_id.type == "cash":
+            return "01"
+        if payment.journal_id.type == "bank":
+            return "20"
+        return False
+
+    def _get_l10n_ec_payment_lines(self, invoice):
+        """
+        Return SRI payment lines for <pagos>.
+
+        Priority:
+        1. Explicit Ecuador SRI payment method on the invoice.
+        2. eCommerce/payment transaction method mapping.
+        3. Reconciled account payment/journal type.
+        4. Conservative SRI fallback: 20 (financial system) or 01 for cash journals.
+        """
+        if (
+            "l10n_ec_sri_payment_id" in invoice._fields
+            and invoice.l10n_ec_sri_payment_id
+            and invoice.l10n_ec_sri_payment_id.code
+        ):
+            return [{"code": invoice.l10n_ec_sri_payment_id.code, "amount": invoice.amount_total}]
+
+        transactions = invoice.transaction_ids | invoice.authorized_transaction_ids
+        transactions = transactions.filtered(lambda tx: tx.state in ("authorized", "done")) or transactions
+        transaction_codes = transactions.mapped("payment_method_id.l10n_ec_sri_payment_id.code")
+        transaction_codes = [code for code in transaction_codes if code]
+        if transaction_codes:
+            unique_codes = sorted(set(transaction_codes))
+            if len(unique_codes) == 1:
+                return [{"code": unique_codes[0], "amount": invoice.amount_total}]
+
+        payment_codes = []
+        for payment in invoice.reconciled_payment_ids | invoice.payment_ids:
+            code = self._get_l10n_ec_payment_code_from_payment(payment)
+            if code:
+                payment_codes.append(code)
+        if payment_codes:
+            unique_codes = sorted(set(payment_codes))
+            if len(unique_codes) == 1:
+                return [{"code": unique_codes[0], "amount": invoice.amount_total}]
+
+        return [
+            {
+                "code": self._get_l10n_ec_fallback_payment_code(invoice),
+                "amount": invoice.amount_total,
+            }
+        ]
+
     def _get_l10n_ec_tax_percentage_code(self, tax):
         tax_name = str(tax.name or "")
         if tax.amount == 15 or "15%" in tax_name:
@@ -45,6 +116,11 @@ class AccountEdiFormat(models.Model):
 
         for line in invoice.invoice_line_ids:
             if line.display_type in ("line_section", "line_note"):
+                continue
+            if not line.tax_ids:
+                if line.price_subtotal:
+                    tax_grouped[("2", "0")]["base"] += line.price_subtotal
+                    tax_grouped[("2", "0")]["amount"] += 0.0
                 continue
 
             price_reduce = line.price_unit * (1 - (line.discount or 0.0) / 100.0)
@@ -87,6 +163,53 @@ class AccountEdiFormat(models.Model):
             )
         return results
 
+    def _get_l10n_ec_line_taxes(self, line):
+        if not line.tax_ids:
+            return [
+                {
+                    "codigo": "2",
+                    "codigo_porcentaje": "0",
+                    "tarifa": 0.0,
+                    "base": line.price_subtotal,
+                    "amount": 0.0,
+                }
+            ]
+
+        price_reduce = line.price_unit * (1 - (line.discount or 0.0) / 100.0)
+        taxes_res = line.tax_ids.compute_all(
+            price_reduce,
+            quantity=line.quantity,
+            product=line.product_id,
+            partner=line.move_id.partner_id,
+        )
+        line_taxes = []
+        for tax_val in taxes_res["taxes"]:
+            tax_obj = self.env["account.tax"].browse(tax_val["id"])
+            if "ICE" in str(tax_obj.name or ""):
+                sri_code = "3"
+                sri_perc = "3023"
+            else:
+                sri_code = "2"
+                sri_perc = self._get_l10n_ec_tax_percentage_code(tax_obj)
+            line_taxes.append(
+                {
+                    "codigo": sri_code,
+                    "codigo_porcentaje": sri_perc,
+                    "tarifa": tax_obj.amount,
+                    "base": tax_val["base"],
+                    "amount": tax_val["amount"],
+                }
+            )
+        return line_taxes or [
+            {
+                "codigo": "2",
+                "codigo_porcentaje": "0",
+                "tarifa": 0.0,
+                "base": line.price_subtotal,
+                "amount": 0.0,
+            }
+        ]
+
     def _get_l10n_ec_edi_values(self, invoice):
         """
         Prepares the dictionary of values for the QWeb template.
@@ -115,7 +238,12 @@ class AccountEdiFormat(models.Model):
                 "total_sin_impuestos": invoice.amount_untaxed,
                 "total_descuento": total_discount,
                 "taxes": self._compute_tax_aggregates(invoice),
-                "pagos": [{"code": "20", "amount": invoice.amount_total}],
+                "line_taxes": {
+                    line.id: self._get_l10n_ec_line_taxes(line)
+                    for line in invoice.invoice_line_ids
+                    if line.display_type not in ("line_section", "line_note")
+                },
+                "pagos": self._get_l10n_ec_payment_lines(invoice),
                 "additional_info": [
                     info
                     for info in [

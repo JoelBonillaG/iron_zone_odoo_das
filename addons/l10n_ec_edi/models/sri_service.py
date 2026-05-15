@@ -2,6 +2,7 @@
 from odoo import models, _
 from odoo.exceptions import UserError
 import logging
+from xml.sax.saxutils import escape
 
 # Trusted External Libs
 try:
@@ -103,10 +104,11 @@ class SriService(models.AbstractModel):
                 "status": state,
                 "date": auth.fechaAutorizacion,  # Check if this is datetime or str
                 "xml": auth.comprobante,  # The authorized XML (with authorization tag)
+                "authorized_xml": self._build_authorized_xml(auth),
                 "messages": [],
             }
 
-            if state != "AUTORIZADO":
+            if state != "AUTORIZADO" and getattr(auth, "mensajes", None):
                 for msg in auth.mensajes.mensaje:
                     result["messages"].append(
                         f"{msg.mensaje} - {msg.informacionAdicional or ''}"
@@ -116,3 +118,21 @@ class SriService(models.AbstractModel):
 
         except Exception as e:
             return {"status": "ERROR", "messages": [f"Connection Fail: {str(e)}"]}
+
+    def _build_authorized_xml(self, authorization):
+        date_value = authorization.fechaAutorizacion or ""
+        if hasattr(date_value, "isoformat"):
+            date_value = date_value.isoformat()
+        comprobante = authorization.comprobante or ""
+        comprobante = comprobante.replace("]]>", "]]]]><![CDATA[>")
+        return (
+            '<?xml version="1.0" encoding="UTF-8"?>'
+            "<autorizacion>"
+            f"<estado>{escape(str(authorization.estado or ''))}</estado>"
+            f"<numeroAutorizacion>{escape(str(authorization.numeroAutorizacion or ''))}</numeroAutorizacion>"
+            f"<fechaAutorizacion>{escape(str(date_value))}</fechaAutorizacion>"
+            "<comprobante><![CDATA["
+            f"{comprobante}"
+            "]]></comprobante>"
+            "</autorizacion>"
+        )

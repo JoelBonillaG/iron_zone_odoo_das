@@ -61,13 +61,13 @@
                             <descuento t-out="format_monetary(line.price_unit * line.quantity * (line.discount / 100.0))"/>
                             <precioTotalSinImpuesto t-out="format_monetary(line.price_subtotal)"/>
                             <impuestos>
-                                <t t-foreach="line.tax_ids" t-as="tax_line">
+                                <t t-foreach="vals['line_taxes'].get(line.id, [])" t-as="tax_line">
                                     <impuesto>
-                                        <codigo>2</codigo> <!-- IVA -->
-                                        <codigoPorcentaje t-out="tax_map.get(tax_line.id, '0')"/>
-                                        <tarifa t-out="tax_line.amount"/>
-                                        <baseImponible t-out="format_monetary(line.price_subtotal)"/> <!-- Simplified: need proportional if multi-tax -->
-                                        <valor t-out="format_monetary(line.price_subtotal * (tax_line.amount / 100))"/>
+                                        <codigo t-out="tax_line['codigo']"/>
+                                        <codigoPorcentaje t-out="tax_line['codigo_porcentaje']"/>
+                                        <tarifa t-out="format_float(tax_line['tarifa'], 2)"/>
+                                        <baseImponible t-out="format_monetary(tax_line['base'])"/>
+                                        <valor t-out="format_monetary(tax_line['amount'])"/>
                                     </impuesto>
                                 </t>
                             </impuestos>
