@@ -15,7 +15,7 @@ async function processDemoPayment(processingValues) {
             payment_details: customerInput,
             simulated_state: simulatedPaymentState,
         });
-        window.location = this.paymentContext?.landingRoute || "/payment/status";
+        window.location = "/payment/status";
     } catch (error) {
         if (error instanceof RPCError) {
             this._displayErrorDialog?.(_t("Payment processing failed"), error.data.message);
