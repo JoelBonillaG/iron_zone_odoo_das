@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<odoo>
-    <record id="group_training_instructor_portal" model="res.groups">
-        <field name="name">Instructor Portal</field>
-        <field name="implied_ids" eval="[(4, ref('base.group_portal'))]"/>
-    </record>
-</odoo>
