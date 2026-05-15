@@ -22,9 +22,9 @@
                             </div>
                         </section>
 
-                        <section class="iz-section iz-section-tight">
+                        <section class="iz-section iz-section-tight iz-contact_body">
                             <div class="container">
-                                <div class="row g-5">
+                                <div class="row g-4 align-items-start">
                                     <div class="col-lg-7">
                                         <section class="s_website_form iz-contact_form" data-vcss="001" data-snippet="s_website_form">
                                             <form id="contactus_form" action="/website/form/" method="post" enctype="multipart/form-data" class="o_mark_required" data-mark="*" data-model_name="mail.mail" data-success-mode="redirect" data-success-page="/contactus-thank-you" data-pre-fill="true">

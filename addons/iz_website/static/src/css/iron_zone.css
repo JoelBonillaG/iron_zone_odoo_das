@@ -782,7 +782,13 @@ header .dropdown-item:hover,
 }
 
 .iz-contact_header {
-    padding-bottom: clamp(2rem, 5vw, 3.8rem);
+    background:
+        radial-gradient(circle at 78% 20%, rgba(255, 90, 47, 0.14), transparent 24rem),
+        linear-gradient(180deg, rgba(255, 255, 255, 0.03), transparent 58%);
+    max-width: none;
+    padding-bottom: clamp(1.25rem, 3vw, 2.2rem);
+    padding-top: clamp(3rem, 6vw, 5rem);
+    width: 100%;
 }
 
 .iz-contact_header .container {
@@ -792,11 +798,77 @@ header .dropdown-item:hover,
 }
 
 .iz-contact_header h1 {
-    max-width: 760px;
+    font-size: clamp(3rem, 6.2vw, 5.7rem);
+    max-width: 840px;
 }
 
 .iz-contact_header .iz-lead {
     max-width: 560px;
+}
+
+.iz-contact_body {
+    padding-bottom: clamp(3.5rem, 7vw, 5.8rem);
+    padding-top: clamp(1.5rem, 3vw, 2.5rem);
+}
+
+.iz-contact_body .container {
+    max-width: 1180px;
+}
+
+.iz-contact_form,
+.iz-contact_meta {
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.045), rgba(255, 255, 255, 0.02));
+    border: 1px solid var(--iz-line);
+    border-radius: var(--iz-radius);
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.24);
+}
+
+.iz-contact_form {
+    padding: clamp(1.1rem, 2.2vw, 1.65rem);
+}
+
+.iz-contact_meta {
+    border-top: 1px solid var(--iz-line);
+    padding: 0.35rem 1.35rem;
+}
+
+.iz-contact_meta > div {
+    padding: 1.05rem 0;
+}
+
+.iz-contact_meta span {
+    color: #fff;
+    font-size: 0.95rem;
+}
+
+.iz-contact_meta p {
+    color: #d9d4cd;
+    font-size: 1.02rem;
+    line-height: 1.5;
+}
+
+.iz-contact_form .form-control {
+    min-height: 46px;
+}
+
+.iz-contact_form textarea.form-control {
+    min-height: 132px;
+    resize: vertical;
+}
+
+.iz-contact_form .s_website_form_submit {
+    padding-top: 0.35rem;
+}
+
+@media (max-width: 767px) {
+    .iz-contact_header h1 {
+        font-size: clamp(2.45rem, 13vw, 3.6rem);
+    }
+
+    .iz-contact_form,
+    .iz-contact_meta {
+        box-shadow: none;
+    }
 }
 
 .iz-process span {
