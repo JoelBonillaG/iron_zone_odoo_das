@@ -127,10 +127,10 @@ class SaleSubscription(models.Model):
         string="Productos recurrentes",
     )
     sale_order_ids_count = fields.Integer(
-        compute="_compute_sale_order_ids_count", string="Pedidos"
+        compute="_compute_sale_order_ids_count", string="Nº de pedidos"
     )
     account_invoice_ids_count = fields.Integer(
-        compute="_compute_account_invoice_ids_count", string="Facturas"
+        compute="_compute_account_invoice_ids_count", string="Nº de facturas"
     )
     close_reason_id = fields.Many2one(
         comodel_name="sale.subscription.close.reason", string="Motivo de cierre"

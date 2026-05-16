@@ -38,7 +38,7 @@ class SaleSubscriptionTemplate(models.Model):
         ],
     )
     code = fields.Char(string="Codigo")
-    recurring_rule_count = fields.Integer(default=1, string="Duracion")
+    recurring_rule_count = fields.Integer(default=1, string="Cantidad de duracion")
     invoice_mail_template_id = fields.Many2one(
         comodel_name="mail.template",
         string="Correo de factura",
@@ -50,7 +50,7 @@ class SaleSubscriptionTemplate(models.Model):
         string="Productos",
     )
     product_ids_count = fields.Integer(
-        compute="_compute_product_ids_count", string="Productos"
+        compute="_compute_product_ids_count", string="Nº de productos"
     )
     subscription_ids = fields.One2many(
         comodel_name="sale.subscription",
@@ -58,7 +58,7 @@ class SaleSubscriptionTemplate(models.Model):
         string="Suscripciones",
     )
     subscription_count = fields.Integer(
-        compute="_compute_subscription_count", string="Suscripciones"
+        compute="_compute_subscription_count", string="Nº de suscripciones"
     )
 
     def _compute_subscription_count(self):

@@ -1,6 +1,6 @@
 # Copyright 2023 Domatix - Carlos Martínez
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
-from collections import defaultdict
+
 from datetime import date
 
 from dateutil.relativedelta import relativedelta
@@ -81,14 +81,17 @@ class SaleOrder(models.Model):
     def group_subscription_lines(self):
         """
         Group sale order lines by their product's recurring template.
+        Returns a dict {template_recordset: order_line_recordset}.
         """
-        grouped = defaultdict(list)
+        grouped = {}
+        SaleOrderLine = self.env["sale.order.line"]
         for order_line in self.order_line.filtered(
             lambda line: line.product_id.subscribable
         ):
-            grouped[
-                order_line.product_id.product_tmpl_id.subscription_template_id
-            ].append(order_line)
+            tmpl = order_line.product_id.product_tmpl_id.subscription_template_id
+            if tmpl not in grouped:
+                grouped[tmpl] = SaleOrderLine
+            grouped[tmpl] |= order_line
         return grouped
 
     def action_confirm(self):
