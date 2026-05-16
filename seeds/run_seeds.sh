@@ -4,7 +4,7 @@ set -euo pipefail
 # Run all seeds or a specific one
 # Usage:
 #   bash seeds/run_seeds.sh              -> runs all in order
-#   bash seeds/run_seeds.sh 02_products  -> runs only that script
+#   bash seeds/run_seeds.sh 03_products  -> runs only that script
 
 cd "$(dirname "$0")"
 

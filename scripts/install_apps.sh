@@ -34,7 +34,7 @@ DEFAULT_MODULES=(
   iz_website
   iz_inventory
   iz_backend_theme
-  training_plans
+  iz_subscription
 
   # Ecuador electronic invoicing custom modules
   l10n_ec_base

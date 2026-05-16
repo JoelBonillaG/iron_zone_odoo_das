@@ -6,9 +6,9 @@ from config import DB, PASSWORD, connect
 
 IVA_RATE = 15.0
 PAYMENT_RATIO = 0.5
-TARGET_ORDER_COUNT = 3
-ACT006_REF_PREFIX = "ACT006-MEMBERSHIP"
-MEMBERSHIP_PRODUCT_KEYWORDS = ["Membresía", "Plan Nutrición"]
+TARGET_ORDER_COUNT = 10
+ACT006_REF_PREFIX = "ACT006-SUBSCRIPTION"
+SUBSCRIPTION_PRODUCT_KEYWORDS = ["Suscripcion", "Plan Nutricion", "Plan Nutrición"]
 
 
 def execute(models, model, method, *args, **kwargs):
@@ -90,13 +90,15 @@ def get_customers(models):
         limit=TARGET_ORDER_COUNT,
         order="id asc",
     )
-    if len(customers) < TARGET_ORDER_COUNT:
-        raise RuntimeError(f"Run 01_customers.py first. ACT006 requires {TARGET_ORDER_COUNT} customer/member records.")
     return customers
 
 
-def get_membership_products(models):
-    domain = ["|", ["name", "ilike", MEMBERSHIP_PRODUCT_KEYWORDS[0]], ["name", "ilike", MEMBERSHIP_PRODUCT_KEYWORDS[1]]]
+def get_subscription_products(models):
+    domain = [
+        "|",
+        ["name", "ilike", SUBSCRIPTION_PRODUCT_KEYWORDS[0]],
+        ["name", "ilike", SUBSCRIPTION_PRODUCT_KEYWORDS[1]],
+    ]
     products = search_read(
         models,
         "product.product",
@@ -105,7 +107,7 @@ def get_membership_products(models):
         order="name asc",
     )
     if not products:
-        raise RuntimeError("Run 02_products.py first. ACT006 requires membership products.")
+        raise RuntimeError("Run 03_products.py first. ACT006 requires subscription products.")
     return products
 
 
@@ -123,21 +125,26 @@ def get_act006_sale_orders(models):
     return orders
 
 
-def ensure_membership_orders(models):
+def ensure_subscription_orders(models):
     existing_orders = get_act006_sale_orders(models)
     existing_refs = {order["client_order_ref"] for order in existing_orders}
 
     customers = get_customers(models)
-    membership_products = get_membership_products(models)
+    subscription_products = get_subscription_products(models)
+    target_count = max(len(customers), len(existing_orders))
+
+    if not target_count:
+        print("No customer/member records found; skipping ACT006 subscription order creation.")
+        return []
 
     created = 0
-    for index in range(TARGET_ORDER_COUNT):
+    for index in range(len(customers)):
         ref = f"{ACT006_REF_PREFIX}-{index + 1:02d}"
         if ref in existing_refs:
             continue
 
         customer = customers[index]
-        product = membership_products[index % len(membership_products)]
+        product = subscription_products[index % len(subscription_products)]
         order_id = execute(
             models,
             "sale.order",
@@ -145,7 +152,7 @@ def ensure_membership_orders(models):
             {
                 "partner_id": customer["id"],
                 "client_order_ref": ref,
-                "note": "ACT006: contrato de membresia / pago recurrente simulado.",
+                "note": "ACT006: contrato de suscripcion / pago recurrente simulado.",
             },
         )
         execute(
@@ -159,17 +166,15 @@ def ensure_membership_orders(models):
             },
         )
         created += 1
-        print(f"Created membership order {ref}: {customer['name']} -> {product['name']}")
+        print(f"Created subscription order {ref}: {customer['name']} -> {product['name']}")
 
     if created:
-        print(f"ACT006 membership orders created: {created}")
+        print(f"ACT006 subscription orders created: {created}")
     else:
-        print("ACT006 membership orders already exist.")
+        print("ACT006 subscription orders already exist.")
 
     orders = get_act006_sale_orders(models)
-    if len(orders) < TARGET_ORDER_COUNT:
-        raise RuntimeError(f"ACT006 requires {TARGET_ORDER_COUNT} membership orders; found {len(orders)}.")
-    return orders
+    return orders[:target_count]
 
 
 def confirm_orders(models, orders):
@@ -267,7 +272,7 @@ def print_summary(models, invoice_ids):
     )
     paid_count = 0
     print("")
-    print("ACT006 membership invoice summary:")
+    print("ACT006 subscription invoice summary:")
     for invoice in sorted(invoices, key=lambda item: item["name"] or ""):
         if invoice["payment_state"] == "paid":
             paid_count += 1
@@ -276,7 +281,7 @@ def print_summary(models, invoice_ids):
             f"State: {invoice['state']} | Payment: {invoice['payment_state']} | "
             f"Total: {invoice['amount_total']}"
         )
-    print(f"Done: {len(invoices)} membership invoices generated, {paid_count} paid.")
+    print(f"Done: {len(invoices)} subscription invoices generated, {paid_count} paid.")
 
 
 def run():
@@ -285,7 +290,7 @@ def run():
 
     print(f"Running ACT006 accounting automation on {date.today().isoformat()}...")
     ensure_accounting_base(models)
-    orders = ensure_membership_orders(models)
+    orders = ensure_subscription_orders(models)
     confirm_orders(models, orders)
 
     refreshed_orders = get_act006_sale_orders(models)

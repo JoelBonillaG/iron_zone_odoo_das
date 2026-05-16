@@ -1,8 +1,10 @@
+import xmlrpc.client
+
 from config import DB, PASSWORD, connect, create
 
 
 PORTAL_PASSWORD = "admin123"
-DEFAULT_CUSTOMER_LANG = "es_EC"
+DEFAULT_CUSTOMER_LANGS = ("es_EC", "es_419", "es_ES", "en_US")
 
 CUSTOMERS = [
     {
@@ -90,18 +92,76 @@ def xmlid_to_res_id(uid, models, xmlid):
     return record["res_id"]
 
 
-def ensure_portal_user(uid, models, partner_id, customer):
+def resolve_customer_lang(uid, models):
+    def installed_lang():
+        lang_records = models.execute_kw(
+            DB,
+            uid,
+            PASSWORD,
+            "res.lang",
+            "search_read",
+            [[("code", "in", list(DEFAULT_CUSTOMER_LANGS))]],
+            {"fields": ["id", "code", "active"], "context": {"active_test": False}},
+        )
+        records_by_code = {record["code"]: record for record in lang_records}
+        for lang_code in DEFAULT_CUSTOMER_LANGS:
+            record = records_by_code.get(lang_code)
+            if not record:
+                continue
+            if not record["active"]:
+                models.execute_kw(DB, uid, PASSWORD, "res.lang", "write", [[record["id"]], {"active": True}])
+                print(f"Activated language: {lang_code}")
+            return lang_code
+        return False
+
+    lang = installed_lang()
+    if lang:
+        return lang
+
+    for lang_code in DEFAULT_CUSTOMER_LANGS:
+        try:
+            wizard_id = create(
+                uid,
+                models,
+                "base.language.install",
+                {"lang": lang_code, "overwrite": False},
+            )
+            models.execute_kw(DB, uid, PASSWORD, "base.language.install", "lang_install", [[wizard_id]])
+            print(f"Installed language: {lang_code}")
+            return lang_code
+        except xmlrpc.client.Fault:
+            continue
+
+    lang_records = models.execute_kw(
+        DB,
+        uid,
+        PASSWORD,
+        "res.lang",
+        "search_read",
+        [[("code", "in", list(DEFAULT_CUSTOMER_LANGS))]],
+        {"fields": ["code"], "context": {"active_test": False}},
+    )
+    available_codes = {record["code"] for record in lang_records}
+    for lang_code in DEFAULT_CUSTOMER_LANGS:
+        if lang_code in available_codes:
+            return lang_code
+    return False
+
+
+def ensure_portal_user(uid, models, partner_id, customer, default_lang):
     portal_group_id = xmlid_to_res_id(uid, models, "base.group_portal")
     values = {
         "name": customer["name"],
         "login": customer["email"],
         "email": customer["email"],
-        "lang": customer.get("lang", DEFAULT_CUSTOMER_LANG),
         "partner_id": partner_id,
         "groups_id": [(6, 0, [portal_group_id])],
         "active": True,
         "password": PORTAL_PASSWORD,
     }
+    lang = customer.get("lang") or default_lang
+    if lang:
+        values["lang"] = lang
     user_id, created = create_or_update(
         uid,
         models,
@@ -164,6 +224,7 @@ def deactivate_old_portal_users(uid, models):
 
 def run():
     uid, models = connect()
+    default_lang = resolve_customer_lang(uid, models)
     country = search_one(uid, models, "res.country", [("code", "=", "EC")], fields=["id"])
     country_id = country["id"] if country else False
 
@@ -183,10 +244,12 @@ def run():
             "l10n_ec_identifier_type": customer["l10n_ec_identifier_type"],
             "l10n_ec_taxpayer_type": customer["l10n_ec_taxpayer_type"],
             "l10n_ec_related_party": customer["l10n_ec_related_party"],
-            "lang": customer.get("lang", DEFAULT_CUSTOMER_LANG),
             "customer_rank": 1,
             "active": True,
         }
+        lang = customer.get("lang") or default_lang
+        if lang:
+            values["lang"] = lang
         if country_id:
             values["country_id"] = country_id
 
@@ -205,7 +268,7 @@ def run():
             values,
             fields=["id", "name"],
         )
-        user_id, user_created = ensure_portal_user(uid, models, partner_id, customer)
+        user_id, user_created = ensure_portal_user(uid, models, partner_id, customer, default_lang)
         if created:
             created_count += 1
         else:
