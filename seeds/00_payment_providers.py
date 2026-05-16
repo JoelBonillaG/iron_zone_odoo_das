@@ -29,8 +29,8 @@ PAYMENT_PROVIDERS = {
 }
 
 PAYMENT_METHODS = {
-    "demo": {"active": True, "sequence": 1},
-    "wire_transfer": {"active": True, "sequence": 2},
+    "demo": {"active": True, "sequence": 1, "sri_payment_code": "19"},
+    "wire_transfer": {"active": True, "sequence": 2, "sri_payment_code": "20"},
 }
 
 
@@ -178,6 +178,7 @@ def clear_restrictions(models, uid, provider_id):
 
 
 def configure_payment_methods(models, uid):
+    method_fields = execute(models, uid, "payment.method", "fields_get", [])
     for code, values in PAYMENT_METHODS.items():
         method_ids = search(
             models,
@@ -190,7 +191,24 @@ def configure_payment_methods(models, uid):
         if not method_ids:
             print(f"Payment method not found: {code}")
             continue
-        execute(models, uid, "payment.method", "write", method_ids, values)
+        write_values = {
+            key: value for key, value in values.items() if key != "sri_payment_code"
+        }
+        sri_payment_code = values.get("sri_payment_code")
+        if sri_payment_code and "l10n_ec_sri_payment_id" in method_fields:
+            sri_payment_ids = search(
+                models,
+                uid,
+                "l10n_ec.sri.payment",
+                [["code", "=", sri_payment_code]],
+                limit=1,
+                active_test=False,
+            )
+            if sri_payment_ids:
+                write_values["l10n_ec_sri_payment_id"] = sri_payment_ids[0]
+            else:
+                print(f"SRI payment method not found: {sri_payment_code}")
+        execute(models, uid, "payment.method", "write", method_ids, write_values)
         print(f"Payment method enabled: {code}")
 
 

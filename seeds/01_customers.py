@@ -2,6 +2,7 @@ from config import DB, PASSWORD, connect, create
 
 
 PORTAL_PASSWORD = "admin123"
+DEFAULT_CUSTOMER_LANG = "es_EC"
 
 CUSTOMERS = [
     {
@@ -10,7 +11,12 @@ CUSTOMERS = [
         "phone": "0991234501",
         "street": "Av. Cevallos 123",
         "city": "Ambato",
-        "vat": "1801234567001",
+        "vat": "1801234566001",
+        "identification_type_xmlid": "l10n_ec.ec_ruc",
+        "l10n_ec_identifier_type": "ruc",
+        "contributor_type_xmlid": "l10n_ec_base.contrib_persona_natural",
+        "l10n_ec_taxpayer_type": "general",
+        "l10n_ec_related_party": False,
     },
     {
         "name": "Cliente Portal 07",
@@ -18,7 +24,12 @@ CUSTOMERS = [
         "phone": "0991234502",
         "street": "Calle Bolivar 456",
         "city": "Ambato",
-        "vat": "1712345678",
+        "vat": "1850191253",
+        "identification_type_xmlid": "l10n_ec.ec_dni",
+        "l10n_ec_identifier_type": "cedula",
+        "contributor_type_xmlid": "l10n_ec_base.contrib_persona_natural_profesionales",
+        "l10n_ec_taxpayer_type": "general",
+        "l10n_ec_related_party": False,
     },
     {
         "name": "Cliente Portal 08",
@@ -26,7 +37,12 @@ CUSTOMERS = [
         "phone": "0991234503",
         "street": "Av. Miraflores 789",
         "city": "Ambato",
-        "vat": "0912345678001",
+        "vat": "0912345675001",
+        "identification_type_xmlid": "l10n_ec.ec_ruc",
+        "l10n_ec_identifier_type": "ruc",
+        "contributor_type_xmlid": "l10n_ec_base.contrib_rimpe_negocio",
+        "l10n_ec_taxpayer_type": "rimpe_p",
+        "l10n_ec_related_party": False,
     },
 ]
 
@@ -80,6 +96,7 @@ def ensure_portal_user(uid, models, partner_id, customer):
         "name": customer["name"],
         "login": customer["email"],
         "email": customer["email"],
+        "lang": customer.get("lang", DEFAULT_CUSTOMER_LANG),
         "partner_id": partner_id,
         "groups_id": [(6, 0, [portal_group_id])],
         "active": True,
@@ -157,12 +174,28 @@ def run():
     updated_count = 0
     for customer in CUSTOMERS:
         values = {
-            **customer,
+            "name": customer["name"],
+            "email": customer["email"],
+            "phone": customer["phone"],
+            "street": customer["street"],
+            "city": customer["city"],
+            "vat": customer["vat"],
+            "l10n_ec_identifier_type": customer["l10n_ec_identifier_type"],
+            "l10n_ec_taxpayer_type": customer["l10n_ec_taxpayer_type"],
+            "l10n_ec_related_party": customer["l10n_ec_related_party"],
+            "lang": customer.get("lang", DEFAULT_CUSTOMER_LANG),
             "customer_rank": 1,
             "active": True,
         }
         if country_id:
             values["country_id"] = country_id
+
+        values["l10n_latam_identification_type_id"] = xmlid_to_res_id(
+            uid, models, customer["identification_type_xmlid"]
+        )
+        values["l10n_ec_contributor_type_id"] = xmlid_to_res_id(
+            uid, models, customer["contributor_type_xmlid"]
+        )
 
         partner_id, created = create_or_update(
             uid,
