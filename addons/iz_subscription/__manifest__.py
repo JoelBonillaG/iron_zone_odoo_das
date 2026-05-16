@@ -9,7 +9,7 @@
     "website": "https://github.com/OCA/contract",
     "license": "AGPL-3",
     "author": "Domatix, Onestein, Odoo Community Association (OCA)",
-    "depends": ["sale_management", "account", "event"],
+    "depends": ["sale_management", "account", "event", "website", "portal"],
     "data": [
         "views/product_template_views.xml",
         "views/account_move_views.xml",
@@ -24,6 +24,7 @@
         "data/ir_cron.xml",
         "data/sale_subscription_data.xml",
         "wizard/close_subscription_wizard.xml",
+        "views/portal_subscription_views.xml",
         "security/ir.model.access.csv",
     ],
     "installable": True,

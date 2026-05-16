@@ -81,7 +81,15 @@ class SaleOrder(models.Model):
                     "sale_subscription_line_ids": subscription_lines,
                 }
             )
-            rec.action_start_subscription()
+            # Assign draft stage so the subscription starts in "Borrador".
+            # The admin activates it manually once payment is confirmed.
+            # (Calling action_start_subscription() would skip straight to
+            # in_progress and trigger billing immediately.)
+            draft_stage = self.env["sale.subscription.stage"].search(
+                [("type", "=", "draft")], limit=1
+            )
+            if draft_stage:
+                rec.stage_id = draft_stage
             rec.recurring_next_date = self.get_next_interval(
                 subscription_tmpl.recurring_rule_type,
                 subscription_tmpl.recurring_interval,
