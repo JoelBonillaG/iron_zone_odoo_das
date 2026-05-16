@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <odoo>
     <record id="iz_event_registration_tree_membership" model="ir.ui.view">
-        <field name="name">event.registration.list.membership.benefits</field>
+        <field name="name">event.registration.list.subscription.benefits</field>
         <field name="model">event.registration</field>
         <field name="inherit_id" ref="event.view_event_registration_tree" />
         <field name="arch" type="xml">
@@ -14,7 +14,7 @@
     </record>
 
     <record id="iz_event_registration_form_membership" model="ir.ui.view">
-        <field name="name">event.registration.form.membership.benefits</field>
+        <field name="name">event.registration.form.subscription.benefits</field>
         <field name="model">event.registration</field>
         <field name="inherit_id" ref="event.view_event_registration_form" />
         <field name="arch" type="xml">

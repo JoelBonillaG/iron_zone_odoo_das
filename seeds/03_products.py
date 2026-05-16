@@ -198,7 +198,7 @@ def ensure_internal_categories(uid, models):
 
 
 def get_subscription_template_ids(uid, models):
-    """Return {name: id} map from already-seeded subscription templates (seeded by 03_subscription_config.py)."""
+    """Return {name: id} map from subscription templates seeded by 02_subscription_config.py."""
     if not model_exists(uid, models, "sale.subscription.template"):
         return {}
     templates = search_read(uid, models, "sale.subscription.template", [], ["id", "name"])
@@ -229,7 +229,7 @@ def run():
     rename_legacy_subscription_records(uid, models)
     internal_categories = ensure_internal_categories(uid, models)
 
-    # Fetch subscription templates and plans seeded by 03_subscription_config.py
+    # Fetch subscription templates and plans seeded by 02_subscription_config.py.
     subscription_template_ids = get_subscription_template_ids(uid, models)
     subscription_plan_ids = get_subscription_plan_ids(uid, models)
 

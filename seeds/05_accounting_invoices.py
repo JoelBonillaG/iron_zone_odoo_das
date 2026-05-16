@@ -90,8 +90,6 @@ def get_customers(models):
         limit=TARGET_ORDER_COUNT,
         order="id asc",
     )
-    if len(customers) < TARGET_ORDER_COUNT:
-        raise RuntimeError(f"Run 01_customers.py first. ACT006 requires {TARGET_ORDER_COUNT} customer/member records.")
     return customers
 
 
@@ -109,7 +107,7 @@ def get_subscription_products(models):
         order="name asc",
     )
     if not products:
-        raise RuntimeError("Run 02_products.py first. ACT006 requires subscription products.")
+        raise RuntimeError("Run 03_products.py first. ACT006 requires subscription products.")
     return products
 
 
@@ -133,9 +131,14 @@ def ensure_subscription_orders(models):
 
     customers = get_customers(models)
     subscription_products = get_subscription_products(models)
+    target_count = max(len(customers), len(existing_orders))
+
+    if not target_count:
+        print("No customer/member records found; skipping ACT006 subscription order creation.")
+        return []
 
     created = 0
-    for index in range(TARGET_ORDER_COUNT):
+    for index in range(len(customers)):
         ref = f"{ACT006_REF_PREFIX}-{index + 1:02d}"
         if ref in existing_refs:
             continue
@@ -171,9 +174,7 @@ def ensure_subscription_orders(models):
         print("ACT006 subscription orders already exist.")
 
     orders = get_act006_sale_orders(models)
-    if len(orders) < TARGET_ORDER_COUNT:
-        raise RuntimeError(f"ACT006 requires {TARGET_ORDER_COUNT} subscription orders; found {len(orders)}.")
-    return orders
+    return orders[:target_count]
 
 
 def confirm_orders(models, orders):

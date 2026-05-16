@@ -3,7 +3,7 @@
 -----------------
 Seeds 10 sale orders (mix of draft and confirmed) for portal customers.
 Confirmed orders automatically trigger subscription creation in draft stage.
-Depends on: 01_customers.py, 02_products.py, 03_subscription_config.py
+Depends on: 01_customers.py, 02_subscription_config.py, 03_products.py
 """
 from config import DB, PASSWORD, connect, create, search_read
 
@@ -61,7 +61,7 @@ def run():
     products = [products_by_name[n] for n in IRON_ZONE_PRODUCTS if n in products_by_name]
 
     if len(customers) < len(set(ci for ci, _, _ in ORDERS)) or missing_products:
-        print("ERROR: Run 01_customers.py, 02_products.py and 03_subscription_config.py first.")
+        print("ERROR: Run 01_customers.py, 02_subscription_config.py and 03_products.py first.")
         if missing_customers:
             print("Missing portal customers:", ", ".join(missing_customers))
         if missing_products:

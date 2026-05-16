@@ -1,8 +1,8 @@
 """
-03_subscription_config.py
+02_subscription_config.py
 --------------------------
 Seeds subscription templates, plans, stages, tags, close reasons, and benefits.
-Must run BEFORE 04_sale_orders.py so that products can reference templates and plans.
+Must run before 03_products.py so products can reference templates and plans.
 """
 from config import DB, PASSWORD, connect, create
 
