@@ -60,13 +60,22 @@ class SaleOrder(models.Model):
             subscription_plan = subscription_plans.sorted(
                 key=lambda plan: (-plan.priority, plan.sequence, plan.id)
             )[:1]
+            pricelist_id = self.pricelist_id.id or self.partner_id.property_product_pricelist.id
+            if not pricelist_id:
+                company_id = self.company_id.id or self.env.company.id
+                pricelist = self.env["product.pricelist"].search(
+                    [("company_id", "in", [company_id, False])], limit=1
+                )
+                if not pricelist:
+                    pricelist = self.env["product.pricelist"].search([], limit=1)
+                pricelist_id = pricelist.id
             rec = self.env["sale.subscription"].create(
                 {
                     "partner_id": self.partner_id.id,
                     "user_id": self.env.context.get("uid", self.env.uid),
                     "template_id": subscription_tmpl.id,
                     "subscription_plan_id": subscription_plan.id,
-                    "pricelist_id": self.partner_id.property_product_pricelist.id,
+                    "pricelist_id": pricelist_id,
                     "date_start": date.today(),
                     "sale_order_id": self.id,
                     "sale_subscription_line_ids": subscription_lines,
