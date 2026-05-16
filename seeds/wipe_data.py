@@ -15,9 +15,10 @@ def run():
     
     # 2. Archive products
     product_names = [
+        "Suscripcion Mensual", "Suscripcion Trimestral", "Suscripcion Anual",
         "Membresía Mensual", "Membresía Trimestral", "Membresía Anual",
         "Clase de Spinning", "Clase de CrossFit", "Entrenamiento Personal",
-        "Guantes de Boxeo", "Botella Proteína Whey 1kg", "Cuerda para Saltar",
+        "Guantes de Boxeo", "Botella Proteína Whey 1kg", "Creatina Monohidratada 300g", "Cuerda para Saltar",
         "Agua Mineral", "Plan Nutrición + Gym"
     ]
     products = models.execute_kw(DB, uid, PASSWORD, 'product.template', 'search', [[('name', 'in', product_names)]])
@@ -65,7 +66,8 @@ def run():
 
     # 5. Archive Job Positions
     job_names = [
-        "Instructor de CrossFit", "Instructor de Yoga", "Recepcionista de Membresias",
+        "Instructor de CrossFit", "Instructor de Yoga", "Recepcionista de Suscripciones",
+        "Administrador de Suscripciones", "Recepcionista de Membresias",
         "Administrador de Membresias", "Asesor Comercial", "Ejecutivo de Ventas",
         "Analista de Facturacion", "Contador", "Analista de Recursos Humanos",
         "Coordinador de Recursos Humanos", "Coordinador de Operaciones",
@@ -90,7 +92,7 @@ def run():
         except: pass
     
     # 7. Try unlink categories
-    categ_names = ["Membresías", "Clases", "Equipamiento", "Suplementos"]
+    categ_names = ["Suscripciones", "Membresías", "Clases", "Equipamiento", "Suplementos"]
     categories = models.execute_kw(DB, uid, PASSWORD, 'product.public.category', 'search', [[('name', 'in', categ_names)]])
     for c in categories:
         try: models.execute_kw(DB, uid, PASSWORD, 'product.public.category', 'unlink', [[c]])

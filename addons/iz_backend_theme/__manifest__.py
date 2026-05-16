@@ -17,7 +17,8 @@
         "hr",
         "spreadsheet_dashboard",
         "event",
-        "calendar"
+        "calendar",
+        "iz_subscription"
     ],
     "data": [
         "data/security_groups.xml",

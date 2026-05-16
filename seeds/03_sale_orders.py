@@ -15,16 +15,10 @@ CUSTOMER_EMAILS = [
 ]
 
 IRON_ZONE_PRODUCTS = [
-    "Agua Mineral",
-    "Botella Proteína Whey 1kg",
-    "Clase de CrossFit",
-    "Clase de Spinning",
-    "Cuerda para Saltar",
-    "Entrenamiento Personal",
-    "Guantes de Boxeo",
-    "Membresía Anual",
-    "Membresía Mensual",
-    "Membresía Trimestral",
+    "Suscripcion Mensual",
+    "Suscripcion Trimestral",
+    "Suscripcion Anual",
+    "Plan Nutrición + Gym",
 ]
 
 
