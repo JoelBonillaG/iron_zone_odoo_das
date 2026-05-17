@@ -433,6 +433,21 @@ def run():
 
     stage_ids = ensure_event_stages(uid, models)
 
+    print("Configurando producto para los boletos...")
+    product_id, _ = create_or_update(
+        uid,
+        models,
+        "product.product",
+        [("name", "=", "Boleto de Clase")],
+        {
+            "name": "Boleto de Clase",
+            "type": "service",
+            "detailed_type": "event",
+            "list_price": 0.0,
+        },
+        fields=["id"]
+    )
+
     created_count = 0
     updated_count = 0
     event_ids = {}
@@ -468,6 +483,7 @@ def run():
             "user_id": instructor_user_id or False,
             "stage_id": stage_ids.get(class_info.get("stage", "Nuevo")),
             "website_published": True,
+            "website_menu": True,
             "address_id": location_partner_id,
             "event_type_id": False,
         }
@@ -518,6 +534,7 @@ def run():
             "event_id": event_id,
             "seats_max": class_info["capacity"],
             "price": class_info.get("price", 0.0),
+            "product_id": product_id,
         }
         create_or_update(
             uid,
