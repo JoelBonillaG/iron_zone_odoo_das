@@ -89,24 +89,13 @@ class ResPartner(models.Model):
     @api.model_create_multi
     def create(self, vals_list):
         partners = super().create(vals_list)
-        try:
-            for partner in partners:
-                partner._iz_subscribe_to_mailing_list()
-                partner._iz_assign_to_segment_lists()
-                partner._iz_send_welcome_if_needed()
-        except Exception:
-            pass
-        return partners
-
-    @api.model_create_multi
-    def create(self, vals_list):
-        partners = super().create(vals_list)
         today = fields.Date.context_today(self)
         for partner in partners:
             try:
                 if partner.iz_subscribed:
                     partner._iz_subscribe_to_mailing_list()
                 partner._iz_assign_to_segment_lists()
+                partner._iz_send_welcome_if_needed()
             except Exception:
                 pass
             

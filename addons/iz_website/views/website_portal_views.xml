@@ -4,18 +4,18 @@
         Extends the standard Odoo portal details form (/my/account)
         to add IronZone-specific profile fields with edit rules.
     -->
-    <template id="iz_portal_my_details" inherit_id="portal.portal_my_details" name="IZ: Extra fields on portal details">
+    <template id="iz_portal_my_details" inherit_id="portal.portal_my_details_fields" name="IZ: Extra fields on portal details">
         
-        <xpath expr="//div[hasclass('o_portal_details')]/div[1]" position="before">
+        <xpath expr="//input[@name='email']/parent::div" position="after">
             <div class="clearfix" />
             <div class="col-12 mt-3">
-                <h5 class="mb-3" style="color: #ff6a42; border-bottom: 1px solid #eee; padding-bottom: 10px;">Perfil Iron Zone</h5>
+                <h5 class="mb-3" style="color: #ff6a42; border-bottom: 1px solid #eee; padding-bottom: 10px;">Información Adicional Iron Zone</h5>
             </div>
                 
                 <!-- ── Fecha de nacimiento (Solo lectura) ── -->
                 <div class="mb-3 col-xl-6">
                     <label class="col-form-label" for="iz_birthdate">Fecha de Nacimiento</label>
-                    <input type="date" name="iz_birthdate" t-att-value="partner.iz_birthdate" class="form-control" readonly="1" disabled="1" title="La fecha de nacimiento no puede ser modificada desde el portal."/>
+                    <input type="date" name="iz_birthdate" t-att-value="partner.iz_birthdate" class="form-control bg-light text-muted" style="pointer-events: none;" readonly="1" disabled="1" title="La fecha de nacimiento no puede ser modificada desde el portal."/>
                     <small class="form-text text-muted">Para modificar tu fecha de nacimiento debes contactar a soporte.</small>
                 </div>
 

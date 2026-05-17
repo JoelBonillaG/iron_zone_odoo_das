@@ -15,6 +15,34 @@
       <field name="mailing_type">mail</field>
       <field name="state">draft</field>
       <field name="contact_list_ids" eval="[(6, 0, [ref('mailing_list_customers')])]"/>
+      <field name="body_arch"><![CDATA[
+<div style="background-color:#050505;font-family:'Segoe UI',Roboto,Helvetica,Arial,sans-serif;padding:40px 0;margin:0;">
+  <table width="100%" cellpadding="0" cellspacing="0" style="max-width:600px;margin:0 auto;background-color:#111111;border:1px solid #222;border-radius:12px;overflow:hidden;box-shadow:0 10px 30px rgba(0,0,0,0.5);">
+    <tr>
+      <td style="text-align:center;padding:20px;background-color:#000000;border-bottom:1px solid #222;">
+        <img src="/web/image/res.company/1/logo" style="max-height:60px;" alt="Iron Zone Logo"/>
+      </td>
+    </tr>
+    <tr>
+      <td style="background:linear-gradient(135deg,#ff4b2b,#ff416c);padding:40px;text-align:center;">
+        <h1 style="color:#ffffff;font-size:36px;margin:0;font-weight:900;text-transform:uppercase;line-height:1.1;">Tu Transformacion<br/>Empieza Hoy</h1>
+      </td>
+    </tr>
+    <tr>
+      <td style="padding:40px;text-align:center;">
+        <p style="color:#aaaaaa;font-size:16px;line-height:1.6;">Estas a un paso de acceder a las mejores instalaciones, clases premium y entrenamiento especializado en Iron Zone.</p>
+        <table width="100%" cellpadding="0" cellspacing="0" style="margin:35px 0;">
+          <tr>
+            <td align="center">
+              <a href="/shop" style="background:linear-gradient(to right,#ff4b2b,#ff416c);color:#ffffff;text-decoration:none;padding:16px 40px;border-radius:4px;font-weight:bold;font-size:16px;display:inline-block;text-transform:uppercase;letter-spacing:1px;">Ver Membresias</a>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+</div>
+      ]]></field>
       <field name="body_html"><![CDATA[
 <div style="background-color:#050505;font-family:'Segoe UI',Roboto,Helvetica,Arial,sans-serif;padding:40px 0;margin:0;">
   <table width="100%" cellpadding="0" cellspacing="0" style="max-width:600px;margin:0 auto;background-color:#111111;border:1px solid #222;border-radius:12px;overflow:hidden;box-shadow:0 10px 30px rgba(0,0,0,0.5);">
@@ -52,6 +80,30 @@
       <field name="mailing_type">mail</field>
       <field name="state">draft</field>
       <field name="contact_list_ids" eval="[(6, 0, [ref('mailing_list_women')])]"/>
+      <field name="body_arch"><![CDATA[
+<div style="background-color:#050505;font-family:'Segoe UI',Roboto,Helvetica,Arial,sans-serif;padding:40px 0;margin:0;">
+  <table width="100%" cellpadding="0" cellspacing="0" style="max-width:600px;margin:0 auto;background-color:#111111;border:1px solid #222;border-radius:12px;overflow:hidden;box-shadow:0 10px 30px rgba(0,0,0,0.5);">
+    <tr>
+      <td style="text-align:center;padding:20px;background-color:#000000;border-bottom:1px solid #222;">
+        <img src="/web/image/res.company/1/logo" style="max-height:60px;" alt="Iron Zone Logo"/>
+      </td>
+    </tr>
+    <tr>
+      <td style="background:linear-gradient(135deg,#8e2de2,#4a00e0);padding:40px;text-align:center;">
+        <h1 style="color:#ffffff;font-size:36px;margin:0;font-weight:900;text-transform:uppercase;line-height:1.1;">Dia Internacional<br/>de la Mujer</h1>
+      </td>
+    </tr>
+    <tr>
+      <td style="padding:40px;">
+        <p style="color:#aaaaaa;font-size:16px;line-height:1.6;">Celebramos tu fuerza. Como obsequio especial, te regalamos el acceso a cualquier evento o clase premium (Yoga Avanzado, Funcional Boot Camp, etc.) totalmente gratis durante esta semana.</p>
+        <div style="text-align:center;margin-top:30px;">
+          <a href="/event" style="background:linear-gradient(to right,#8e2de2,#4a00e0);color:#ffffff;text-decoration:none;padding:16px 40px;border-radius:4px;font-weight:bold;text-transform:uppercase;">Ver Eventos</a>
+        </div>
+      </td>
+    </tr>
+  </table>
+</div>
+      ]]></field>
       <field name="body_html"><![CDATA[
 <div style="background-color:#050505;font-family:'Segoe UI',Roboto,Helvetica,Arial,sans-serif;padding:40px 0;margin:0;">
   <table width="100%" cellpadding="0" cellspacing="0" style="max-width:600px;margin:0 auto;background-color:#111111;border:1px solid #222;border-radius:12px;overflow:hidden;box-shadow:0 10px 30px rgba(0,0,0,0.5);">
@@ -85,6 +137,27 @@
       <field name="mailing_type">mail</field>
       <field name="state">draft</field>
       <field name="contact_list_ids" eval="[(6, 0, [ref('mailing_list_men')])]"/>
+      <field name="body_arch"><![CDATA[
+<div style="background-color:#050505;font-family:'Segoe UI',Roboto,Helvetica,Arial,sans-serif;padding:40px 0;margin:0;">
+  <table width="100%" cellpadding="0" cellspacing="0" style="max-width:600px;margin:0 auto;background-color:#111111;border:1px solid #222;border-radius:12px;overflow:hidden;">
+    <tr>
+      <td style="text-align:center;padding:20px;background-color:#000000;border-bottom:1px solid #222;">
+        <img src="/web/image/res.company/1/logo" style="max-height:60px;"/>
+      </td>
+    </tr>
+    <tr>
+      <td style="background:linear-gradient(135deg,#1cb5e0,#000046);padding:40px;text-align:center;">
+        <h1 style="color:#ffffff;font-size:36px;margin:0;font-weight:900;text-transform:uppercase;line-height:1.1;">Dia Internacional<br/>del Hombre</h1>
+      </td>
+    </tr>
+    <tr>
+      <td style="padding:40px;">
+        <p style="color:#aaaaaa;font-size:16px;line-height:1.6;">Reconocemos tu esfuerzo. Obtén un análisis de composición corporal y asesoría nutricional gratuita en tu próxima renovación.</p>
+      </td>
+    </tr>
+  </table>
+</div>
+      ]]></field>
       <field name="body_html"><![CDATA[
 <div style="background-color:#050505;font-family:'Segoe UI',Roboto,Helvetica,Arial,sans-serif;padding:40px 0;margin:0;">
   <table width="100%" cellpadding="0" cellspacing="0" style="max-width:600px;margin:0 auto;background-color:#111111;border:1px solid #222;border-radius:12px;overflow:hidden;">
@@ -115,6 +188,30 @@
       <field name="mailing_type">mail</field>
       <field name="state">draft</field>
       <field name="contact_list_ids" eval="[(6, 0, [ref('mailing_list_goal_muscle')])]"/>
+      <field name="body_arch"><![CDATA[
+<div style="background-color:#050505;font-family:'Segoe UI',Roboto,Helvetica,Arial,sans-serif;padding:40px 0;margin:0;">
+  <table width="100%" cellpadding="0" cellspacing="0" style="max-width:600px;margin:0 auto;background-color:#111111;border:1px solid #222;border-radius:12px;overflow:hidden;">
+    <tr>
+      <td style="text-align:center;padding:20px;background-color:#000000;border-bottom:1px solid #222;">
+        <img src="/web/image/res.company/1/logo" style="max-height:60px;"/>
+      </td>
+    </tr>
+    <tr>
+      <td style="background:linear-gradient(135deg,#000000,#434343);border-bottom:4px solid #e50914;padding:40px;text-align:center;">
+        <h1 style="color:#ffffff;font-size:40px;margin:0;font-weight:900;text-transform:uppercase;letter-spacing:2px;">IRON BULK</h1>
+      </td>
+    </tr>
+    <tr>
+      <td style="padding:40px;">
+        <p style="color:#aaaaaa;font-size:16px;line-height:1.6;">Sabemos que tu meta es ganar masa muscular. Hemos lanzado un programa avanzado centrado en técnicas de fuerza pura.</p>
+        <div style="text-align:center;margin-top:35px;">
+          <a href="/event" style="background-color:#e50914;color:#ffffff;text-decoration:none;padding:16px 40px;border-radius:4px;font-weight:bold;">INSCRIBIRSE AL PROGRAMA</a>
+        </div>
+      </td>
+    </tr>
+  </table>
+</div>
+      ]]></field>
       <field name="body_html"><![CDATA[
 <div style="background-color:#050505;font-family:'Segoe UI',Roboto,Helvetica,Arial,sans-serif;padding:40px 0;margin:0;">
   <table width="100%" cellpadding="0" cellspacing="0" style="max-width:600px;margin:0 auto;background-color:#111111;border:1px solid #222;border-radius:12px;overflow:hidden;">
@@ -148,6 +245,27 @@
       <field name="mailing_type">mail</field>
       <field name="state">draft</field>
       <field name="contact_list_ids" eval="[(6, 0, [ref('mailing_list_goal_weight_loss')])]"/>
+      <field name="body_arch"><![CDATA[
+<div style="background-color:#050505;font-family:'Segoe UI',Roboto,Helvetica,Arial,sans-serif;padding:40px 0;margin:0;">
+  <table width="100%" cellpadding="0" cellspacing="0" style="max-width:600px;margin:0 auto;background-color:#111111;border:1px solid #222;border-radius:12px;overflow:hidden;">
+    <tr>
+      <td style="text-align:center;padding:20px;background-color:#000000;border-bottom:1px solid #222;">
+        <img src="/web/image/res.company/1/logo" style="max-height:60px;"/>
+      </td>
+    </tr>
+    <tr>
+      <td style="background:linear-gradient(135deg,#f12711,#f5af19);padding:40px;text-align:center;">
+        <h1 style="color:#ffffff;font-size:36px;margin:0;font-weight:900;text-transform:uppercase;">RETO IRON BURN</h1>
+      </td>
+    </tr>
+    <tr>
+      <td style="padding:40px;text-align:center;">
+        <p style="color:#aaaaaa;font-size:16px;">Combinamos HIIT, nutrición especializada y cardio acelerado. El reto perfecto para tu objetivo de reducción de medidas.</p>
+      </td>
+    </tr>
+  </table>
+</div>
+      ]]></field>
       <field name="body_html"><![CDATA[
 <div style="background-color:#050505;font-family:'Segoe UI',Roboto,Helvetica,Arial,sans-serif;padding:40px 0;margin:0;">
   <table width="100%" cellpadding="0" cellspacing="0" style="max-width:600px;margin:0 auto;background-color:#111111;border:1px solid #222;border-radius:12px;overflow:hidden;">
@@ -178,6 +296,27 @@
       <field name="mailing_type">mail</field>
       <field name="state">draft</field>
       <field name="contact_list_ids" eval="[(6, 0, [ref('mailing_list_beginners')])]"/>
+      <field name="body_arch"><![CDATA[
+<div style="background-color:#050505;font-family:'Segoe UI',Roboto,Helvetica,Arial,sans-serif;padding:40px 0;margin:0;">
+  <table width="100%" cellpadding="0" cellspacing="0" style="max-width:600px;margin:0 auto;background-color:#111111;border:1px solid #222;border-radius:12px;overflow:hidden;">
+    <tr>
+      <td style="text-align:center;padding:20px;background-color:#000000;border-bottom:1px solid #222;">
+        <img src="/web/image/res.company/1/logo" style="max-height:60px;"/>
+      </td>
+    </tr>
+    <tr>
+      <td style="background:linear-gradient(135deg,#11998e,#38ef7d);padding:40px;text-align:center;">
+        <h1 style="color:#ffffff;font-size:36px;margin:0;font-weight:900;text-transform:uppercase;">FUNDAMENTOS</h1>
+      </td>
+    </tr>
+    <tr>
+      <td style="padding:40px;">
+        <p style="color:#aaaaaa;font-size:16px;">Como principiante, es vital enfocarse en la técnica. Conoce nuestro programa de entrenamiento introductorio gratuito.</p>
+      </td>
+    </tr>
+  </table>
+</div>
+      ]]></field>
       <field name="body_html"><![CDATA[
 <div style="background-color:#050505;font-family:'Segoe UI',Roboto,Helvetica,Arial,sans-serif;padding:40px 0;margin:0;">
   <table width="100%" cellpadding="0" cellspacing="0" style="max-width:600px;margin:0 auto;background-color:#111111;border:1px solid #222;border-radius:12px;overflow:hidden;">
@@ -208,6 +347,27 @@
       <field name="mailing_type">mail</field>
       <field name="state">draft</field>
       <field name="contact_list_ids" eval="[(6, 0, [ref('mailing_list_advanced')])]"/>
+      <field name="body_arch"><![CDATA[
+<div style="background-color:#050505;font-family:'Segoe UI',Roboto,Helvetica,Arial,sans-serif;padding:40px 0;margin:0;">
+  <table width="100%" cellpadding="0" cellspacing="0" style="max-width:600px;margin:0 auto;background-color:#111111;border:1px solid #222;border-radius:12px;overflow:hidden;">
+    <tr>
+      <td style="text-align:center;padding:20px;background-color:#000000;border-bottom:1px solid #222;">
+        <img src="/web/image/res.company/1/logo" style="max-height:60px;"/>
+      </td>
+    </tr>
+    <tr>
+      <td style="background:linear-gradient(135deg,#000000,#222222);border-left:4px solid #f5af19;padding:40px;text-align:center;">
+        <h1 style="color:#f5af19;font-size:36px;margin:0;font-weight:900;text-transform:uppercase;">IRON PRO</h1>
+      </td>
+    </tr>
+    <tr>
+      <td style="padding:40px;">
+        <p style="color:#aaaaaa;font-size:16px;">Llegar a nivel avanzado requiere nuevos estímulos. Inscríbete en nuestras masterclasses exclusivas para atletas élite.</p>
+      </td>
+    </tr>
+  </table>
+</div>
+      ]]></field>
       <field name="body_html"><![CDATA[
 <div style="background-color:#050505;font-family:'Segoe UI',Roboto,Helvetica,Arial,sans-serif;padding:40px 0;margin:0;">
   <table width="100%" cellpadding="0" cellspacing="0" style="max-width:600px;margin:0 auto;background-color:#111111;border:1px solid #222;border-radius:12px;overflow:hidden;">
