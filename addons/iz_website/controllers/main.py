@@ -66,7 +66,6 @@ class IzSignupController(AuthSignupHome):
         qcontext.setdefault("iz_gender_choices", [
             ("male", "Masculino"),
             ("female", "Femenino"),
-            ("other", "Otro"),
             ("prefer_not", "Prefiero no decirlo"),
         ])
         qcontext.setdefault("iz_fitness_goal_choices", [

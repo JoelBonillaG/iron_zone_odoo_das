@@ -15,6 +15,11 @@
 <div style="background-color:#050505;font-family:'Segoe UI',Roboto,Helvetica,Arial,sans-serif;padding:40px 0;margin:0;">
   <table width="100%" cellpadding="0" cellspacing="0" style="max-width:600px;margin:0 auto;background-color:#111111;border:1px solid #222;border-radius:12px;overflow:hidden;box-shadow:0 10px 30px rgba(0,0,0,0.5);">
     <tr>
+      <td style="text-align:center;padding:20px;background-color:#000000;border-bottom:1px solid #222;">
+        <img src="/web/image/res.company/1/logo" style="max-height:60px;" alt="Iron Zone Logo"/>
+      </td>
+    </tr>
+    <tr>
       <td style="background:linear-gradient(135deg,#ff4b2b,#ff416c);padding:50px 40px;text-align:center;">
         <h2 style="color:#ffffff;font-size:14px;letter-spacing:3px;text-transform:uppercase;margin:0 0 15px;font-weight:600;">Iron Zone</h2>
         <h1 style="color:#ffffff;font-size:36px;margin:0;font-weight:900;text-transform:uppercase;line-height:1.1;">Tu Transformacion<br/>Empieza Hoy</h1>
@@ -56,6 +61,11 @@
       <field name="body_html"><![CDATA[
 <div style="background-color:#050505;font-family:'Segoe UI',Roboto,Helvetica,Arial,sans-serif;padding:40px 0;margin:0;">
   <table width="100%" cellpadding="0" cellspacing="0" style="max-width:600px;margin:0 auto;background-color:#111111;border:1px solid #222;border-radius:12px;overflow:hidden;box-shadow:0 10px 30px rgba(0,0,0,0.5);">
+    <tr>
+      <td style="text-align:center;padding:20px;background-color:#000000;border-bottom:1px solid #222;">
+        <img src="/web/image/res.company/1/logo" style="max-height:60px;" alt="Iron Zone Logo"/>
+      </td>
+    </tr>
     <tr>
       <td style="background:linear-gradient(135deg,#f12711,#f5af19);padding:50px 40px;text-align:center;">
         <h2 style="color:#ffffff;font-size:14px;letter-spacing:3px;text-transform:uppercase;margin:0 0 15px;font-weight:600;">Beneficio Exclusivo</h2>
@@ -106,6 +116,11 @@
 <div style="background-color:#050505;font-family:'Segoe UI',Roboto,Helvetica,Arial,sans-serif;padding:40px 0;margin:0;">
   <table width="100%" cellpadding="0" cellspacing="0" style="max-width:600px;margin:0 auto;background-color:#111111;border:1px solid #222;border-radius:12px;overflow:hidden;box-shadow:0 10px 30px rgba(0,0,0,0.5);">
     <tr>
+      <td style="text-align:center;padding:20px;background-color:#000000;border-bottom:1px solid #222;">
+        <img src="/web/image/res.company/1/logo" style="max-height:60px;" alt="Iron Zone Logo"/>
+      </td>
+    </tr>
+    <tr>
       <td style="background:linear-gradient(135deg,#8e2de2,#4a00e0);padding:50px 40px;text-align:center;">
         <h2 style="color:#ffffff;font-size:14px;letter-spacing:3px;text-transform:uppercase;margin:0 0 15px;font-weight:600;">8 de Marzo</h2>
         <h1 style="color:#ffffff;font-size:36px;margin:0;font-weight:900;text-transform:uppercase;line-height:1.1;">Dia Internacional<br/>de la Mujer</h1>
@@ -147,6 +162,11 @@
       <field name="body_html"><![CDATA[
 <div style="background-color:#050505;font-family:'Segoe UI',Roboto,Helvetica,Arial,sans-serif;padding:40px 0;margin:0;">
   <table width="100%" cellpadding="0" cellspacing="0" style="max-width:600px;margin:0 auto;background-color:#111111;border:1px solid #222;border-radius:12px;overflow:hidden;box-shadow:0 10px 30px rgba(0,0,0,0.5);">
+    <tr>
+      <td style="text-align:center;padding:20px;background-color:#000000;border-bottom:1px solid #222;">
+        <img src="/web/image/res.company/1/logo" style="max-height:60px;" alt="Iron Zone Logo"/>
+      </td>
+    </tr>
     <tr>
       <td style="background:linear-gradient(135deg,#1cb5e0,#000046);padding:50px 40px;text-align:center;">
         <h2 style="color:#ffffff;font-size:14px;letter-spacing:3px;text-transform:uppercase;margin:0 0 15px;font-weight:600;">19 de Noviembre</h2>
@@ -190,6 +210,11 @@
 <div style="background-color:#050505;font-family:'Segoe UI',Roboto,Helvetica,Arial,sans-serif;padding:40px 0;margin:0;">
   <table width="100%" cellpadding="0" cellspacing="0" style="max-width:600px;margin:0 auto;background-color:#111111;border:1px solid #222;border-radius:12px;overflow:hidden;box-shadow:0 10px 30px rgba(0,0,0,0.5);">
     <tr>
+      <td style="text-align:center;padding:20px;background-color:#000000;border-bottom:1px solid #222;">
+        <img src="/web/image/res.company/1/logo" style="max-height:60px;" alt="Iron Zone Logo"/>
+      </td>
+    </tr>
+    <tr>
       <td style="background:linear-gradient(135deg,#ff8008,#ffc837);padding:40px;text-align:center;">
         <h1 style="color:#111111;font-size:30px;margin:0;font-weight:900;text-transform:uppercase;line-height:1.1;">Accion Requerida</h1>
       </td>
@@ -224,6 +249,11 @@
       <field name="body_html"><![CDATA[
 <div style="background-color:#050505;font-family:'Segoe UI',Roboto,Helvetica,Arial,sans-serif;padding:40px 0;margin:0;">
   <table width="100%" cellpadding="0" cellspacing="0" style="max-width:600px;margin:0 auto;background-color:#111111;border:1px solid #222;border-radius:12px;overflow:hidden;box-shadow:0 10px 30px rgba(0,0,0,0.5);">
+    <tr>
+      <td style="text-align:center;padding:20px;background-color:#000000;border-bottom:1px solid #222;">
+        <img src="/web/image/res.company/1/logo" style="max-height:60px;" alt="Iron Zone Logo"/>
+      </td>
+    </tr>
     <tr>
       <td style="background:linear-gradient(135deg,#000000,#434343);border-bottom:4px solid #e50914;padding:50px 40px;text-align:center;">
         <h2 style="color:#aaaaaa;font-size:14px;letter-spacing:3px;text-transform:uppercase;margin:0 0 15px;font-weight:600;">Programa Especializado</h2>

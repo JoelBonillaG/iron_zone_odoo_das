@@ -238,32 +238,7 @@ def run():
 
     print(f"\n  Total asignados: {assigned} partners")
 
-    # ── 4. Crear mailings de demostración ────────────────────────────────
-    print("\n[4] Creando mailings de demostración...")
-    for mailing_def in DEMO_MAILINGS:
-        list_id = list_ids_by_name.get(mailing_def["list_name"])
-        if not list_id:
-            print(f"  [WARN] Lista '{mailing_def['list_name']}' no encontrada, saltando.")
-            continue
-
-        existing = search_one(uid, models, "mailing.mailing",
-                              [("name", "=", mailing_def["name"])], fields=["id"])
-        mailing_values = {
-            "name": mailing_def["name"],
-            "subject": mailing_def["subject"],
-            "mailing_type": "mail",
-            "body_html": mailing_def["body"],
-            "contact_list_ids": [(6, 0, [list_id])],
-            "state": "draft",
-        }
-        if existing:
-            models.execute_kw(DB, uid, PASSWORD, "mailing.mailing", "write",
-                              [[existing["id"]], mailing_values])
-            print(f"  [OK] Actualizado mailing: {mailing_def['name']}")
-        else:
-            new_id = models.execute_kw(DB, uid, PASSWORD, "mailing.mailing", "create",
-                                       [mailing_values])
-            print(f"  [OK] Creado mailing: {mailing_def['name']} (ID {new_id})")
+    print("\n  [OK] Mailings de demostración creados automáticamente en mass_mailing.xml")
 
     print("\n" + "=" * 60)
     print("Email Marketing Seed completado.")

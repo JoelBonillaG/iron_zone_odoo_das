@@ -6,11 +6,11 @@
     -->
     <template id="iz_portal_my_details" inherit_id="portal.portal_my_details" name="IZ: Extra fields on portal details">
         
-        <xpath expr="//div[hasclass('o_portal_details')]" position="inside">
-            <div class="row mt-4">
-                <div class="col-12">
-                    <h5 class="mb-3" style="color: #ff6a42; border-bottom: 1px solid #eee; padding-bottom: 10px;">Perfil Iron Zone</h5>
-                </div>
+        <xpath expr="//div[hasclass('o_portal_details')]/div[1]" position="before">
+            <div class="clearfix" />
+            <div class="col-12 mt-3">
+                <h5 class="mb-3" style="color: #ff6a42; border-bottom: 1px solid #eee; padding-bottom: 10px;">Perfil Iron Zone</h5>
+            </div>
                 
                 <!-- ── Fecha de nacimiento (Solo lectura) ── -->
                 <div class="mb-3 col-xl-6">
@@ -58,7 +58,6 @@
                         </t>
                     </select>
                 </div>
-            </div>
         </xpath>
 
     </template>

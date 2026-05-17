@@ -98,17 +98,45 @@ class ResPartner(models.Model):
             pass
         return partners
 
+    @api.model_create_multi
+    def create(self, vals_list):
+        partners = super().create(vals_list)
+        today = fields.Date.context_today(self)
+        for partner in partners:
+            try:
+                if partner.iz_subscribed:
+                    partner._iz_subscribe_to_mailing_list()
+                partner._iz_assign_to_segment_lists()
+            except Exception:
+                pass
+            
+            if partner.iz_birthdate and partner.iz_birthdate.month == today.month and partner.iz_birthdate.day == today.day:
+                template = self.env.ref("iz_website.mail_template_birthday", raise_if_not_found=False)
+                if template:
+                    try:
+                        template.send_mail(partner.id, force_send=True)
+                    except Exception:
+                        pass
+        return partners
+
     def write(self, vals):
         # Actualizar timestamp si el género cambia
         if "iz_gender" in vals:
             vals["iz_gender_last_update"] = fields.Datetime.now()
             
         res = super().write(vals)
+        today = fields.Date.context_today(self)
         try:
             for partner in self:
                 if "iz_subscribed" in vals and vals.get("iz_subscribed"):
                     partner._iz_subscribe_to_mailing_list()
                 partner._iz_assign_to_segment_lists()
+                
+                # Enviar cumpleanos inmediatamente si se edita para hoy
+                if "iz_birthdate" in vals and partner.iz_birthdate and partner.iz_birthdate.month == today.month and partner.iz_birthdate.day == today.day:
+                    template = self.env.ref("iz_website.mail_template_birthday", raise_if_not_found=False)
+                    if template:
+                        template.send_mail(partner.id, force_send=True)
         except Exception:
             pass
         return res

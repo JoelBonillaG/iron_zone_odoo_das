@@ -21,6 +21,7 @@
     "data": [
         "data/mailing_list.xml",
         "data/email_templates.xml",
+        "data/mass_mailing.xml",
         "data/cron.xml",
         "data/ir.model.access.csv",
         "views/website_layout.xml",
