@@ -352,11 +352,44 @@ def ensure_user_for_employee(uid, models, employee):
     ensure_instructor_user(uid, models, user_id)
     models.execute_kw(DB, uid, PASSWORD, "hr.employee", "write", [[employee["id"]], {"user_id": user_id}])
     return user_id
+def ensure_event_login_required(uid, models):
+    inherit_id = models.execute_kw(DB, uid, PASSWORD, 'ir.ui.view', 'search', [[('key', '=', 'website_event.registration_template')]])
+    if not inherit_id:
+        return
+    
+    arch = '''
+    <xpath expr="//button[@data-bs-target='#modal_ticket_registration']" position="replace">
+        <t t-if="request.env.user._is_public()">
+            <a t-attf-href="/web/login?redirect=/event/#{slug(event)}" t-attf-class="btn btn-primary {{cta_additional_classes}}">Register</a>
+        </t>
+        <t t-else="">
+            <button type="button" data-bs-toggle="modal" data-bs-target="#modal_ticket_registration" t-attf-class="btn btn-primary {{cta_additional_classes}}">Register</button>
+        </t>
+    </xpath>
+    '''
+    
+    create_or_update(
+        uid,
+        models,
+        "ir.ui.view",
+        [("key", "=", "iz_event_login_required")],
+        {
+            "name": "Require Login to Register",
+            "key": "iz_event_login_required",
+            "type": "qweb",
+            "mode": "extension",
+            "inherit_id": inherit_id[0],
+            "arch": arch,
+            "active": True
+        },
+        fields=["id"]
+    )
 
 
 def run():
     uid, models = connect()
     ensure_event_admin_rule(uid, models)
+    ensure_event_login_required(uid, models)
     archive_old_demo_events(uid, models)
 
     # Get company info
