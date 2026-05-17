@@ -13,7 +13,6 @@ class ResPartner(models.Model):
         [
             ("male", "Masculino"),
             ("female", "Femenino"),
-            ("other", "Otro"),
             ("prefer_not", "Prefiero no decirlo"),
         ],
         string="Género",
@@ -43,6 +42,11 @@ class ResPartner(models.Model):
     # Campo fantasma necesario para que Odoo valide vistas antiguas en la DB durante actualizaciones
     iz_last_birthday_year = fields.Integer(string="Último año de cumpleaños")
     iz_welcome_sent = fields.Boolean(string="Welcome Sent")
+    
+    iz_gender_last_update = fields.Datetime(
+        string="Última modificación de género", 
+        readonly=True
+    )
 
     # ------------------------------------------------------------------
     # Computed
@@ -95,10 +99,15 @@ class ResPartner(models.Model):
         return partners
 
     def write(self, vals):
+        # Actualizar timestamp si el género cambia
+        if "iz_gender" in vals:
+            vals["iz_gender_last_update"] = fields.Datetime.now()
+            
         res = super().write(vals)
         try:
             for partner in self:
-                partner._iz_subscribe_to_mailing_list()
+                if "iz_subscribed" in vals and vals.get("iz_subscribed"):
+                    partner._iz_subscribe_to_mailing_list()
                 partner._iz_assign_to_segment_lists()
         except Exception:
             pass
