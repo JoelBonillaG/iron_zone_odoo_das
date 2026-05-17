@@ -61,6 +61,7 @@ SEGMENT_LISTS = {
     "mailing_list_goal_endurance": "Iron Zone – Objetivo: Resistencia",
     "mailing_list_goal_fitness": "Iron Zone – Objetivo: Fitness general",
     "mailing_list_beginners":    "Iron Zone – Principiantes",
+    "mailing_list_intermediates": "Iron Zone – Intermedios",
     "mailing_list_advanced":     "Iron Zone – Avanzados",
 }
 
@@ -146,6 +147,7 @@ GOAL_TO_LISTS = {
 
 LEVEL_TO_LISTS = {
     "beginner": ["mailing_list_beginners"],
+    "intermediate": ["mailing_list_intermediates"],
     "advanced": ["mailing_list_advanced"],
 }
 

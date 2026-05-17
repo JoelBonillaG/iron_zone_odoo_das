@@ -35,6 +35,9 @@
     <record id="mailing_list_beginners" model="mailing.list">
       <field name="name">Iron Zone – Principiantes</field>
     </record>
+    <record id="mailing_list_intermediates" model="mailing.list">
+      <field name="name">Iron Zone – Intermedios</field>
+    </record>
     <record id="mailing_list_advanced" model="mailing.list">
       <field name="name">Iron Zone – Avanzados</field>
     </record>
