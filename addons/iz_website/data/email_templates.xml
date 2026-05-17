@@ -1,0 +1,243 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <data noupdate="1">
+
+    <!-- ══════════════════════════════════════════════════
+         BIENVENIDA
+    ══════════════════════════════════════════════════ -->
+    <record id="mail_template_welcome" model="mail.template">
+      <field name="name">IZ Bienvenida</field>
+      <field name="model_id" ref="base.model_res_partner"/>
+      <field name="subject">¡Bienvenido a Iron Zone, ${object.name}! 🔥</field>
+      <field name="email_from">${(user.email_formatted or 'noreply@ironzone.com')}</field>
+      <field name="auto_delete">True</field>
+      <field name="body_html"><![CDATA[
+<div style="background:#0d0d0d;font-family:'Segoe UI',Arial,sans-serif;padding:0;margin:0;">
+  <table width="100%" cellpadding="0" cellspacing="0" style="max-width:600px;margin:0 auto;">
+    <tr><td style="background:linear-gradient(135deg,#ff6a42,#ff4f86);padding:40px 32px;text-align:center;border-radius:0 0 32px 32px;">
+      <p style="color:#fff;font-size:13px;letter-spacing:.1em;text-transform:uppercase;margin:0 0 8px;">Iron Zone</p>
+      <h1 style="color:#fff;font-size:32px;margin:0;font-weight:800;">¡Bienvenido! 🔥</h1>
+    </td></tr>
+    <tr><td style="background:#161616;padding:36px 32px;">
+      <p style="color:#e0e0e0;font-size:16px;line-height:1.7;">Hola <strong style="color:#ff6a42;">${object.name}</strong>,</p>
+      <p style="color:#b0b0b0;font-size:15px;line-height:1.7;">Tu cuenta en <strong>Iron Zone</strong> está lista. Ahora puedes acceder a membresías, clases y mucho más.</p>
+      <div style="text-align:center;margin:32px 0;">
+        <a href="http://localhost:8069/shop" style="background:linear-gradient(135deg,#ff6a42,#ff4f86);color:#fff;text-decoration:none;padding:14px 36px;border-radius:50px;font-weight:700;font-size:15px;display:inline-block;">Ver membresías →</a>
+      </div>
+      <p style="color:#555;font-size:13px;border-top:1px solid #2a2a2a;padding-top:24px;margin-top:24px;">Iron Zone · Ambato, Ecuador<br/>¿Tienes dudas? Escríbenos a <a href="mailto:contacto@ironzone.ec" style="color:#ff6a42;">contacto@ironzone.ec</a></p>
+    </td></tr>
+  </table>
+</div>
+      ]]></field>
+    </record>
+
+    <!-- ══════════════════════════════════════════════════
+         CUMPLEAÑOS
+    ══════════════════════════════════════════════════ -->
+    <record id="mail_template_birthday" model="mail.template">
+      <field name="name">IZ Cumpleaños</field>
+      <field name="model_id" ref="base.model_res_partner"/>
+      <field name="subject">¡Feliz cumpleaños ${object.name}! 🎉 Tu regalo te espera</field>
+      <field name="email_from">${(user.email_formatted or 'noreply@ironzone.com')}</field>
+      <field name="auto_delete">True</field>
+      <field name="body_html"><![CDATA[
+<div style="background:#0d0d0d;font-family:'Segoe UI',Arial,sans-serif;padding:0;margin:0;">
+  <table width="100%" cellpadding="0" cellspacing="0" style="max-width:600px;margin:0 auto;">
+    <tr><td style="background:linear-gradient(135deg,#f7971e,#ffd200);padding:40px 32px;text-align:center;border-radius:0 0 32px 32px;">
+      <p style="font-size:48px;margin:0;">🎂</p>
+      <h1 style="color:#1a1a1a;font-size:30px;margin:8px 0 0;font-weight:800;">¡Feliz cumpleaños!</h1>
+    </td></tr>
+    <tr><td style="background:#161616;padding:36px 32px;text-align:center;">
+      <p style="color:#e0e0e0;font-size:16px;">Hola <strong style="color:#ffd200;">${object.name}</strong>, hoy es tu día especial 🎉</p>
+      <div style="background:#1e1e1e;border:2px dashed #ffd200;border-radius:20px;padding:28px;margin:24px 0;">
+        <p style="color:#ffd200;font-size:13px;letter-spacing:.1em;margin:0 0 8px;">REGALO EXCLUSIVO</p>
+        <p style="color:#fff;font-size:44px;font-weight:900;margin:0;">20% OFF</p>
+        <p style="color:#b0b0b0;font-size:14px;margin:8px 0 0;">en tu próxima renovación de membresía</p>
+        <p style="color:#555;font-size:12px;margin:12px 0 0;">Válido por 7 días. Usa el código: <strong style="color:#ffd200;">BDAY20</strong></p>
+      </div>
+      <a href="http://localhost:8069/shop" style="background:linear-gradient(135deg,#f7971e,#ffd200);color:#1a1a1a;text-decoration:none;padding:14px 36px;border-radius:50px;font-weight:800;font-size:15px;display:inline-block;">Reclamar mi descuento 🎁</a>
+      <p style="color:#555;font-size:13px;margin-top:32px;border-top:1px solid #2a2a2a;padding-top:20px;">Iron Zone · Ambato, Ecuador</p>
+    </td></tr>
+  </table>
+</div>
+      ]]></field>
+    </record>
+
+    <!-- ══════════════════════════════════════════════════
+         DÍA DE LA MUJER
+    ══════════════════════════════════════════════════ -->
+    <record id="mail_template_womens_day" model="mail.template">
+      <field name="name">IZ Día de la Mujer</field>
+      <field name="model_id" ref="base.model_res_partner"/>
+      <field name="subject">💜 Feliz Día de la Mujer, ${object.name} – Tu clase gratis te espera</field>
+      <field name="email_from">${(user.email_formatted or 'noreply@ironzone.com')}</field>
+      <field name="auto_delete">True</field>
+      <field name="body_html"><![CDATA[
+<div style="background:#0d0d0d;font-family:'Segoe UI',Arial,sans-serif;padding:0;margin:0;">
+  <table width="100%" cellpadding="0" cellspacing="0" style="max-width:600px;margin:0 auto;">
+    <tr><td style="background:linear-gradient(135deg,#8e2de2,#f64f59);padding:40px 32px;text-align:center;border-radius:0 0 32px 32px;">
+      <p style="font-size:40px;margin:0;">💜</p>
+      <h1 style="color:#fff;font-size:28px;font-weight:800;margin:8px 0 0;">Día Internacional de la Mujer</h1>
+      <p style="color:rgba(255,255,255,.8);font-size:14px;margin:6px 0 0;">8 de Marzo</p>
+    </td></tr>
+    <tr><td style="background:#161616;padding:36px 32px;text-align:center;">
+      <p style="color:#e0e0e0;font-size:16px;">Hola <strong style="color:#c084fc;">${object.name}</strong>,</p>
+      <p style="color:#b0b0b0;font-size:15px;line-height:1.7;">Hoy celebramos tu fuerza, tu constancia y tu determinación. En Iron Zone, tú eres la protagonista. 💪</p>
+      <div style="background:linear-gradient(135deg,rgba(142,45,226,.15),rgba(246,79,89,.15));border:1px solid #8e2de2;border-radius:20px;padding:28px;margin:24px 0;">
+        <p style="color:#c084fc;font-size:13px;letter-spacing:.1em;margin:0 0 8px;">TU REGALO HOY</p>
+        <p style="color:#fff;font-size:26px;font-weight:800;margin:0;">1 CLASE FUNCIONAL GRATIS</p>
+        <p style="color:#b0b0b0;font-size:14px;margin:8px 0 0;">+ 15% de descuento en entrenamiento personalizado</p>
+      </div>
+      <a href="http://localhost:8069/event" style="background:linear-gradient(135deg,#8e2de2,#f64f59);color:#fff;text-decoration:none;padding:14px 36px;border-radius:50px;font-weight:700;font-size:15px;display:inline-block;">Ver clases disponibles →</a>
+      <p style="color:#555;font-size:13px;margin-top:32px;border-top:1px solid #2a2a2a;padding-top:20px;">Iron Zone · Ambato, Ecuador</p>
+    </td></tr>
+  </table>
+</div>
+      ]]></field>
+    </record>
+
+    <!-- ══════════════════════════════════════════════════
+         DÍA DEL HOMBRE
+    ══════════════════════════════════════════════════ -->
+    <record id="mail_template_mens_day" model="mail.template">
+      <field name="name">IZ Día del Hombre</field>
+      <field name="model_id" ref="base.model_res_partner"/>
+      <field name="subject">💪 Día del Hombre – ${object.name}, potencia tu rendimiento</field>
+      <field name="email_from">${(user.email_formatted or 'noreply@ironzone.com')}</field>
+      <field name="auto_delete">True</field>
+      <field name="body_html"><![CDATA[
+<div style="background:#0d0d0d;font-family:'Segoe UI',Arial,sans-serif;padding:0;margin:0;">
+  <table width="100%" cellpadding="0" cellspacing="0" style="max-width:600px;margin:0 auto;">
+    <tr><td style="background:linear-gradient(135deg,#0f3460,#16213e);padding:40px 32px;text-align:center;border-radius:0 0 32px 32px;">
+      <p style="font-size:40px;margin:0;">💪</p>
+      <h1 style="color:#fff;font-size:28px;font-weight:800;margin:8px 0 0;">Día Internacional del Hombre</h1>
+      <p style="color:rgba(255,255,255,.7);font-size:14px;margin:6px 0 0;">19 de Noviembre</p>
+    </td></tr>
+    <tr><td style="background:#161616;padding:36px 32px;text-align:center;">
+      <p style="color:#e0e0e0;font-size:16px;">Hola <strong style="color:#ff6a42;">${object.name}</strong>,</p>
+      <p style="color:#b0b0b0;font-size:15px;line-height:1.7;">Hoy es tu día. Sigue entrenando fuerte, Iron Zone tiene algo especial para ti.</p>
+      <div style="background:rgba(255,106,66,.08);border:1px solid #ff6a42;border-radius:20px;padding:28px;margin:24px 0;">
+        <p style="color:#ff6a42;font-size:13px;letter-spacing:.1em;margin:0 0 8px;">PROMOCIÓN ESPECIAL</p>
+        <p style="color:#fff;font-size:26px;font-weight:800;margin:0;">PLAN IRON STRENGTH</p>
+        <p style="color:#b0b0b0;font-size:14px;margin:8px 0 0;">20% OFF en membresía mensual · Solo hoy</p>
+      </div>
+      <a href="http://localhost:8069/shop" style="background:linear-gradient(135deg,#ff6a42,#ff4f86);color:#fff;text-decoration:none;padding:14px 36px;border-radius:50px;font-weight:700;font-size:15px;display:inline-block;">Activar promoción →</a>
+      <p style="color:#555;font-size:13px;margin-top:32px;border-top:1px solid #2a2a2a;padding-top:20px;">Iron Zone · Ambato, Ecuador</p>
+    </td></tr>
+  </table>
+</div>
+      ]]></field>
+    </record>
+
+    <!-- ══════════════════════════════════════════════════
+         MEMBRESÍA POR VENCER
+    ══════════════════════════════════════════════════ -->
+    <record id="mail_template_membership_expiry" model="mail.template">
+      <field name="name">IZ Membresía próxima a vencer</field>
+      <field name="model_id" ref="base.model_res_partner"/>
+      <field name="subject">⏰ ${object.name}, tu membresía vence pronto – Renueva con descuento</field>
+      <field name="email_from">${(user.email_formatted or 'noreply@ironzone.com')}</field>
+      <field name="auto_delete">True</field>
+      <field name="body_html"><![CDATA[
+<div style="background:#0d0d0d;font-family:'Segoe UI',Arial,sans-serif;padding:0;margin:0;">
+  <table width="100%" cellpadding="0" cellspacing="0" style="max-width:600px;margin:0 auto;">
+    <tr><td style="background:linear-gradient(135deg,#f7971e,#ff6a42);padding:40px 32px;text-align:center;border-radius:0 0 32px 32px;">
+      <p style="font-size:40px;margin:0;">⏰</p>
+      <h1 style="color:#fff;font-size:28px;font-weight:800;margin:8px 0 0;">Tu membresía vence en 7 días</h1>
+    </td></tr>
+    <tr><td style="background:#161616;padding:36px 32px;text-align:center;">
+      <p style="color:#e0e0e0;font-size:16px;">Hola <strong style="color:#f7971e;">${object.name}</strong>,</p>
+      <p style="color:#b0b0b0;font-size:15px;line-height:1.7;">No pierdas tu ritmo. Renueva ahora y sigue entrenando sin interrupciones con un descuento especial por ser miembro.</p>
+      <div style="background:rgba(247,151,30,.08);border:1px solid #f7971e;border-radius:20px;padding:28px;margin:24px 0;">
+        <p style="color:#f7971e;font-size:13px;letter-spacing:.1em;margin:0 0 8px;">OFERTA DE RENOVACIÓN</p>
+        <p style="color:#fff;font-size:44px;font-weight:900;margin:0;">15% OFF</p>
+        <p style="color:#b0b0b0;font-size:14px;margin:8px 0 0;">al renovar antes de que venza tu membresía</p>
+      </div>
+      <a href="http://localhost:8069/shop" style="background:linear-gradient(135deg,#f7971e,#ff6a42);color:#fff;text-decoration:none;padding:14px 36px;border-radius:50px;font-weight:700;font-size:15px;display:inline-block;">Renovar ahora →</a>
+      <p style="color:#555;font-size:13px;margin-top:32px;border-top:1px solid #2a2a2a;padding-top:20px;">Iron Zone · Ambato, Ecuador</p>
+    </td></tr>
+  </table>
+</div>
+      ]]></field>
+    </record>
+
+    <!-- ══════════════════════════════════════════════════
+         OBJETIVO FITNESS – MASA MUSCULAR
+    ══════════════════════════════════════════════════ -->
+    <record id="mail_template_goal_muscle" model="mail.template">
+      <field name="name">IZ Campaña – Masa muscular</field>
+      <field name="model_id" ref="base.model_res_partner"/>
+      <field name="subject">💪 ${object.name} – Nuevo programa Iron Bulk disponible</field>
+      <field name="email_from">${(user.email_formatted or 'noreply@ironzone.com')}</field>
+      <field name="auto_delete">True</field>
+      <field name="body_html"><![CDATA[
+<div style="background:#0d0d0d;font-family:'Segoe UI',Arial,sans-serif;padding:0;margin:0;">
+  <table width="100%" cellpadding="0" cellspacing="0" style="max-width:600px;margin:0 auto;">
+    <tr><td style="background:linear-gradient(135deg,#1a1a2e,#16213e,#0f3460);padding:40px 32px;text-align:center;border-radius:0 0 32px 32px;">
+      <p style="font-size:40px;margin:0;">🏋️</p>
+      <h1 style="color:#fff;font-size:28px;font-weight:800;margin:8px 0 0;">Programa Iron Bulk</h1>
+      <p style="color:rgba(255,255,255,.7);font-size:14px;margin:6px 0 0;">Hipertrofia · Fuerza · Volumen</p>
+    </td></tr>
+    <tr><td style="background:#161616;padding:36px 32px;">
+      <p style="color:#e0e0e0;font-size:16px;">Hola <strong style="color:#ff6a42;">${object.name}</strong>,</p>
+      <p style="color:#b0b0b0;font-size:15px;line-height:1.7;">Sabemos que tu objetivo es ganar masa muscular. Por eso diseñamos el programa <strong style="color:#fff;">Iron Bulk</strong>: rutinas de hipertrofia progresiva con acompañamiento de entrenadores certificados.</p>
+      <div style="display:flex;gap:12px;margin:24px 0;">
+        <div style="background:#1e1e1e;border-radius:16px;padding:20px;flex:1;text-align:center;">
+          <p style="color:#ff6a42;font-size:22px;margin:0;">12</p>
+          <p style="color:#999;font-size:12px;margin:4px 0 0;">Semanas</p>
+        </div>
+        <div style="background:#1e1e1e;border-radius:16px;padding:20px;flex:1;text-align:center;">
+          <p style="color:#ff6a42;font-size:22px;margin:0;">5</p>
+          <p style="color:#999;font-size:12px;margin:4px 0 0;">Días / semana</p>
+        </div>
+        <div style="background:#1e1e1e;border-radius:16px;padding:20px;flex:1;text-align:center;">
+          <p style="color:#ff6a42;font-size:22px;margin:0;">100%</p>
+          <p style="color:#999;font-size:12px;margin:4px 0 0;">Personalizado</p>
+        </div>
+      </div>
+      <div style="text-align:center;">
+        <a href="http://localhost:8069/event" style="background:linear-gradient(135deg,#ff6a42,#ff4f86);color:#fff;text-decoration:none;padding:14px 36px;border-radius:50px;font-weight:700;font-size:15px;display:inline-block;">Ver clases disponibles →</a>
+      </div>
+      <p style="color:#555;font-size:13px;margin-top:32px;border-top:1px solid #2a2a2a;padding-top:20px;text-align:center;">Iron Zone · Ambato, Ecuador</p>
+    </td></tr>
+  </table>
+</div>
+      ]]></field>
+    </record>
+
+    <!-- ══════════════════════════════════════════════════
+         NAVIDAD / ESTACIONAL
+    ══════════════════════════════════════════════════ -->
+    <record id="mail_template_seasonal" model="mail.template">
+      <field name="name">IZ Campaña Estacional</field>
+      <field name="model_id" ref="base.model_res_partner"/>
+      <field name="subject">🎄 ${object.name} – Felices Fiestas de parte de Iron Zone</field>
+      <field name="email_from">${(user.email_formatted or 'noreply@ironzone.com')}</field>
+      <field name="auto_delete">True</field>
+      <field name="body_html"><![CDATA[
+<div style="background:#0d0d0d;font-family:'Segoe UI',Arial,sans-serif;padding:0;margin:0;">
+  <table width="100%" cellpadding="0" cellspacing="0" style="max-width:600px;margin:0 auto;">
+    <tr><td style="background:linear-gradient(135deg,#1a472a,#2d6a4f);padding:40px 32px;text-align:center;border-radius:0 0 32px 32px;">
+      <p style="font-size:40px;margin:0;">🎄</p>
+      <h1 style="color:#fff;font-size:28px;font-weight:800;margin:8px 0 0;">¡Felices Fiestas!</h1>
+      <p style="color:rgba(255,255,255,.7);font-size:14px;margin:6px 0 0;">De parte de todo el equipo Iron Zone</p>
+    </td></tr>
+    <tr><td style="background:#161616;padding:36px 32px;text-align:center;">
+      <p style="color:#e0e0e0;font-size:16px;">Hola <strong style="color:#52b788;">${object.name}</strong>,</p>
+      <p style="color:#b0b0b0;font-size:15px;line-height:1.7;">Que estas fiestas estén llenas de energía y motivación. Para empezar el año nuevo con todo, te tenemos un regalo.</p>
+      <div style="background:rgba(82,183,136,.08);border:1px solid #52b788;border-radius:20px;padding:28px;margin:24px 0;">
+        <p style="color:#52b788;font-size:13px;letter-spacing:.1em;margin:0 0 8px;">REGALO DE NAVIDAD</p>
+        <p style="color:#fff;font-size:40px;font-weight:900;margin:0;">25% OFF</p>
+        <p style="color:#b0b0b0;font-size:14px;margin:8px 0 0;">en cualquier membresía para enero</p>
+        <p style="color:#555;font-size:12px;margin:12px 0 0;">Código: <strong style="color:#52b788;">NAVIDAD25</strong> · Válido hasta el 7 de enero</p>
+      </div>
+      <a href="http://localhost:8069/shop" style="background:linear-gradient(135deg,#1a472a,#52b788);color:#fff;text-decoration:none;padding:14px 36px;border-radius:50px;font-weight:700;font-size:15px;display:inline-block;">Activar mi regalo 🎁</a>
+      <p style="color:#555;font-size:13px;margin-top:32px;border-top:1px solid #2a2a2a;padding-top:20px;">Iron Zone · Ambato, Ecuador</p>
+    </td></tr>
+  </table>
+</div>
+      ]]></field>
+    </record>
+
+  </data>
+</odoo>

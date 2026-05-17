@@ -1,6 +1,6 @@
 {
     "name": "IZ Website",
-    "version": "18.0.1.0.0",
+    "version": "18.0.1.1.0",
     "summary": "Website customization for the Iron Zone project",
     "category": "Website",
     "author": "Iron Zone",
@@ -14,8 +14,15 @@
         "payment_custom",
         "account_payment",
         "website_payment",
+        "mail",
+        "mass_mailing",
+        "auth_signup",
     ],
     "data": [
+        "data/mailing_list.xml",
+        "data/email_templates.xml",
+        "data/cron.xml",
+        "data/ir.model.access.csv",
         "views/website_layout.xml",
         "views/website_footer.xml",
         "views/website_branding_views.xml",
@@ -24,14 +31,21 @@
         "views/website_contact_views.xml",
         "views/website_terms_views.xml",
         "views/website_portal_views.xml",
+        "views/website_signup_views.xml",
     ],
     "assets": {
         "web.assets_frontend": [
             "iz_website/static/src/css/iron_zone.css",
             "iz_website/static/src/js/iron_zone.js",
-            ("after", "payment_demo/static/src/js/payment_form.js", "iz_website/static/src/js/payment_demo_fix.js"),
+            "iz_website/static/src/js/iz_signup.js",
+            (
+                "after",
+                "payment_demo/static/src/js/payment_form.js",
+                "iz_website/static/src/js/payment_demo_fix.js",
+            ),
         ],
     },
+    "post_init_hook": "post_init_hook",
     "installable": True,
     "application": False,
 }
