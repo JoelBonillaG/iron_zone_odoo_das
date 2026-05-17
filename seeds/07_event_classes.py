@@ -442,7 +442,6 @@ def run():
         {
             "name": "Boleto de Clase",
             "type": "service",
-            "detailed_type": "event",
             "list_price": 0.0,
         },
         fields=["id"]
@@ -483,7 +482,7 @@ def run():
             "user_id": instructor_user_id or False,
             "stage_id": stage_ids.get(class_info.get("stage", "Nuevo")),
             "website_published": True,
-            "website_menu": True,
+            "website_menu": False,
             "address_id": location_partner_id,
             "event_type_id": False,
         }
