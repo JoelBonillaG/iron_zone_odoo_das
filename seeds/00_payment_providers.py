@@ -1,4 +1,4 @@
-from config import DB, PASSWORD, connect
+from config import DB, PASSWORD, connect, env_value
 
 
 BANK_NAME = "Banco Pichincha"
@@ -26,11 +26,21 @@ PAYMENT_PROVIDERS = {
         "custom_mode": "wire_transfer",
         "pre_msg": "<p>Realiza la transferencia con los datos bancarios de Iron Zone.</p>",
     },
+    "stripe": {
+        "name": "Stripe",
+        "state": "test",
+        "is_published": True,
+        "sequence": 3,
+        "stripe_publishable_key": env_value("STRIPE_PUBLISHABLE_KEY", default=""),
+        "stripe_secret_key": env_value("STRIPE_SECRET_KEY", default=""),
+        "stripe_webhook_secret": env_value("STRIPE_WEBHOOK_SECRET", default=""),
+    },
 }
 
 PAYMENT_METHODS = {
     "demo": {"active": True, "sequence": 1, "sri_payment_code": "19"},
     "wire_transfer": {"active": True, "sequence": 2, "sri_payment_code": "20"},
+    "card": {"active": True, "sequence": 3, "sri_payment_code": "19"},
 }
 
 
@@ -82,7 +92,7 @@ def get_website(models, uid):
 
 
 def ensure_modules_installed(models, uid):
-    modules = ["payment_demo", "payment_custom", "account_payment", "website_payment"]
+    modules = ["payment_demo", "payment_custom", "payment_stripe", "account_payment", "website_payment"]
     records = execute(
         models,
         uid,

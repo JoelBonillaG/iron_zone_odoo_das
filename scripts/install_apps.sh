@@ -19,6 +19,7 @@ DEFAULT_MODULES=(
   l10n_ec
   website_payment
   payment_demo
+  payment_stripe
   payment_custom
   hr
   mass_mailing
