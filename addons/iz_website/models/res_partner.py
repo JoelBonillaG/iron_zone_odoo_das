@@ -92,6 +92,9 @@ class ResPartner(models.Model):
     def create(self, vals_list):
         partners = super().create(vals_list)
         today = fields.Date.context_today(self)
+        if self.env.context.get('iz_skip_automation'):
+            return partners
+            
         for partner in partners:
             try:
                 # Synchronize partner category tags
@@ -129,6 +132,9 @@ class ResPartner(models.Model):
             
         res = super().write(vals)
         today = fields.Date.context_today(self)
+        if self.env.context.get('iz_skip_automation'):
+            return res
+
         try:
             for partner in self:
                 # Synchronize partner category tags

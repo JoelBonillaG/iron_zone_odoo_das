@@ -10,6 +10,7 @@
       <field name="model_id" ref="base.model_res_partner"/>
       <field name="subject">¡Bienvenido a Iron Zone! Tu camino al éxito comienza hoy 🔥</field>
       <field name="email_from">contacto@ironzone.ec</field>
+      <field name="email_to">{{ object.email }}</field>
       <field name="auto_delete">True</field>
       <field name="body_html"><![CDATA[
 <div style="background-color:#050505;font-family:'Segoe UI',Roboto,Helvetica,Arial,sans-serif;padding:45px 0;margin:0;">
@@ -135,6 +136,7 @@
       <field name="model_id" ref="base.model_res_users"/>
       <field name="subject">¡Bienvenido a Iron Zone! Tu camino al éxito comienza hoy 🔥</field>
       <field name="email_from">contacto@ironzone.ec</field>
+      <field name="email_to">{{ object.email }}</field>
       <field name="auto_delete">True</field>
       <field name="body_html"><![CDATA[
 <div style="background-color:#050505;font-family:'Segoe UI',Roboto,Helvetica,Arial,sans-serif;padding:45px 0;margin:0;">
@@ -269,6 +271,7 @@
       <field name="model_id" ref="base.model_res_partner"/>
       <field name="subject">¡Feliz Cumpleaños {{ object.name }}! Un año más de salud y progreso ⚡</field>
       <field name="email_from">contacto@ironzone.ec</field>
+      <field name="email_to">{{ object.email }}</field>
       <field name="auto_delete">True</field>
       <field name="body_html"><![CDATA[
 <div style="background-color:#050505;font-family:'Segoe UI',Roboto,Helvetica,Arial,sans-serif;padding:45px 0;margin:0;">
@@ -356,6 +359,8 @@
       <field name="name">IZ Día de la Mujer</field>
       <field name="model_id" ref="base.model_res_partner"/>
       <field name="subject">¡Feliz Día de la Mujer! Reclama tu Clase Premium 100% GRATIS en Iron Zone 💜</field>
+      <field name="email_from">contacto@ironzone.ec</field>
+      <field name="email_to">{{ object.email }}</field>
       <field name="auto_delete">True</field>
       <field name="body_html"><![CDATA[
 <div style="background-color:#050505;font-family:'Segoe UI',Roboto,Helvetica,Arial,sans-serif;padding:45px 0;margin:0;">
@@ -434,6 +439,8 @@
       <field name="name">IZ Día del Hombre</field>
       <field name="model_id" ref="base.model_res_partner"/>
       <field name="subject">Día del Hombre: Obtén tu Descuento Exclusivo y Pase en Iron Zone ⚡</field>
+      <field name="email_from">contacto@ironzone.ec</field>
+      <field name="email_to">{{ object.email }}</field>
       <field name="auto_delete">True</field>
       <field name="body_html"><![CDATA[
 <div style="background-color:#050505;font-family:'Segoe UI',Roboto,Helvetica,Arial,sans-serif;padding:45px 0;margin:0;">
@@ -455,7 +462,7 @@
       <td style="padding:45px 40px 40px;">
         <p style="color:#ffffff;font-size:19px;line-height:1.6;margin-top:0;font-weight:600;">¿Qué tal, <span style="color:#1cb5e0;"><t t-esc="object.name"/></span>?</p>
         <p style="color:#cccccc;font-size:16px;line-height:1.7;margin-bottom:20px;">
-          En el **Día Internacional del Hombre**, celebramos tu consistencia y la disciplina con la que encaras cada entrenamiento. En Iron Zone sabemos que el progreso es el resultado de la constancia diaria.
+          En el <strong>Día del Hombre</strong>, celebramos tu consistencia y la disciplina con la que encaras cada entrenamiento. En <strong>Iron Zone</strong> sabemos que el progreso es el resultado de la constancia diaria.
         </p>
         
         <div style="background-color:#1a1a1a;border-left:4px solid #1cb5e0;padding:25px;margin:30px 0;border-radius:0 8px 8px 0;">
@@ -512,9 +519,12 @@
       <field name="name">IZ Membresía próxima a vencer</field>
       <field name="model_id" ref="base.model_res_partner"/>
       <field name="subject">🚨 ¡Tu membresía vence en 7 días! Mantén tu progreso, {{ object.name }}</field>
+      <field name="email_from">contacto@ironzone.ec</field>
+      <field name="email_to">{{ object.email }}</field>
       <field name="auto_delete">True</field>
       <field name="body_html"><![CDATA[
 <div style="background-color:#050505;font-family:'Segoe UI',Roboto,Helvetica,Arial,sans-serif;padding:45px 0;margin:0;">
+  <t t-set="base_url" t-value="(object.env['ir.config_parameter'].sudo().get_param('web.base.url') or 'http://localhost:8069')"/>
   <table width="100%" cellpadding="0" cellspacing="0" style="max-width:600px;margin:0 auto;background-color:#111111;border:1px solid #222;border-radius:16px;overflow:hidden;box-shadow:0 15px 35px rgba(0,0,0,0.6);">
     <tr>
       <td style="text-align:center;padding:25px;background-color:#000000;border-bottom:2px solid #ff8008;">
@@ -566,9 +576,12 @@
       <field name="name">IZ Campaña – Masa muscular</field>
       <field name="model_id" ref="base.model_res_partner"/>
       <field name="subject">Desarrollo Muscular: Plan Especializado de Musculación Personalizada 🏋️‍♂️</field>
+      <field name="email_from">contacto@ironzone.ec</field>
+      <field name="email_to">{{ object.email }}</field>
       <field name="auto_delete">True</field>
       <field name="body_html"><![CDATA[
 <div style="background-color:#050505;font-family:'Segoe UI',Roboto,Helvetica,Arial,sans-serif;padding:45px 0;margin:0;">
+  <t t-set="base_url" t-value="(object.env['ir.config_parameter'].sudo().get_param('web.base.url') or 'http://localhost:8069')"/>
   <table width="100%" cellpadding="0" cellspacing="0" style="max-width:600px;margin:0 auto;background-color:#111111;border:1px solid #222;border-radius:16px;overflow:hidden;box-shadow:0 15px 35px rgba(0,0,0,0.6);">
     <tr>
       <td style="text-align:center;padding:25px;background-color:#000000;border-bottom:2px solid #ff4b2b;">
@@ -628,9 +641,12 @@
       <field name="name">IZ Campaña – Pérdida de peso</field>
       <field name="model_id" ref="base.model_res_partner"/>
       <field name="subject">Optimización Metabólica: Domina el HIIT Entrenamiento y Mejora tu Salud 🔥</field>
+      <field name="email_from">contacto@ironzone.ec</field>
+      <field name="email_to">{{ object.email }}</field>
       <field name="auto_delete">True</field>
       <field name="body_html"><![CDATA[
 <div style="background-color:#050505;font-family:'Segoe UI',Roboto,Helvetica,Arial,sans-serif;padding:45px 0;margin:0;">
+  <t t-set="base_url" t-value="(object.env['ir.config_parameter'].sudo().get_param('web.base.url') or 'http://localhost:8069')"/>
   <table width="100%" cellpadding="0" cellspacing="0" style="max-width:600px;margin:0 auto;background-color:#111111;border:1px solid #222;border-radius:16px;overflow:hidden;box-shadow:0 15px 35px rgba(0,0,0,0.6);">
     <tr>
       <td style="text-align:center;padding:25px;background-color:#000000;border-bottom:2px solid #ff8008;">
@@ -663,7 +679,7 @@
         <table width="100%" cellpadding="0" cellspacing="0" style="margin:35px 0;">
           <tr>
             <td align="center">
-              <a t-att-href="(object.env['ir.config_parameter'].sudo().get_param('web.base.url') or 'http://localhost:8069') + '/event/hiit-entrenamiento-6/register'" style="background:linear-gradient(to right,#ff8008,#ffc837);color:#111111;text-decoration:none;padding:18px 45px;border-radius:6px;font-weight:bold;font-size:15px;display:inline-block;text-transform:uppercase;letter-spacing:2px;box-shadow:0 6px 20px rgba(255,128,8,0.4);transition:all 0.3s ease;">Reservar Mi Sesión HIIT</a>
+              <a t-att-href="base_url + '/event/hiit-entrenamiento-6/register'" style="background:linear-gradient(to right,#ff8008,#ffc837);color:#111111;text-decoration:none;padding:18px 45px;border-radius:6px;font-weight:bold;font-size:15px;display:inline-block;text-transform:uppercase;letter-spacing:2px;box-shadow:0 6px 20px rgba(255,128,8,0.4);transition:all 0.3s ease;">Reservar Mi Sesión HIIT</a>
               <p style="color:#888; font-size:12px; margin-top:10px;">*Recomendado: 3 sesiones por semana.</p>
             </td>
           </tr>
@@ -690,9 +706,12 @@
       <field name="name">IZ Campaña – Resistencia física</field>
       <field name="model_id" ref="base.model_res_partner"/>
       <field name="subject">Mejora tu Rendimiento: Conquista el Desafío CrossFit AM y Spinning 🚲</field>
+      <field name="email_from">contacto@ironzone.ec</field>
+      <field name="email_to">{{ object.email }}</field>
       <field name="auto_delete">True</field>
       <field name="body_html"><![CDATA[
 <div style="background-color:#050505;font-family:'Segoe UI',Roboto,Helvetica,Arial,sans-serif;padding:45px 0;margin:0;">
+  <t t-set="base_url" t-value="(object.env['ir.config_parameter'].sudo().get_param('web.base.url') or 'http://localhost:8069')"/>
   <table width="100%" cellpadding="0" cellspacing="0" style="max-width:600px;margin:0 auto;background-color:#111111;border:1px solid #222;border-radius:16px;overflow:hidden;box-shadow:0 15px 35px rgba(0,0,0,0.6);">
     <tr>
       <td style="text-align:center;padding:25px;background-color:#000000;border-bottom:2px solid #0052d4;">
@@ -752,9 +771,12 @@
       <field name="name">IZ Campaña – Fitness general</field>
       <field name="model_id" ref="base.model_res_partner"/>
       <field name="subject">Bienestar Total: Vitalidad Completa en el Funcional Boot Camp 🌟</field>
+      <field name="email_from">contacto@ironzone.ec</field>
+      <field name="email_to">{{ object.email }}</field>
       <field name="auto_delete">True</field>
       <field name="body_html"><![CDATA[
 <div style="background-color:#050505;font-family:'Segoe UI',Roboto,Helvetica,Arial,sans-serif;padding:45px 0;margin:0;">
+  <t t-set="base_url" t-value="(object.env['ir.config_parameter'].sudo().get_param('web.base.url') or 'http://localhost:8069')"/>
   <table width="100%" cellpadding="0" cellspacing="0" style="max-width:600px;margin:0 auto;background-color:#111111;border:1px solid #222;border-radius:16px;overflow:hidden;box-shadow:0 15px 35px rgba(0,0,0,0.6);">
     <tr>
       <td style="text-align:center;padding:25px;background-color:#000000;border-bottom:2px solid #11998e;">
@@ -814,9 +836,12 @@
       <field name="name">IZ Campaña – Nivel Principiante</field>
       <field name="model_id" ref="base.model_res_partner"/>
       <field name="subject">Tu Primer Paso Valiente: Aprende Segura con Yoga Principiantes 🧘‍♀️</field>
+      <field name="email_from">contacto@ironzone.ec</field>
+      <field name="email_to">{{ object.email }}</field>
       <field name="auto_delete">True</field>
       <field name="body_html"><![CDATA[
 <div style="background-color:#050505;font-family:'Segoe UI',Roboto,Helvetica,Arial,sans-serif;padding:45px 0;margin:0;">
+  <t t-set="base_url" t-value="(object.env['ir.config_parameter'].sudo().get_param('web.base.url') or 'http://localhost:8069')"/>
   <table width="100%" cellpadding="0" cellspacing="0" style="max-width:600px;margin:0 auto;background-color:#111111;border:1px solid #222;border-radius:16px;overflow:hidden;box-shadow:0 15px 35px rgba(0,0,0,0.6);">
     <tr>
       <td style="text-align:center;padding:25px;background-color:#000000;border-bottom:2px solid #00b4db;">
@@ -876,9 +901,12 @@
       <field name="name">IZ Campaña – Nivel Intermedio</field>
       <field name="model_id" ref="base.model_res_partner"/>
       <field name="subject">Sube de Nivel: Consolida Tu Técnica en el Funcional Boot Camp y Boxeo 💥</field>
+      <field name="email_from">contacto@ironzone.ec</field>
+      <field name="email_to">{{ object.email }}</field>
       <field name="auto_delete">True</field>
       <field name="body_html"><![CDATA[
 <div style="background-color:#050505;font-family:'Segoe UI',Roboto,Helvetica,Arial,sans-serif;padding:45px 0;margin:0;">
+  <t t-set="base_url" t-value="(object.env['ir.config_parameter'].sudo().get_param('web.base.url') or 'http://localhost:8069')"/>
   <table width="100%" cellpadding="0" cellspacing="0" style="max-width:600px;margin:0 auto;background-color:#111111;border:1px solid #222;border-radius:16px;overflow:hidden;box-shadow:0 15px 35px rgba(0,0,0,0.6);">
     <tr>
       <td style="text-align:center;padding:25px;background-color:#000000;border-bottom:2px solid #ff5858;">
@@ -938,9 +966,12 @@
       <field name="name">IZ Campaña – Nivel Avanzado</field>
       <field name="model_id" ref="base.model_res_partner"/>
       <field name="subject">Solo para Élite: Domina el Control Absoluto en Pilates y Yoga Avanzado 🥋</field>
+      <field name="email_from">contacto@ironzone.ec</field>
+      <field name="email_to">{{ object.email }}</field>
       <field name="auto_delete">True</field>
       <field name="body_html"><![CDATA[
 <div style="background-color:#050505;font-family:'Segoe UI',Roboto,Helvetica,Arial,sans-serif;padding:45px 0;margin:0;">
+  <t t-set="base_url" t-value="(object.env['ir.config_parameter'].sudo().get_param('web.base.url') or 'http://localhost:8069')"/>
   <table width="100%" cellpadding="0" cellspacing="0" style="max-width:600px;margin:0 auto;background-color:#111111;border:1px solid #222;border-radius:16px;overflow:hidden;box-shadow:0 15px 35px rgba(0,0,0,0.6);">
     <tr>
       <td style="text-align:center;padding:25px;background-color:#000000;border-bottom:2px solid #ff4b2b;">
@@ -1000,9 +1031,12 @@
       <field name="name">IZ Campaña Estacional</field>
       <field name="model_id" ref="base.model_res_partner"/>
       <field name="subject">¡Temporada Especial en Iron Zone! Tu bienestar es el mejor obsequio 🎄🎁</field>
+      <field name="email_from">contacto@ironzone.ec</field>
+      <field name="email_to">{{ object.email }}</field>
       <field name="auto_delete">True</field>
       <field name="body_html"><![CDATA[
 <div style="background-color:#050505;font-family:'Segoe UI',Roboto,Helvetica,Arial,sans-serif;padding:45px 0;margin:0;">
+  <t t-set="base_url" t-value="(object.env['ir.config_parameter'].sudo().get_param('web.base.url') or 'http://localhost:8069')"/>
   <table width="100%" cellpadding="0" cellspacing="0" style="max-width:600px;margin:0 auto;background-color:#111111;border:1px solid #222;border-radius:16px;overflow:hidden;box-shadow:0 15px 35px rgba(0,0,0,0.6);">
     <tr>
       <td style="text-align:center;padding:25px;background-color:#000000;border-bottom:2px solid #38ef7d;">
