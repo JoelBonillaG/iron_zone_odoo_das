@@ -57,6 +57,37 @@
         }
     }
 
+    function clearError(el) {
+        const next = el.nextElementSibling;
+        if (next && next.classList && next.classList.contains('iz-field-error')) {
+            next.remove();
+        }
+    }
+
+    function showError(el, msg) {
+        clearError(el);
+        const err = document.createElement('div');
+        err.className = 'form-text text-danger iz-field-error';
+        err.textContent = msg;
+        el.parentNode.appendChild(err);
+    }
+
+    function validateRequiredFields(e) {
+        let ok = true;
+        const selects = ['iz_gender', 'iz_fitness_goal', 'iz_experience_level'];
+        selects.forEach(function (id) {
+            const el = document.getElementById(id);
+            if (!el) return;
+            clearError(el);
+            if (!el.value) {
+                ok = false;
+                showError(el, 'Este campo es obligatorio.');
+                if (ok === false) el.focus();
+            }
+        });
+        return ok;
+    }
+
     document.addEventListener('DOMContentLoaded', function () {
         setMaxDate();
         const dateInput = document.getElementById('iz_birthdate');
@@ -65,6 +96,16 @@
             dateInput.addEventListener('input', updateAgeHint);
         }
         const form = document.querySelector('form#signup_form, form[action*="signup"]');
-        if (form) form.addEventListener('submit', validateOnSubmit);
+        if (form) {
+            form.addEventListener('submit', function (ev) {
+                // validate required selects first
+                const ok = validateRequiredFields(ev);
+                if (!ok) {
+                    ev.preventDefault();
+                    return;
+                }
+                validateOnSubmit(ev);
+            });
+        }
     });
 })();

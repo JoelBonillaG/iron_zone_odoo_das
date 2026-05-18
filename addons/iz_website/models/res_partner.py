@@ -42,6 +42,8 @@ class ResPartner(models.Model):
     # Campo fantasma necesario para que Odoo valide vistas antiguas en la DB durante actualizaciones
     iz_last_birthday_year = fields.Integer(string="Último año de cumpleaños")
     iz_welcome_sent = fields.Boolean(string="Welcome Sent")
+    iz_onboarding_day1_sent = fields.Boolean(string="Onboarding Day 1 Sent")
+    iz_onboarding_day23_sent = fields.Boolean(string="Onboarding Day 2-3 Sent")
     
     iz_gender_last_update = fields.Datetime(
         string="Última modificación de género", 
@@ -102,11 +104,20 @@ class ResPartner(models.Model):
             except Exception:
                 pass
             
-            if partner.email and partner.iz_birthdate and partner.iz_birthdate.month == today.month and partner.iz_birthdate.day == today.day:
-                template = self.env.ref("iz_website.mail_template_birthday", raise_if_not_found=False)
+            # Enviar siempre la bienvenida en el alta; si hoy es su cumpleaños, pasar flag
+            if partner.email:
+                template = self.env.ref("iz_website.mail_template_welcome", raise_if_not_found=False)
                 if template:
                     try:
-                        template.with_context(partner=partner).send_mail(partner.id, force_send=True)
+                        is_bday = False
+                        if partner.iz_birthdate and partner.iz_birthdate.month == today.month and partner.iz_birthdate.day == today.day:
+                            is_bday = True
+                        ctx = {"partner": partner, "is_birthday": is_bday, "is_birthday_today": is_bday}
+                        template.with_context(**ctx).send_mail(partner.id, force_send=True)
+                        try:
+                            partner.sudo().write({"iz_welcome_sent": True})
+                        except Exception:
+                            pass
                     except Exception:
                         pass
         return partners
@@ -411,7 +422,8 @@ class ResPartner(models.Model):
         if not template:
             return
         try:
-            template.send_mail(self.id, force_send=True)
+            is_bday = bool(self.iz_birthdate and self.iz_birthdate.month == today.month and self.iz_birthdate.day == today.day)
+            template.with_context(partner=self, is_birthday=is_bday, is_birthday_today=is_bday).send_mail(self.id, force_send=True)
             self.sudo().write({"iz_welcome_sent": True})
         except Exception:
             pass

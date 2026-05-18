@@ -27,6 +27,23 @@ class IzMarketing(models.TransientModel):
                 pass
         return sent
 
+    def _signup_age_days(self, partner):
+        if not partner.create_date:
+            return None
+        create_date = fields.Datetime.to_datetime(partner.create_date)
+        return (fields.Date.context_today(self) - create_date.date()).days
+
+    def _send_onboarding_batch(self, partners, template, flag_field):
+        sent = 0
+        for partner in partners:
+            try:
+                template.with_context(partner=partner).send_mail(partner.id, force_send=True)
+                partner.sudo().write({flag_field: True})
+                sent += 1
+            except Exception:
+                pass
+        return sent
+
     # ------------------------------------------------------------------
     # Cumpleaños
     # ------------------------------------------------------------------
@@ -164,6 +181,30 @@ class IzMarketing(models.TransientModel):
     @api.model
     def send_marketing_campaigns(self):
         """Orquestador principal – llamado por el cron diario."""
+        partners = self.env["res.partner"].search([
+            ("email", "!=", False),
+            ("active", "=", True),
+            ("iz_subscribed", "=", True),
+        ])
+
+        day1_partners = partners.filtered(
+            lambda partner: self._signup_age_days(partner) == 1 and not partner.iz_onboarding_day1_sent
+        )
+        day23_partners = partners.filtered(
+            lambda partner: self._signup_age_days(partner) in (2, 3) and not partner.iz_onboarding_day23_sent
+        )
+
+        self._send_onboarding_batch(
+            day1_partners,
+            self._get_template("mail_template_level_beginner"),
+            "iz_onboarding_day1_sent",
+        )
+        self._send_onboarding_batch(
+            day23_partners,
+            self._get_template("mail_template_goal_muscle_gain"),
+            "iz_onboarding_day23_sent",
+        )
+
         self.send_womens_day_campaign()
         self.send_mens_day_campaign()
         self.send_seasonal_campaigns()

@@ -18,7 +18,7 @@
                 <!-- ── Género ── -->
                 <div class="mb-3">
                     <label for="iz_gender" class="form-label fw-semibold">Género</label>
-                    <select id="iz_gender" name="iz_gender" class="form-select iz-select">
+                    <select id="iz_gender" name="iz_gender" class="form-select iz-select" required="required">
                         <option value="">— Selecciona —</option>
                         <option value="male">Masculino</option>
                         <option value="female">Femenino</option>
@@ -32,7 +32,7 @@
                         Fecha de nacimiento
                         <small class="text-muted">(mínimo 14 años)</small>
                     </label>
-                    <input id="iz_birthdate" type="date" name="iz_birthdate"
+                    <input id="iz_birthdate" type="date" name="iz_birthdate" required="required"
                            class="form-control iz-input"
                            t-att-max="today_max"
                            placeholder="YYYY-MM-DD"/>
@@ -42,7 +42,7 @@
                 <!-- ── Objetivo fitness ── -->
                 <div class="mb-3">
                     <label for="iz_fitness_goal" class="form-label fw-semibold">Objetivo fitness</label>
-                    <select id="iz_fitness_goal" name="iz_fitness_goal" class="form-select iz-select">
+                    <select id="iz_fitness_goal" name="iz_fitness_goal" class="form-select iz-select" required="required">
                         <option value="">— Selecciona —</option>
                         <option value="weight_loss">🔥 Perder peso</option>
                         <option value="muscle_gain">💪 Ganar masa muscular</option>
@@ -54,7 +54,7 @@
                 <!-- ── Nivel de experiencia ── -->
                 <div class="mb-3">
                     <label for="iz_experience_level" class="form-label fw-semibold">Nivel de experiencia</label>
-                    <select id="iz_experience_level" name="iz_experience_level" class="form-select iz-select">
+                    <select id="iz_experience_level" name="iz_experience_level" class="form-select iz-select" required="required">
                         <option value="">— Selecciona —</option>
                         <option value="beginner">🟢 Principiante</option>
                         <option value="intermediate">🟡 Intermedio</option>
