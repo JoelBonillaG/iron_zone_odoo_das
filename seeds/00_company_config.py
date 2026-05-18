@@ -87,7 +87,7 @@ currency_ids = models.execute_kw(
 
 values = {
     "name": "Iron Zone",
-    "email": get_env("SMTP_FROM", get_env("SMTP_USER", "contacto@ironzone.ec")),
+    "email": get_env("SMTP_USER", get_env("SMTP_FROM", "contacto@ironzone.ec")),
     "phone": "+593 3 282 4450",
     "street": "Av. Cevallos y Montalvo 245",
     "city": "Ambato",
@@ -120,6 +120,54 @@ if website_ids:
     
     models.execute_kw(DB, uid, PASSWORD, "website", "write", [website_ids, website_vals])
     print(f"Website(s) updated: {len(website_ids)}")
+
+# Replace the standard signup email with the Iron Zone welcome template content
+signup_template_ids = models.execute_kw(
+    DB,
+    uid,
+    PASSWORD,
+    "mail.template",
+    "search",
+    [[("name", "=", "Settings: New Portal Sign Up"), ("model_id.model", "=", "res.users")]],
+    {"limit": 1},
+)
+welcome_template_ids = models.execute_kw(
+    DB,
+    uid,
+    PASSWORD,
+    "mail.template",
+    "search",
+    [[("name", "=", "IZ Bienvenida"), ("model_id.model", "=", "res.partner")]],
+    {"limit": 1},
+)
+if signup_template_ids and welcome_template_ids:
+    signup_template = models.execute_kw(
+        DB,
+        uid,
+        PASSWORD,
+        "mail.template",
+        "read",
+        [welcome_template_ids],
+        {"fields": ["subject", "body_html"]},
+    )[0]
+    models.execute_kw(
+        DB,
+        uid,
+        PASSWORD,
+        "mail.template",
+        "write",
+        [
+            signup_template_ids,
+            {
+                "subject": signup_template["subject"],
+                "body_html": signup_template["body_html"],
+                "lang": "en_US",
+                "email_from": "{{ (object.company_id.email_formatted or user.email_formatted) }}",
+                "email_to": "{{ object.email_formatted }}",
+            },
+        ],
+    )
+    print("Standard signup email synchronized with Iron Zone welcome template.")
 
 # Configure automatic invoice for sales
 settings_id = models.execute_kw(DB, uid, PASSWORD, "res.config.settings", "create", [{"automatic_invoice": True}])

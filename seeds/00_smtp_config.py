@@ -38,6 +38,7 @@ SMTP_USER = get_env("SMTP_USER")
 SMTP_PASSWORD = get_env("SMTP_PASSWORD")
 SMTP_FROM = get_env("SMTP_FROM", SMTP_USER)
 SMTP_ENCRYPTION = get_env("SMTP_ENCRYPTION", "starttls")
+SMTP_FILTER_FROM = SMTP_USER or SMTP_FROM
 
 print(
     "Configuring SMTP...",
@@ -47,6 +48,7 @@ print(
     f"PORT={SMTP_PORT}",
     f"USER={SMTP_USER}",
     f"FROM={SMTP_FROM}",
+    f"FILTER_FROM={SMTP_FILTER_FROM}",
     f"ENCRYPTION={SMTP_ENCRYPTION}",
     f"PASSWORD_SET={bool(SMTP_PASSWORD)}",
 )
@@ -81,7 +83,7 @@ values = {
     "smtp_user": SMTP_USER,
     "smtp_pass": SMTP_PASSWORD,
     "smtp_encryption": SMTP_ENCRYPTION,
-    "from_filter": SMTP_FROM,
+    "from_filter": SMTP_FILTER_FROM,
     "sequence": 1,
     "active": True,
 }

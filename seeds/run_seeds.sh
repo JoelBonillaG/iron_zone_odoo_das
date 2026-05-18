@@ -19,20 +19,11 @@ fi
 
 if [ -n "${1:-}" ]; then
     echo "Running $1.py ..."
-    if [ "$1" = "00_smtp_config" ]; then
-        set -a
-        source ../.env
-        set +a
-    fi
     "$PYTHON_BIN" "$1.py"
 else
     echo "==> Running 00_company_config.py ..."
     "$PYTHON_BIN" 00_company_config.py
     echo ""
-
-    set -a
-    source ../.env
-    set +a
 
     echo "==> Running 00_smtp_config.py ..."
     "$PYTHON_BIN" 00_smtp_config.py

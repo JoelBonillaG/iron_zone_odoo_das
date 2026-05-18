@@ -99,7 +99,6 @@ class ResPartner(models.Model):
                     partner._iz_subscribe_to_mailing_list()
                 if partner.email:
                     partner._iz_assign_to_segment_lists()
-                    partner._iz_send_welcome_if_needed()
             except Exception:
                 pass
             
@@ -107,7 +106,7 @@ class ResPartner(models.Model):
                 template = self.env.ref("iz_website.mail_template_birthday", raise_if_not_found=False)
                 if template:
                     try:
-                        template.send_mail(partner.id, force_send=True)
+                        template.with_context(partner=partner).send_mail(partner.id, force_send=True)
                     except Exception:
                         pass
         return partners
@@ -129,7 +128,6 @@ class ResPartner(models.Model):
                     if partner.iz_subscribed:
                         partner._iz_subscribe_to_mailing_list()
                     partner._iz_assign_to_segment_lists()
-                    partner._iz_send_welcome_if_needed()
                 
                 # Enviar correo de campaña específico al actualizar objetivo fitness
                 if "iz_fitness_goal" in vals and partner.iz_fitness_goal and partner.email:
@@ -156,7 +154,7 @@ class ResPartner(models.Model):
                     template = self.env.ref("iz_website.mail_template_birthday", raise_if_not_found=False)
                     if template:
                         try:
-                            template.send_mail(partner.id, force_send=True)
+                            template.with_context(partner=partner).send_mail(partner.id, force_send=True)
                         except Exception:
                             pass
         except Exception:

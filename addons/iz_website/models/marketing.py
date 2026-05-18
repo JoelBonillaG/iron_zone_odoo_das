@@ -21,7 +21,7 @@ class IzMarketing(models.TransientModel):
         sent = 0
         for partner in partners:
             try:
-                template.send_mail(partner.id, force_send=True)
+                template.with_context(partner=partner).send_mail(partner.id, force_send=True)
                 sent += 1
             except Exception:
                 pass
