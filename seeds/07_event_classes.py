@@ -305,12 +305,15 @@ def ensure_event_stages(uid, models):
     )
     deletable = []
     for sid in old_stage_ids:
-        count = models.execute_kw(DB, uid, PASSWORD, "event.event", "search_count", [[("stage_id", "=", sid)]])
+        count = models.execute_kw(DB, uid, PASSWORD, "event.event", "search_count", [[("stage_id", "=", sid)]], {"context": {"active_test": False}})
         if count == 0:
             deletable.append(sid)
     if deletable:
-        models.execute_kw(DB, uid, PASSWORD, "event.stage", "unlink", [deletable])
-        print(f"Deleted {len(deletable)} old event stage(s).")
+        try:
+            models.execute_kw(DB, uid, PASSWORD, "event.stage", "unlink", [deletable])
+            print(f"Deleted {len(deletable)} old event stage(s).")
+        except Exception as e:
+            print(f"Warning: Could not delete old event stages: {e}")
 
     return stage_ids
 
@@ -352,11 +355,112 @@ def ensure_user_for_employee(uid, models, employee):
     ensure_instructor_user(uid, models, user_id)
     models.execute_kw(DB, uid, PASSWORD, "hr.employee", "write", [[employee["id"]], {"user_id": user_id}])
     return user_id
+def ensure_event_login_required(uid, models):
+    inherit_id = models.execute_kw(DB, uid, PASSWORD, 'ir.ui.view', 'search', [[('key', '=', 'website_event.registration_template')]])
+    if not inherit_id:
+        return
+    
+    arch = '''
+    <xpath expr="//button[@data-bs-target='#modal_ticket_registration']" position="replace">
+        <t t-if="request.env.user._is_public()">
+            <a t-attf-href="/web/login?redirect=/event/#{slug(event)}" t-attf-class="btn btn-primary {{cta_additional_classes}}">Register</a>
+        </t>
+        <t t-else="">
+            <button type="button" data-bs-toggle="modal" data-bs-target="#modal_ticket_registration" t-attf-class="btn btn-primary {{cta_additional_classes}}">Register</button>
+        </t>
+    </xpath>
+    '''
+    
+    create_or_update(
+        uid,
+        models,
+        "ir.ui.view",
+        [("key", "=", "iz_event_login_required")],
+        {
+            "name": "Require Login to Register",
+            "key": "iz_event_login_required",
+            "type": "qweb",
+            "mode": "extension",
+            "inherit_id": inherit_id[0],
+            "arch": arch,
+            "active": True
+        },
+        fields=["id"]
+    )
+def ensure_event_ticket_info(uid, models):
+    inherit_id = models.execute_kw(DB, uid, PASSWORD, 'ir.ui.view', 'search', [[('key', '=', 'website_event.event_description_full')]])
+    if not inherit_id:
+        return
+    
+    arch = '''
+    <data>
+        <xpath expr="//aside[@id='o_wevent_event_main_sidebar']/div[hasclass('d-none', 'd-lg-block', 'border-bottom', 'pb-2', 'mb-3')]" position="before">
+            <div class="o_wevent_sidebar_block border-bottom pb-3 mb-4 d-none d-lg-block">
+                <h6 class="o_wevent_sidebar_title">Información del Boleto</h6>
+                <div class="mb-2 d-flex align-items-center">
+                    <i class="fa fa-ticket fa-fw me-2 text-muted"/> 
+                    <strong class="me-2">Precio:</strong> 
+                    <t t-if="event.event_ticket_ids and event.event_ticket_ids[0].price > 0">
+                        <span t-out="event.event_ticket_ids[0].price" t-options="{'widget': 'monetary', 'display_currency': website.currency_id}"/>
+                    </t>
+                    <t t-else="">
+                        <span class="badge text-bg-success">Gratis</span>
+                    </t>
+                </div>
+                <div class="mb-2 d-flex align-items-center">
+                    <i class="fa fa-users fa-fw me-2 text-muted"/> 
+                    <strong class="me-2">Cupos Disponibles:</strong> 
+                    <span t-out="event.seats_available"/> / <span t-out="event.seats_max"/>
+                </div>
+            </div>
+        </xpath>
+        
+        <xpath expr="//header[hasclass('d-lg-none', 'mt-4', 'mb-2', 'py-3', 'border-top')]" position="after">
+            <div class="o_wevent_sidebar_block border-bottom pb-3 mb-4 d-lg-none mt-3">
+                <h6 class="o_wevent_sidebar_title">Información del Boleto</h6>
+                <div class="mb-2 d-flex align-items-center">
+                    <i class="fa fa-ticket fa-fw me-2 text-muted"/> 
+                    <strong class="me-2">Precio:</strong> 
+                    <t t-if="event.event_ticket_ids and event.event_ticket_ids[0].price > 0">
+                        <span t-out="event.event_ticket_ids[0].price" t-options="{'widget': 'monetary', 'display_currency': website.currency_id}"/>
+                    </t>
+                    <t t-else="">
+                        <span class="badge text-bg-success">Gratis</span>
+                    </t>
+                </div>
+                <div class="mb-2 d-flex align-items-center">
+                    <i class="fa fa-users fa-fw me-2 text-muted"/> 
+                    <strong class="me-2">Cupos Disponibles:</strong> 
+                    <span t-out="event.seats_available"/> / <span t-out="event.seats_max"/>
+                </div>
+            </div>
+        </xpath>
+    </data>
+    '''
+    
+    create_or_update(
+        uid,
+        models,
+        "ir.ui.view",
+        [("key", "=", "iz_event_ticket_info")],
+        {
+            "name": "Show Event Ticket Info",
+            "key": "iz_event_ticket_info",
+            "type": "qweb",
+            "mode": "extension",
+            "inherit_id": inherit_id[0],
+            "arch": arch,
+            "active": True
+        },
+        fields=["id"]
+    )
 
 
 def run():
     uid, models = connect()
     ensure_event_admin_rule(uid, models)
+    ensure_event_login_required(uid, models)
+    ensure_event_ticket_info(uid, models)
     archive_old_demo_events(uid, models)
 
     # Get company info
@@ -433,6 +537,20 @@ def run():
 
     stage_ids = ensure_event_stages(uid, models)
 
+    print("Configurando producto para los boletos...")
+    product_id, _ = create_or_update(
+        uid,
+        models,
+        "product.product",
+        [("name", "=", "Boleto de Clase")],
+        {
+            "name": "Boleto de Clase",
+            "type": "service",
+            "list_price": 0.0,
+        },
+        fields=["id"]
+    )
+
     created_count = 0
     updated_count = 0
     event_ids = {}
@@ -468,6 +586,7 @@ def run():
             "user_id": instructor_user_id or False,
             "stage_id": stage_ids.get(class_info.get("stage", "Nuevo")),
             "website_published": True,
+            "website_menu": False,
             "address_id": location_partner_id,
             "event_type_id": False,
         }
@@ -518,6 +637,7 @@ def run():
             "event_id": event_id,
             "seats_max": class_info["capacity"],
             "price": class_info.get("price", 0.0),
+            "product_id": product_id,
         }
         create_or_update(
             uid,

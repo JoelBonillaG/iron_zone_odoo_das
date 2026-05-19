@@ -130,6 +130,31 @@ bash seeds/run_seeds.sh 00_smtp_config
 | PostgreSQL   | Password        | `odoo`                             |
 | PostgreSQL   | Base de datos   | `iron_zone`                        |
 
+## Configuración de Pagos (Stripe Sandbox)
+
+El proyecto incluye la automatización completa para integrar Stripe como pasarela de pago en modo de pruebas.
+
+1. Asegúrate de colocar tus credenciales de Stripe (Sandbox) en el archivo `.env`:
+   - `STRIPE_PUBLISHABLE_KEY`
+   - `STRIPE_SECRET_KEY`
+
+2. Para recibir notificaciones de pago (Webhooks), el archivo `docker-compose.yml` incluye un contenedor del **Stripe CLI** que se conecta automáticamente a tu cuenta y redirige los eventos a Odoo. 
+
+   Para obtener tu secreto de webhook:
+   ```bash
+   # 1. Levanta los servicios (incluyendo Stripe CLI)
+   docker compose up -d
+   
+   # 2. Revisa los logs del contenedor para obtener el secreto (empieza con whsec_)
+   docker logs iron_zone_stripe
+   ```
+   Copia el valor obtenido y pégalo en la variable `STRIPE_WEBHOOK_SECRET` de tu archivo `.env`.
+
+3. Ejecuta el seed de proveedores de pago para que Odoo recoja las credenciales:
+   ```bash
+   bash seeds/run_seeds.sh 00_payment_providers
+   ```
+
 ## Archivos de configuración
 
 El proyecto tiene dos archivos de configuración con propósitos distintos — no confundirlos:
@@ -239,6 +264,12 @@ Para validar los datos cargados y cumplir con las entregas, utiliza las siguient
 ### 3. Ventas y Clientes
 *   **Clientes:** `Contactos` o `Ventas` → `Pedidos` → `Clientes`
 *   **Pedidos:** `Ventas` → `Pedidos` → `Pedidos`
+
+### Nota Técnica: Validaciones de Cédula y RUC (Ecuador)
+
+Debido a que el proyecto cuenta con la localización Ecuatoriana instalada (`l10n_ec`), **el sistema valida matemáticamente la autenticidad del documento de identidad**. Si intentas realizar una compra de prueba en la tienda online o registrar un nuevo cliente con una cédula inventada, el sistema arrojará un error y no te permitirá continuar (en la web se puede presentar como `400 Bad Request` en consola). 
+
+> Para tus pruebas, asegúrate de utilizar una cédula ecuatoriana matemáticamente válida (por ejemplo: `1804888764`). Para RUC, agrega `001` al final de una cédula válida.
 
 ---
 ### Nota Técnica: Tipos de Productos (Odoo 18)

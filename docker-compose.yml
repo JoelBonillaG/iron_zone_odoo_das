@@ -35,6 +35,14 @@ services:
       timeout: 5s
       retries: 10
 
+  stripe:
+    image: stripe/stripe-cli:latest
+    container_name: iron_zone_stripe
+    restart: unless-stopped
+    command: listen --api-key ${STRIPE_SECRET_KEY} --forward-to odoo:8069/payment/stripe/webhook
+    depends_on:
+      - odoo
+
 volumes:
   odoo-data:
   pgdata:
