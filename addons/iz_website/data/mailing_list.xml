@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <data noupdate="1">
+
+    <!-- ═══════════════════════════════════════════════════════════════
+         LISTA GENERAL (ya existe)
+    ═══════════════════════════════════════════════════════════════ -->
+    <record id="mailing_list_customers" model="mailing.list">
+      <field name="name">Iron Zone – Clientes</field>
+    </record>
+
+    <!-- ── Segmentación por género ── -->
+    <record id="mailing_list_women" model="mailing.list">
+      <field name="name">Iron Zone – Mujeres</field>
+    </record>
+    <record id="mailing_list_men" model="mailing.list">
+      <field name="name">Iron Zone – Hombres</field>
+    </record>
+
+    <!-- ── Segmentación por objetivo fitness ── -->
+    <record id="mailing_list_goal_muscle" model="mailing.list">
+      <field name="name">Iron Zone – Objetivo: Masa muscular</field>
+    </record>
+    <record id="mailing_list_goal_weight_loss" model="mailing.list">
+      <field name="name">Iron Zone – Objetivo: Pérdida de peso</field>
+    </record>
+    <record id="mailing_list_goal_endurance" model="mailing.list">
+      <field name="name">Iron Zone – Objetivo: Resistencia</field>
+    </record>
+    <record id="mailing_list_goal_fitness" model="mailing.list">
+      <field name="name">Iron Zone – Objetivo: Fitness general</field>
+    </record>
+
+    <!-- ── Segmentación por nivel ── -->
+    <record id="mailing_list_beginners" model="mailing.list">
+      <field name="name">Iron Zone – Principiantes</field>
+    </record>
+    <record id="mailing_list_intermediates" model="mailing.list">
+      <field name="name">Iron Zone – Intermedios</field>
+    </record>
+    <record id="mailing_list_advanced" model="mailing.list">
+      <field name="name">Iron Zone – Avanzados</field>
+    </record>
+
+  </data>
+</odoo>

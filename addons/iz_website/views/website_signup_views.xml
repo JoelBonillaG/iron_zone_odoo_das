@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!--
+        Extends the standard Odoo signup form (/web/signup) to add
+        IronZone-specific profile fields: gender, birthdate, fitness goal,
+        and experience level.
+    -->
+    <template id="iz_signup_fields" inherit_id="auth_signup.signup" name="IZ: Extra fields on signup">
+        <!-- Insert after the password-confirm field group -->
+        <xpath expr="//div[hasclass('oe_login_buttons')]" position="before">
+
+            <div class="iz-signup-extra mb-3">
+                <p class="iz-signup-extra__heading text-muted fw-semibold mb-3 text-center"
+                   style="font-size:0.78rem;letter-spacing:.07em;text-transform:uppercase;">
+                    Cuéntanos un poco sobre ti
+                </p>
+
+                <!-- ── Género ── -->
+                <div class="mb-3">
+                    <label for="iz_gender" class="form-label fw-semibold">Género</label>
+                    <select id="iz_gender" name="iz_gender" class="form-select iz-select" required="required">
+                        <option value="">— Selecciona —</option>
+                        <option value="male">Masculino</option>
+                        <option value="female">Femenino</option>
+                        <option value="prefer_not">Prefiero no decirlo</option>
+                    </select>
+                </div>
+
+                <!-- ── Fecha de nacimiento ── -->
+                <div class="mb-3">
+                    <label for="iz_birthdate" class="form-label fw-semibold">
+                        Fecha de nacimiento
+                        <small class="text-muted">(mínimo 14 años)</small>
+                    </label>
+                    <input id="iz_birthdate" type="date" name="iz_birthdate" required="required"
+                           class="form-control iz-input"
+                           t-att-max="today_max"
+                           placeholder="YYYY-MM-DD"/>
+                    <div id="iz_age_display" class="form-text iz-age-hint" style="display:none;"/>
+                </div>
+
+                <!-- ── Objetivo fitness ── -->
+                <div class="mb-3">
+                    <label for="iz_fitness_goal" class="form-label fw-semibold">Objetivo fitness</label>
+                    <select id="iz_fitness_goal" name="iz_fitness_goal" class="form-select iz-select" required="required">
+                        <option value="">— Selecciona —</option>
+                        <option value="weight_loss">🔥 Perder peso</option>
+                        <option value="muscle_gain">💪 Ganar masa muscular</option>
+                        <option value="general_fitness">🧘 Mantenerme saludable</option>
+                        <option value="endurance">🏃 Mejorar resistencia física</option>
+                    </select>
+                </div>
+
+                <!-- ── Nivel de experiencia ── -->
+                <div class="mb-3">
+                    <label for="iz_experience_level" class="form-label fw-semibold">Nivel de experiencia</label>
+                    <select id="iz_experience_level" name="iz_experience_level" class="form-select iz-select" required="required">
+                        <option value="">— Selecciona —</option>
+                        <option value="beginner">🟢 Principiante</option>
+                        <option value="intermediate">🟡 Intermedio</option>
+                        <option value="advanced">🔴 Avanzado</option>
+                    </select>
+                </div>
+            </div>
+
+        </xpath>
+    </template>
+</odoo>

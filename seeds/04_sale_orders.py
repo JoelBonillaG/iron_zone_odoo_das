@@ -119,9 +119,9 @@ def run():
         else:
             state = "Presupuesto"
 
-        print(f"  [{index:02d}] {customer['name']} → {product['name']} | {ref} | {state}")
+        print(f"  [{index:02d}] {customer['name']} -> {product['name']} | {ref} | {state}")
 
-    print(f"Done: {created_count} sale orders created, {updated_count} already synced.")
+    print(f"Done: {created_count} sale orders created, {updated_count} updated.")
 
 
 if __name__ == "__main__":

@@ -19,27 +19,22 @@ fi
 
 if [ -n "${1:-}" ]; then
     echo "Running $1.py ..."
-    if [ "$1" = "00_smtp_config" ]; then
-        set -a
-        source ../.env
-        set +a
-    fi
     "$PYTHON_BIN" "$1.py"
 else
     echo "==> Running 00_company_config.py ..."
     "$PYTHON_BIN" 00_company_config.py
     echo ""
 
-    set -a
-    source ../.env
-    set +a
-
     echo "==> Running 00_smtp_config.py ..."
     "$PYTHON_BIN" 00_smtp_config.py
     echo ""
 
+    echo "==> Running 01_email_templates_sync.py ..."
+    "$PYTHON_BIN" 01_email_templates_sync.py
+    echo ""
+
     for f in [0-9]*.py; do
-        if [ "$f" = "00_company_config.py" ] || [ "$f" = "00_smtp_config.py" ]; then
+        if [ "$f" = "00_company_config.py" ] || [ "$f" = "00_smtp_config.py" ] || [ "$f" = "01_email_templates_sync.py" ]; then
             continue
         fi
         echo "==> Running $f ..."
