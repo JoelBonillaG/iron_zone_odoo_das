@@ -305,12 +305,15 @@ def ensure_event_stages(uid, models):
     )
     deletable = []
     for sid in old_stage_ids:
-        count = models.execute_kw(DB, uid, PASSWORD, "event.event", "search_count", [[("stage_id", "=", sid)]])
+        count = models.execute_kw(DB, uid, PASSWORD, "event.event", "search_count", [[("stage_id", "=", sid)]], {"context": {"active_test": False}})
         if count == 0:
             deletable.append(sid)
     if deletable:
-        models.execute_kw(DB, uid, PASSWORD, "event.stage", "unlink", [deletable])
-        print(f"Deleted {len(deletable)} old event stage(s).")
+        try:
+            models.execute_kw(DB, uid, PASSWORD, "event.stage", "unlink", [deletable])
+            print(f"Deleted {len(deletable)} old event stage(s).")
+        except Exception as e:
+            print(f"Warning: Could not delete old event stages: {e}")
 
     return stage_ids
 
