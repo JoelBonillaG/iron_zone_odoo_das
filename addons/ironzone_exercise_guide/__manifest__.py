@@ -1,0 +1,27 @@
+{
+    "name": "Iron Zone - Guias de Ejercicios",
+    "version": "18.0.1.0.0",
+    "summary": "Guias basicas de ejercicios y uso de maquinas para Iron Zone",
+    "category": "Services/Fitness",
+    "author": "Iron Zone",
+    "license": "LGPL-3",
+    "depends": [
+        "base",
+        "hr",
+        "mail",
+        "maintenance",
+        "event",
+        "website",
+        "iz_backend_theme",
+    ],
+    "data": [
+        "security/ir.model.access.csv",
+        "security/exercise_guide_security.xml",
+        "views/exercise_category_views.xml",
+        "views/maintenance_equipment_views.xml",
+        "views/exercise_guide_views.xml",
+        "views/menus.xml",
+    ],
+    "installable": True,
+    "application": True,
+}

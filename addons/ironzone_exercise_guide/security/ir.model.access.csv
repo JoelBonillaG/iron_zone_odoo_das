@@ -1,0 +1,15 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_ironzone_exercise_guide_public,ironzone.exercise.guide.public,model_ironzone_exercise_guide,base.group_public,1,0,0,0
+access_ironzone_exercise_guide_portal,ironzone.exercise.guide.portal,model_ironzone_exercise_guide,base.group_portal,1,0,0,0
+access_ironzone_exercise_guide_user,ironzone.exercise.guide.user,model_ironzone_exercise_guide,base.group_user,1,0,0,0
+access_ironzone_exercise_guide_trainer,ironzone.exercise.guide.trainer,model_ironzone_exercise_guide,iz_backend_theme.group_ironzone_trainers,1,1,1,1
+access_ironzone_exercise_guide_admin,ironzone.exercise.guide.admin,model_ironzone_exercise_guide,iz_backend_theme.group_ironzone_admin,1,1,1,1
+access_ironzone_exercise_category_public,ironzone.exercise.category.public,model_ironzone_exercise_category,base.group_public,1,0,0,0
+access_ironzone_exercise_category_portal,ironzone.exercise.category.portal,model_ironzone_exercise_category,base.group_portal,1,0,0,0
+access_ironzone_exercise_category_user,ironzone.exercise.category.user,model_ironzone_exercise_category,base.group_user,1,0,0,0
+access_ironzone_exercise_category_trainer,ironzone.exercise.category.trainer,model_ironzone_exercise_category,iz_backend_theme.group_ironzone_trainers,1,0,0,0
+access_ironzone_exercise_category_admin,ironzone.exercise.category.admin,model_ironzone_exercise_category,iz_backend_theme.group_ironzone_admin,1,1,1,1
+access_maintenance_equipment_public_gym_read,maintenance.equipment.public.gym.read,maintenance.model_maintenance_equipment,base.group_public,1,0,0,0
+access_maintenance_equipment_portal_gym_read,maintenance.equipment.portal.gym.read,maintenance.model_maintenance_equipment,base.group_portal,1,0,0,0
+access_maintenance_equipment_trainer_read,maintenance.equipment.trainer.read,maintenance.model_maintenance_equipment,iz_backend_theme.group_ironzone_trainers,1,0,0,0
+access_maintenance_equipment_admin_gym,maintenance.equipment.admin.gym,maintenance.model_maintenance_equipment,iz_backend_theme.group_ironzone_admin,1,1,1,1

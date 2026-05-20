@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <menuitem id="menu_ironzone_exercise_root"
+              name="Guias de ejercicios"
+              sequence="55"
+              groups="base.group_user,iz_backend_theme.group_ironzone_trainers,iz_backend_theme.group_ironzone_admin"/>
+
+    <menuitem id="menu_ironzone_exercise_guides"
+              name="Guias"
+              parent="menu_ironzone_exercise_root"
+              action="action_ironzone_exercise_guide"
+              sequence="10"/>
+
+    <menuitem id="menu_ironzone_exercise_my_guides"
+              name="Mis guias"
+              parent="menu_ironzone_exercise_root"
+              action="action_ironzone_exercise_guide_my"
+              sequence="20"
+              groups="iz_backend_theme.group_ironzone_trainers"/>
+
+    <menuitem id="menu_ironzone_gym_machines"
+              name="Maquinas"
+              parent="menu_ironzone_exercise_root"
+              action="action_ironzone_gym_machine"
+              sequence="30"/>
+
+    <menuitem id="menu_ironzone_exercise_config"
+              name="Configuracion"
+              parent="menu_ironzone_exercise_root"
+              sequence="90"
+              groups="iz_backend_theme.group_ironzone_admin"/>
+
+    <menuitem id="menu_ironzone_exercise_categories"
+              name="Categorias y grupos musculares"
+              parent="menu_ironzone_exercise_config"
+              action="action_ironzone_exercise_category"
+              sequence="10"
+              groups="iz_backend_theme.group_ironzone_admin"/>
+</odoo>
