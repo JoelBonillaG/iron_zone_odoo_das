@@ -2132,3 +2132,106 @@ hr {
 #wrap .text-muted a:hover {
     color: #fff !important;
 }
+
+/* Subscription portal fixes */
+#portal_subscriptions_category .o_portal_doc_entry {
+    align-items: center;
+    min-height: 116px;
+    overflow: hidden;
+}
+
+#portal_subscriptions_category .o_portal_doc_entry img,
+#portal_subscriptions_category .o_portal_doc_entry svg,
+#portal_subscriptions_category .o_portal_doc_entry .o_portal_doc_icon,
+#portal_subscriptions_category .o_portal_doc_entry .o_portal_icon {
+    flex: 0 0 68px;
+    height: 68px !important;
+    max-height: 68px !important;
+    max-width: 68px !important;
+    object-fit: contain;
+    width: 68px !important;
+}
+
+#portal_subscriptions_category .o_portal_doc_entry .o_portal_doc_text,
+#portal_subscriptions_category .o_portal_doc_entry .o_portal_doc_content {
+    min-width: 0;
+}
+
+.iz-subscriptions-page {
+    max-width: 1180px;
+}
+
+.iz-subscriptions-hero,
+.iz-subscription-panel,
+.iz-subscription-card,
+.iz-subscription-benefit {
+    background: var(--iz-surface) !important;
+    border-color: var(--iz-line) !important;
+    color: var(--iz-text) !important;
+}
+
+.iz-subscriptions-hero {
+    background:
+        linear-gradient(135deg, rgba(255, 90, 47, 0.11), rgba(255, 255, 255, 0.025) 42%),
+        var(--iz-surface) !important;
+}
+
+.iz-subscriptions-page .text-muted,
+.iz-subscriptions-page .small.text-muted,
+.iz-subscriptions-page small.text-muted {
+    color: var(--iz-muted) !important;
+}
+
+.iz-subscriptions-page .text-white-50 {
+    color: rgba(244, 242, 238, 0.68) !important;
+}
+
+.iz-subscriptions-page .badge.text-bg-light {
+    background: var(--iz-surface-2) !important;
+    border: 1px solid var(--iz-line);
+    color: var(--iz-text) !important;
+}
+
+.iz-subscriptions-page .badge.text-bg-secondary {
+    background: #d8dde8 !important;
+    color: #111827 !important;
+}
+
+.iz-subscriptions-page .badge.text-bg-warning {
+    background: #fbbf24 !important;
+    color: #111827 !important;
+}
+
+.iz-subscriptions-page .badge.text-bg-success {
+    background: #34d399 !important;
+    color: #052e1a !important;
+}
+
+.iz-subscriptions-page .badge.text-bg-dark {
+    background: #475569 !important;
+    color: #fff !important;
+}
+
+.iz-subscriptions-page .btn-outline-primary {
+    border-color: rgba(255, 90, 47, 0.55) !important;
+    color: var(--iz-accent) !important;
+}
+
+.iz-subscriptions-page .btn-outline-primary:hover,
+.iz-subscriptions-page .btn-outline-primary:focus {
+    background: var(--iz-accent) !important;
+    color: #fff !important;
+}
+
+@media (max-width: 767px) {
+    #portal_subscriptions_category .o_portal_doc_entry img,
+    #portal_subscriptions_category .o_portal_doc_entry svg,
+    #portal_subscriptions_category .o_portal_doc_entry .o_portal_doc_icon,
+    #portal_subscriptions_category .o_portal_doc_entry .o_portal_icon {
+        flex-basis: 52px;
+        height: 52px !important;
+        max-height: 52px !important;
+        max-width: 52px !important;
+        width: 52px !important;
+    }
+}
