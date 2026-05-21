@@ -1,3 +1,5 @@
+from urllib.parse import parse_qs, urlparse
+
 from odoo import api, fields, models, _
 from odoo.exceptions import ValidationError
 
@@ -82,6 +84,19 @@ class IronZoneExerciseGuide(models.Model):
         string="Grupo muscular principal",
         domain=[("category_type", "=", "muscle")],
     )
+    requires_subscription = fields.Boolean(
+        string="Requiere suscripcion activa",
+        help="Si se activa, solo socios con una suscripcion activa y pagada podran ver esta guia en el portal.",
+        tracking=True,
+    )
+    allowed_plan_ids = fields.Many2many(
+        "iz.subscription.plan",
+        "ironzone_guide_subscription_plan_rel",
+        "guide_id",
+        "plan_id",
+        string="Planes permitidos",
+        help="Si se deja vacio, cualquier plan activo y pagado permite ver la guia.",
+    )
     instructions = fields.Html(string="Instrucciones de uso", sanitize=True)
     recommendations = fields.Text(string="Recomendaciones")
     common_mistakes = fields.Text(string="Errores comunes")
@@ -90,6 +105,10 @@ class IronZoneExerciseGuide(models.Model):
     video_url = fields.Char(string="URL de video")
     video_file = fields.Binary(string="Video MP4", attachment=True)
     video_filename = fields.Char(string="Nombre del video")
+    video_embed_url = fields.Char(string="URL embebida", compute="_compute_video_embed_fields")
+    video_is_direct = fields.Boolean(string="Video directo", compute="_compute_video_embed_fields")
+    reference_url = fields.Char(string="Fuente tecnica")
+    media_credit = fields.Char(string="Credito multimedia")
     company_id = fields.Many2one(
         "res.company",
         string="Compania",
@@ -109,6 +128,76 @@ class IronZoneExerciseGuide(models.Model):
 
     def _current_employee(self):
         return self.env["hr.employee"].search([("user_id", "=", self.env.user.id)], limit=1)
+
+    @api.depends("video_url")
+    def _compute_video_embed_fields(self):
+        for guide in self:
+            guide.video_embed_url = False
+            guide.video_is_direct = False
+            if not guide.video_url:
+                continue
+
+            parsed = urlparse(guide.video_url)
+            host = (parsed.netloc or "").lower()
+            path = parsed.path or ""
+            clean_url = guide.video_url.split("?", 1)[0].lower()
+
+            if clean_url.endswith((".mp4", ".webm", ".ogg")):
+                guide.video_embed_url = guide.video_url
+                guide.video_is_direct = True
+            elif "youtube.com" in host:
+                video_id = parse_qs(parsed.query).get("v", [False])[0]
+                if "/embed/" in path:
+                    guide.video_embed_url = guide.video_url
+                elif video_id:
+                    guide.video_embed_url = "https://www.youtube.com/embed/%s" % video_id
+            elif "youtu.be" in host:
+                video_id = path.strip("/").split("/")[0]
+                if video_id:
+                    guide.video_embed_url = "https://www.youtube.com/embed/%s" % video_id
+            elif "vimeo.com" in host:
+                video_id = path.strip("/").split("/")[0]
+                if video_id:
+                    guide.video_embed_url = "https://player.vimeo.com/video/%s" % video_id
+
+    def _is_accessible_for_partner(self, partner):
+        self.ensure_one()
+        if not self.requires_subscription:
+            return True
+        if not partner or partner._name != "res.partner":
+            return False
+        plan, subscription = partner.sudo()._get_current_subscription_plan()
+        if not plan or not subscription:
+            return False
+        if not self.allowed_plan_ids:
+            return True
+        return plan in self.allowed_plan_ids
+
+    @api.model
+    def _get_portal_accessible_domain(self, partner):
+        public_domain = [
+            ("is_published", "=", True),
+            ("state", "=", "published"),
+            ("active", "=", True),
+            ("requires_subscription", "=", False),
+        ]
+        if not partner or partner._name != "res.partner":
+            return public_domain
+
+        plan, subscription = partner.sudo()._get_current_subscription_plan()
+        if not plan or not subscription:
+            return public_domain
+
+        return [
+            ("is_published", "=", True),
+            ("state", "=", "published"),
+            ("active", "=", True),
+            "|",
+            ("requires_subscription", "=", False),
+            "|",
+            ("allowed_plan_ids", "=", False),
+            ("allowed_plan_ids", "in", [plan.id]),
+        ]
 
     @api.model_create_multi
     def create(self, vals_list):

@@ -28,8 +28,8 @@ PAYMENT_PROVIDERS = {
     },
     "stripe": {
         "name": "Stripe",
-        "state": "test",
-        "is_published": True,
+        "state": "disabled",
+        "is_published": False,
         "sequence": 3,
         "stripe_publishable_key": env_value("STRIPE_PUBLISHABLE_KEY", default=""),
         "stripe_secret_key": env_value("STRIPE_SECRET_KEY", default=""),
@@ -42,6 +42,11 @@ PAYMENT_METHODS = {
     "wire_transfer": {"active": True, "sequence": 2, "sri_payment_code": "20"},
     "card": {"active": True, "sequence": 3, "sri_payment_code": "19"},
 }
+
+
+def stripe_credentials_available():
+    stripe = PAYMENT_PROVIDERS["stripe"]
+    return bool(stripe.get("stripe_publishable_key") and stripe.get("stripe_secret_key"))
 
 
 def execute(models, uid, model, method, *args, **kwargs):
@@ -190,6 +195,9 @@ def clear_restrictions(models, uid, provider_id):
 def configure_payment_methods(models, uid):
     method_fields = execute(models, uid, "payment.method", "fields_get", [])
     for code, values in PAYMENT_METHODS.items():
+        values = dict(values)
+        if code == "card" and not stripe_credentials_available():
+            values["active"] = False
         method_ids = search(
             models,
             uid,
@@ -219,15 +227,20 @@ def configure_payment_methods(models, uid):
             else:
                 print(f"SRI payment method not found: {sri_payment_code}")
         execute(models, uid, "payment.method", "write", method_ids, write_values)
-        print(f"Payment method enabled: {code}")
+        action = "enabled" if values.get("active") else "disabled"
+        print(f"Payment method {action}: {code}")
 
 
 def configure_payment_providers(models, uid):
     website = get_website(models, uid)
     journal_ids = search(models, uid, "account.journal", [["type", "in", ["bank", "cash"]]], limit=1)
     for code, values in PAYMENT_PROVIDERS.items():
+        values = dict(values)
         if code == "custom":
-            values = {**values, "pending_msg": transfer_pending_message()}
+            values["pending_msg"] = transfer_pending_message()
+        if code == "stripe" and stripe_credentials_available():
+            values["state"] = "test"
+            values["is_published"] = True
         provider_ids = search(models, uid, "payment.provider", [["code", "=", code]], limit=1)
         if not provider_ids:
             print(f"Payment provider not found: {code}")

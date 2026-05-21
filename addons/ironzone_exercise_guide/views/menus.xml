@@ -9,7 +9,8 @@
               name="Guias"
               parent="menu_ironzone_exercise_root"
               action="action_ironzone_exercise_guide"
-              sequence="10"/>
+              sequence="10"
+              groups="iz_backend_theme.group_ironzone_admin"/>
 
     <menuitem id="menu_ironzone_exercise_my_guides"
               name="Mis guias"

@@ -4,7 +4,7 @@
         <field name="name">ironzone.exercise.guide.kanban</field>
         <field name="model">ironzone.exercise.guide</field>
         <field name="arch" type="xml">
-            <kanban string="Guias de ejercicios" default_group_by="exercise_type" class="o_kanban_mobile">
+            <kanban string="Guias de ejercicios" default_group_by="exercise_type" class="o_kanban_mobile" quick_create="false">
                 <field name="id"/>
                 <field name="name"/>
                 <field name="image_1920"/>
@@ -13,28 +13,32 @@
                 <field name="primary_muscle_group_id"/>
                 <field name="equipment_id"/>
                 <field name="author_id"/>
+                <field name="requires_subscription"/>
                 <field name="state"/>
                 <field name="is_published"/>
                 <templates>
                     <t t-name="card">
-                        <div class="o_kanban_record d-flex flex-column p-0 overflow-hidden">
-                            <div class="position-relative bg-100" style="height: 150px;">
+                        <div class="o_kanban_record d-flex flex-column p-0 overflow-hidden shadow-sm" style="border-radius: 10px;">
+                            <div class="position-relative bg-100" style="height: 170px;">
                                 <img t-if="record.image_1920.raw_value"
-                                     t-att-src="kanban_image('ironzone.exercise.guide', 'image_1920', record.id.raw_value)"
+                                     t-att-src="'/web/image/ironzone.exercise.guide/' + record.id.raw_value + '/image_1920'"
+                                     t-att-alt="record.name.value"
                                      class="w-100 h-100"
                                      style="object-fit: cover;"/>
                                 <div t-else="" class="w-100 h-100 d-flex align-items-center justify-content-center text-muted">
-                                    <span class="fa fa-dumbbell fa-2x"/>
+                                    <span class="fa fa-dumbbell fa-2x" title="Guia de ejercicio"/>
                                 </div>
                                 <span t-if="record.state.raw_value == 'published'" class="badge text-bg-success position-absolute top-0 end-0 m-2">Publicada</span>
                                 <span t-elif="record.state.raw_value == 'draft'" class="badge text-bg-info position-absolute top-0 end-0 m-2">Borrador</span>
                                 <span t-else="" class="badge text-bg-secondary position-absolute top-0 end-0 m-2">Archivada</span>
+                                <span t-if="record.requires_subscription.raw_value" class="badge text-bg-warning position-absolute bottom-0 start-0 m-2">Solo socios</span>
                             </div>
                             <div class="p-3">
-                                <div class="fw-bold fs-5 mb-1">
+                                <div class="fw-bold fs-5 lh-sm mb-2">
                                     <field name="name"/>
                                 </div>
-                                <div class="text-muted small mb-2">
+                                <div class="text-muted small mb-3">
+                                    <i class="fa fa-user me-1" title="Autor"/>
                                     <field name="author_id"/>
                                 </div>
                                 <div class="d-flex flex-wrap gap-1 mb-2">
@@ -45,13 +49,13 @@
                                         <field name="difficulty"/>
                                     </span>
                                 </div>
-                                <div class="small">
+                                <div class="small text-muted">
                                     <div t-if="record.primary_muscle_group_id.raw_value">
-                                        <span class="text-muted">Grupo:</span>
+                                        <i class="fa fa-bullseye me-1" title="Grupo muscular"/>
                                         <field name="primary_muscle_group_id"/>
                                     </div>
                                     <div t-if="record.equipment_id.raw_value">
-                                        <span class="text-muted">Maquina:</span>
+                                        <i class="fa fa-cogs me-1" title="Maquina"/>
                                         <field name="equipment_id"/>
                                     </div>
                                 </div>
@@ -75,6 +79,7 @@
                 <field name="primary_muscle_group_id"/>
                 <field name="equipment_id"/>
                 <field name="author_id"/>
+                <field name="requires_subscription"/>
                 <field name="state" widget="badge" decoration-info="state == 'draft'" decoration-success="state == 'published'" decoration-muted="state == 'archived'"/>
                 <field name="is_published" widget="boolean_toggle"/>
             </list>
@@ -93,12 +98,23 @@
                     <field name="state" widget="statusbar" statusbar_visible="draft,published,archived"/>
                 </header>
                 <sheet>
-                    <field name="image_1920" widget="image" class="oe_avatar"/>
-                    <div class="oe_title">
-                        <label for="name"/>
-                        <h1>
-                            <field name="name" placeholder="Ej. Uso correcto de prensa de piernas"/>
-                        </h1>
+                    <div class="row align-items-start">
+                        <div class="col-lg-9">
+                            <div class="oe_title">
+                                <label for="name"/>
+                                <h1>
+                                    <field name="name" placeholder="Ej. Uso correcto de prensa de piernas"/>
+                                </h1>
+                            </div>
+                            <div class="d-flex flex-wrap gap-2 mt-2 mb-4">
+                                <field name="exercise_type" widget="badge" readonly="1"/>
+                                <field name="difficulty" widget="badge" readonly="1"/>
+                                <field name="primary_muscle_group_id" readonly="1"/>
+                            </div>
+                        </div>
+                        <div class="col-lg-3 text-end">
+                            <field name="image_1920" widget="image" class="oe_avatar" options="{'size': [180, 180]}"/>
+                        </div>
                     </div>
                     <group>
                         <group string="Clasificacion">
@@ -114,6 +130,10 @@
                             <field name="event_ids" widget="many2many_tags" invisible="exercise_type != 'group'"/>
                             <field name="company_id" groups="base.group_multi_company"/>
                         </group>
+                    </group>
+                    <group string="Acceso para socios" groups="iz_backend_theme.group_ironzone_admin">
+                        <field name="requires_subscription"/>
+                        <field name="allowed_plan_ids" widget="many2many_tags" invisible="not requires_subscription"/>
                     </group>
                     <notebook>
                         <page string="Contenido">
@@ -139,6 +159,8 @@
                                     <field name="video_url" placeholder="https://..."/>
                                     <field name="video_file" filename="video_filename"/>
                                     <field name="video_filename" invisible="1"/>
+                                    <field name="reference_url" placeholder="https://..."/>
+                                    <field name="media_credit"/>
                                 </group>
                             </group>
                         </page>
@@ -165,6 +187,7 @@
                 <field name="category_ids"/>
                 <filter name="published" string="Publicadas" domain="[('state', '=', 'published')]"/>
                 <filter name="draft" string="Borradores" domain="[('state', '=', 'draft')]"/>
+                <filter name="subscription" string="Solo socios" domain="[('requires_subscription', '=', True)]"/>
                 <filter name="machine" string="Con maquina" domain="[('exercise_type', '=', 'machine')]"/>
                 <filter name="group" string="Grupales" domain="[('exercise_type', '=', 'group')]"/>
                 <filter name="my_guides" string="Mis guias" domain="[('author_user_id', '=', uid)]"/>
