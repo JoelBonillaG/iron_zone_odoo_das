@@ -67,6 +67,52 @@
         </field>
     </record>
 
+    <record id="view_ironzone_exercise_guide_kanban_portal_style" model="ir.ui.view">
+        <field name="name">ironzone.exercise.guide.kanban.portal.style</field>
+        <field name="model">ironzone.exercise.guide</field>
+        <field name="arch" type="xml">
+            <kanban string="Guias de ejercicios (Portal style)" default_group_by="exercise_type" class="o_kanban_mobile o_portal_style" quick_create="false">
+                <field name="id"/>
+                <field name="name"/>
+                <field name="image_1920"/>
+                <field name="exercise_type"/>
+                <field name="difficulty"/>
+                <field name="primary_muscle_group_id"/>
+                <field name="equipment_id"/>
+                <field name="author_id"/>
+                <field name="requires_subscription"/>
+                <field name="state"/>
+                <field name="is_published"/>
+                <templates>
+                    <t t-name="card">
+                        <div class="o_kanban_record d-flex flex-column p-0 overflow-hidden" style="border-radius: 6px;">
+                            <div class="position-relative bg-100" style="height: 200px;">
+                                <img t-if="record.image_1920.raw_value"
+                                     t-att-src="'/web/image/ironzone.exercise.guide/' + record.id.raw_value + '/image_1920'"
+                                     t-att-alt="record.name.value"
+                                     class="w-100 h-100"
+                                     style="object-fit: cover;"/>
+                                <div t-else="" class="w-100 h-100 d-flex align-items-center justify-content-center text-muted">
+                                    <i class="fa fa-dumbbell fa-2x" title="Guía de ejercicio"/>
+                                </div>
+                                <span t-if="record.state.raw_value == 'published'" class="badge text-bg-success position-absolute top-0 end-0 m-2">Publicada</span>
+                                <span t-if="record.requires_subscription.raw_value" class="badge text-bg-warning position-absolute bottom-0 start-0 m-2">Solo socios</span>
+                            </div>
+                            <div class="p-3">
+                                <h3 class="h6 mb-2"><field name="name"/></h3>
+                                <p class="small text-muted mb-2"><field name="primary_muscle_group_id"/></p>
+                                <div class="d-flex gap-2">
+                                    <span class="badge rounded-pill text-bg-light"><field name="exercise_type"/></span>
+                                    <span class="badge rounded-pill text-bg-light"><field name="difficulty"/></span>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
     <record id="view_ironzone_exercise_guide_list" model="ir.ui.view">
         <field name="name">ironzone.exercise.guide.list</field>
         <field name="model">ironzone.exercise.guide</field>
@@ -98,46 +144,49 @@
                     <field name="state" widget="statusbar" statusbar_visible="draft,published,archived"/>
                 </header>
                 <sheet>
-                    <div class="row align-items-start">
-                        <div class="col-lg-9">
-                            <div class="oe_title">
-                                <label for="name"/>
-                                <h1>
-                                    <field name="name" placeholder="Ej. Uso correcto de prensa de piernas"/>
-                                </h1>
-                            </div>
-                            <div class="d-flex flex-wrap gap-2 mt-2 mb-4">
-                                <field name="exercise_type" widget="badge" readonly="1"/>
-                                <field name="difficulty" widget="badge" readonly="1"/>
-                                <field name="primary_muscle_group_id" readonly="1"/>
+                    <div class="oe_title mb-3">
+                        <label for="name"/>
+                        <h1>
+                            <field name="name" placeholder="Ej. Uso correcto de prensa de piernas"/>
+                        </h1>
+                    </div>
+                    <div class="row g-4 align-items-start mb-4">
+                        <div class="col-lg-5">
+                            <field name="image_1920" widget="image" options="{'size': [0, 320]}" class="w-100"/>
+                            <div class="border rounded p-3 bg-light mt-3">
+                                <div class="small text-muted mb-1">Vista rápida</div>
+                                <div class="d-flex flex-wrap gap-2 mb-2">
+                                    <field name="exercise_type" widget="badge" readonly="1"/>
+                                    <field name="difficulty" widget="badge" readonly="1"/>
+                                </div>
+                                <div class="small d-flex flex-column gap-1">
+                                    <div>
+                                        <span class="text-muted">Grupo muscular:</span>
+                                        <field name="primary_muscle_group_id" readonly="1"/>
+                                    </div>
+                                    <div>
+                                        <span class="text-muted">Máquina:</span>
+                                        <field name="equipment_id" readonly="1"/>
+                                    </div>
+                                </div>
                             </div>
                         </div>
-                        <div class="col-lg-3 text-end">
-                            <field name="image_1920" widget="image" class="oe_avatar" options="{'size': [180, 180]}"/>
+                        <div class="col-lg-7">
+                            <group string="Datos básicos">
+                                <group>
+                                    <field name="exercise_type"/>
+                                    <field name="difficulty"/>
+                                    <field name="primary_muscle_group_id"/>
+                                    <field name="equipment_id" invisible="exercise_type != 'machine'" required="exercise_type == 'machine'"/>
+                                </group>
+                            </group>
+                            <div class="small text-muted">Consejo</div>
+                            <div>Usa esta pantalla para dejar solo la información que también verá el usuario en el portal.</div>
                         </div>
                     </div>
-                    <group>
-                        <group string="Clasificacion">
-                            <field name="exercise_type"/>
-                            <field name="difficulty"/>
-                            <field name="primary_muscle_group_id"/>
-                            <field name="category_ids" widget="many2many_tags"/>
-                            <field name="is_published"/>
-                        </group>
-                        <group string="Relaciones">
-                            <field name="author_id"/>
-                            <field name="equipment_id" invisible="exercise_type != 'machine'" required="exercise_type == 'machine'"/>
-                            <field name="event_ids" widget="many2many_tags" invisible="exercise_type != 'group'"/>
-                            <field name="company_id" groups="base.group_multi_company"/>
-                        </group>
-                    </group>
-                    <group string="Acceso para socios" groups="iz_backend_theme.group_ironzone_admin">
-                        <field name="requires_subscription"/>
-                        <field name="allowed_plan_ids" widget="many2many_tags" invisible="not requires_subscription"/>
-                    </group>
                     <notebook>
-                        <page string="Contenido">
-                            <group string="Guia practica">
+                        <page string="Contenido de la guía">
+                            <group string="Guía práctica">
                                 <field name="instructions" placeholder="Describe pasos claros y seguros para ejecutar el ejercicio."/>
                             </group>
                             <group>
@@ -150,27 +199,38 @@
                                 </group>
                             </group>
                         </page>
-                        <page string="Imagen y video">
+                        <page string="Material complementario">
                             <group>
-                                <group>
-                                    <field name="image_1920" widget="image" options="{'size': [0, 320]}"/>
-                                </group>
-                                <group>
+                                <group string="Video">
                                     <field name="video_url" placeholder="https://..."/>
                                     <field name="video_file" filename="video_filename"/>
                                     <field name="video_filename" invisible="1"/>
-                                    <field name="reference_url" placeholder="https://..."/>
-                                    <field name="media_credit"/>
+                                </group>
+                                <group string="Referencias">
+                                    <!-- Referencias removed by request -->
+                                </group>
+                            </group>
+                        </page>
+                        <page string="Etiquetas">
+                            <group>
+                                <field name="category_ids" widget="many2many_tags"/>
+                            </group>
+                        </page>
+                        <page string="Avanzado" groups="iz_backend_theme.group_ironzone_admin">
+                            <group>
+                                <group>
+                                    <field name="author_id" groups="iz_backend_theme.group_ironzone_admin"/>
+                                    <field name="event_ids" widget="many2many_tags" invisible="exercise_type != 'group'"/>
+                                </group>
+                                <group>
+                                    <field name="requires_subscription"/>
+                                    <field name="allowed_plan_ids" widget="many2many_tags" invisible="not requires_subscription"/>
+                                    <field name="company_id" groups="base.group_multi_company"/>
                                 </group>
                             </group>
                         </page>
                     </notebook>
                 </sheet>
-                <div class="oe_chatter">
-                    <field name="message_follower_ids"/>
-                    <field name="activity_ids"/>
-                    <field name="message_ids"/>
-                </div>
             </form>
         </field>
     </record>
@@ -187,16 +247,18 @@
                 <field name="category_ids"/>
                 <filter name="published" string="Publicadas" domain="[('state', '=', 'published')]"/>
                 <filter name="draft" string="Borradores" domain="[('state', '=', 'draft')]"/>
+                <filter name="archived" string="Archivadas" domain="[('state', '=', 'archived')]"/>
                 <filter name="subscription" string="Solo socios" domain="[('requires_subscription', '=', True)]"/>
                 <filter name="machine" string="Con maquina" domain="[('exercise_type', '=', 'machine')]"/>
                 <filter name="group" string="Grupales" domain="[('exercise_type', '=', 'group')]"/>
-                <filter name="my_guides" string="Mis guias" domain="[('author_user_id', '=', uid)]"/>
                 <group expand="0" string="Agrupar por">
                     <filter name="group_type" string="Tipo" context="{'group_by': 'exercise_type'}"/>
                     <filter name="group_difficulty" string="Dificultad" context="{'group_by': 'difficulty'}"/>
                     <filter name="group_author" string="Autor" context="{'group_by': 'author_id'}"/>
                     <filter name="group_machine" string="Maquina" context="{'group_by': 'equipment_id'}"/>
                 </group>
+                    <separator/>
+                    <field name="equipment_id" string="Máquina" invisible="1"/>
             </search>
         </field>
     </record>
@@ -205,6 +267,7 @@
         <field name="name">Guias de ejercicios</field>
         <field name="res_model">ironzone.exercise.guide</field>
         <field name="view_mode">kanban,list,form</field>
+        <field name="view_id" ref="view_ironzone_exercise_guide_kanban_portal_style"/>
         <field name="context">{'search_default_published': 1}</field>
     </record>
 
@@ -212,6 +275,7 @@
         <field name="name">Mis guias</field>
         <field name="res_model">ironzone.exercise.guide</field>
         <field name="view_mode">kanban,list,form</field>
-        <field name="context">{'search_default_my_guides': 1}</field>
+        <field name="view_id" ref="view_ironzone_exercise_guide_kanban_portal_style"/>
+        <field name="domain">[('author_user_id', '=', uid)]</field>
     </record>
 </odoo>

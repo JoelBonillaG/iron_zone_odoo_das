@@ -115,6 +115,11 @@ class IronZoneExerciseGuide(models.Model):
         default=lambda self: self.env.company,
         required=True,
     )
+    is_editor = fields.Boolean(
+        string="Puede editar",
+        compute="_compute_is_editor",
+        help="True si el usuario actual puede editar esta guia (autor o admin)",
+    )
 
     @api.model
     def _default_author_id(self):
@@ -198,6 +203,15 @@ class IronZoneExerciseGuide(models.Model):
             ("allowed_plan_ids", "=", False),
             ("allowed_plan_ids", "in", [plan.id]),
         ]
+
+    @api.depends('author_user_id')
+    def _compute_is_editor(self):
+        for guide in self:
+            user = self.env.user
+            guide.is_editor = bool(
+                user.has_group("iz_backend_theme.group_ironzone_admin")
+                or (guide.author_user_id and guide.author_user_id.id == user.id)
+            )
 
     @api.model_create_multi
     def create(self, vals_list):

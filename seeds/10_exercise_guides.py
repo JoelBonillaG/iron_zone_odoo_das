@@ -103,6 +103,108 @@ def commons_file_url(filename):
     return "https://commons.wikimedia.org/wiki/Special:Redirect/file/%s" % urllib.parse.quote(filename)
 
 
+def ensure_exercise_categories(uid, models):
+    categories = [
+        {
+            "name": "Pecho",
+            "code": "CHEST",
+            "category_type": "muscle",
+            "sequence": 10,
+            "description": "Ejercicios enfocados en pectorales y empuje horizontal.",
+        },
+        {
+            "name": "Espalda",
+            "code": "BACK",
+            "category_type": "muscle",
+            "sequence": 20,
+            "description": "Ejercicios de traccion para dorsales, trapecio y espalda media.",
+        },
+        {
+            "name": "Piernas",
+            "code": "LEGS",
+            "category_type": "muscle",
+            "sequence": 30,
+            "description": "Trabajo de cuadriceps, isquiotibiales, gluteos y pantorrillas.",
+        },
+        {
+            "name": "Hombros",
+            "code": "SHOULDERS",
+            "category_type": "muscle",
+            "sequence": 40,
+            "description": "Guias para deltoides, estabilidad escapular y empujes verticales.",
+        },
+        {
+            "name": "Core y abdomen",
+            "code": "CORE",
+            "category_type": "muscle",
+            "sequence": 50,
+            "description": "Control del tronco, estabilidad y ejercicios abdominales.",
+        },
+        {
+            "name": "Brazos",
+            "code": "ARMS",
+            "category_type": "muscle",
+            "sequence": 55,
+            "description": "Ejercicios para biceps, triceps y antebrazos.",
+        },
+        {
+            "name": "Gluteos",
+            "code": "GLUTES",
+            "category_type": "muscle",
+            "sequence": 58,
+            "description": "Activacion y fuerza de gluteos para patrones de cadera.",
+        },
+        {
+            "name": "Fuerza",
+            "code": "STRENGTH",
+            "category_type": "exercise",
+            "sequence": 60,
+            "description": "Ejercicios orientados a fuerza y tecnica de carga.",
+        },
+        {
+            "name": "Cardio",
+            "code": "CARDIO",
+            "category_type": "exercise",
+            "sequence": 70,
+            "description": "Ejercicios cardiovasculares y de resistencia.",
+        },
+        {
+            "name": "Movilidad",
+            "code": "MOBILITY",
+            "category_type": "exercise",
+            "sequence": 80,
+            "description": "Movilidad, respiracion, rango articular y recuperacion.",
+        },
+        {
+            "name": "Peso libre",
+            "code": "FREE_WEIGHT",
+            "category_type": "equipment",
+            "sequence": 90,
+            "description": "Ejercicios con mancuernas, barras o implementos libres.",
+        },
+        {
+            "name": "Bajo impacto",
+            "code": "LOW_IMPACT",
+            "category_type": "exercise",
+            "sequence": 100,
+            "description": "Alternativas suaves para acondicionamiento y retorno progresivo.",
+        },
+    ]
+
+    print("Syncing exercise categories...")
+    for category in categories:
+        _, created = create_or_update(
+            uid,
+            models,
+            "ironzone.exercise.category",
+            [("code", "=", category["code"])],
+            category,
+            fields=["id", "name"],
+        )
+        action = "Created" if created else "Updated"
+        print(f"  {action} category: {category['name']}")
+
+
 def category_ids_by_code(uid, models):
     rows = search_read(uid, models, "ironzone.exercise.category", [], ["id", "code", "name", "category_type"])
     return {row["code"]: row["id"] for row in rows if row.get("code")}
@@ -137,38 +239,100 @@ def event_ids_by_name(uid, models):
     return {row["name"]: row["id"] for row in rows}
 
 
+def ensure_equipment_categories(uid, models):
+    categories = [
+        "Maquinas de fuerza",
+        "Cardio",
+        "Bancos y soportes",
+        "Peso libre",
+    ]
+    category_ids = {}
+    for name in categories:
+        category_id, _ = create_or_update(
+            uid,
+            models,
+            "maintenance.equipment.category",
+            [("name", "=", name)],
+            {"name": name},
+            fields=["id", "name"],
+        )
+        category_ids[name] = category_id
+    return category_ids
+
+
 def ensure_machines(uid, models, categories):
     fields = get_model_fields(uid, models, "maintenance.equipment")
+    equipment_categories = ensure_equipment_categories(uid, models)
     machines = [
         {
             "name": "Prensa de piernas 45 grados",
             "gym_zone": "strength",
+            "equipment_category": "Maquinas de fuerza",
             "muscles": ["LEGS"],
             "note": "Equipo para trabajo guiado de cuadriceps, gluteos e isquiotibiales. Revisar bloqueo del asiento y recorrido antes de usar.",
         },
         {
             "name": "Polea alta dorsal",
             "gym_zone": "strength",
+            "equipment_category": "Maquinas de fuerza",
             "muscles": ["BACK"],
             "note": "Maquina de traccion vertical para espalda. La carga debe permitir control escapular y rango completo sin balanceo.",
         },
         {
             "name": "Bicicleta de spinning",
             "gym_zone": "cardio",
+            "equipment_category": "Cardio",
             "muscles": ["LEGS"],
             "note": "Bicicleta indoor para trabajo cardiovascular. Ajustar altura del sillin y manubrio antes de iniciar.",
         },
         {
             "name": "Banco plano de press",
             "gym_zone": "strength",
+            "equipment_category": "Bancos y soportes",
             "muscles": ["CHEST", "SHOULDERS"],
             "note": "Banco para press con barra o mancuernas. Verificar estabilidad, seguros y acompaniamiento en cargas altas.",
         },
         {
             "name": "Caminadora profesional",
             "gym_zone": "cardio",
+            "equipment_category": "Cardio",
             "muscles": ["LEGS"],
             "note": "Equipo cardiovascular para caminata o carrera. Usar clip de seguridad y empezar con velocidad progresiva.",
+        },
+        {
+            "name": "Remo sentado en polea baja",
+            "gym_zone": "strength",
+            "equipment_category": "Maquinas de fuerza",
+            "muscles": ["BACK"],
+            "note": "Estacion de traccion horizontal para espalda media. Ajustar asiento y mantener torso estable.",
+        },
+        {
+            "name": "Extension de piernas",
+            "gym_zone": "strength",
+            "equipment_category": "Maquinas de fuerza",
+            "muscles": ["LEGS"],
+            "note": "Maquina guiada para cuadriceps. Alinear el eje de la rodilla y controlar la extension.",
+        },
+        {
+            "name": "Curl femoral sentado",
+            "gym_zone": "strength",
+            "equipment_category": "Maquinas de fuerza",
+            "muscles": ["LEGS"],
+            "note": "Equipo para isquiotibiales. Ajustar almohadilla y evitar levantar la cadera durante el movimiento.",
+        },
+        {
+            "name": "Eliptica profesional",
+            "gym_zone": "cardio",
+            "equipment_category": "Cardio",
+            "muscles": ["LEGS"],
+            "note": "Equipo cardiovascular de bajo impacto para calentamiento, resistencia y recuperacion activa.",
+        },
+        {
+            "name": "Rack de mancuernas",
+            "gym_zone": "strength",
+            "equipment_category": "Peso libre",
+            "muscles": ["CHEST", "SHOULDERS", "ARMS"],
+            "note": "Zona de peso libre para ejercicios con mancuernas. Mantener orden y elegir cargas controlables.",
         },
     ]
 
@@ -183,6 +347,9 @@ def ensure_machines(uid, models, categories):
             values["gym_zone"] = machine["gym_zone"]
         if "note" in fields:
             values["note"] = machine["note"]
+        equipment_category_id = equipment_categories.get(machine.get("equipment_category"))
+        if equipment_category_id and "category_id" in fields:
+            values["category_id"] = equipment_category_id
         muscle_ids = [categories[code] for code in machine["muscles"] if code in categories]
         if "muscle_group_ids" in fields:
             values["muscle_group_ids"] = [(6, 0, muscle_ids)]
@@ -470,6 +637,57 @@ def ensure_guides(uid, models, categories, machines, employees, events, plans):
             "common_mistakes": "Forzar amplitud, contener la respiracion o comparar tu rango con el de otros alumnos.",
             "safety_notes": "Si hay mareo, vuelve a respiracion normal y descansa.",
         },
+        {
+            "name": "Remo sentado: espalda estable y controlada",
+            "author": "Carlos Mendez",
+            "exercise_type": "machine",
+            "difficulty": "intermediate",
+            "machine": "Remo sentado en polea baja",
+            "muscle": "BACK",
+            "categories": ["BACK", "STRENGTH"],
+            "image": "musculacion_personalizada.jpg",
+            "image_url": commons_file_url("Seated cable row exercise.jpg"),
+            "media_credit": "Wikimedia Commons, archivo 'Seated cable row exercise.jpg' si esta disponible; fallback local si no.",
+            "video_url": "https://www.youtube.com/watch?v=GZbfZ033f74",
+            "reference_url": "https://exrx.net/WeightExercises/BackGeneral/CBStraightBackSeatedRow",
+            "requires_subscription": True,
+            "plans": ["IZ_P01", "IZ_PR01", "IZ_I01"],
+            "instructions": html_steps(
+                "Ajusta el asiento para que los pies queden firmes y la espalda pueda mantenerse neutra.",
+                "Toma el agarre con hombros bajos y brazos extendidos sin encorvarte.",
+                "Inicia la traccion llevando los codos hacia atras y juntando ligeramente las escapulas.",
+                "Acerca el agarre al torso sin balancear el cuerpo ni perder la postura.",
+                "Regresa lento hasta extender los brazos manteniendo control en la espalda.",
+            ),
+            "recommendations": "Usa una carga que te permita pausar un instante al final de la traccion.",
+            "common_mistakes": "Redondear la espalda, tirar con impulso, elevar hombros o llevar los codos demasiado abiertos.",
+            "safety_notes": "Si sientes molestia lumbar, reduce carga y revisa la posicion del tronco.",
+        },
+        {
+            "name": "Extension de piernas: control de cuadriceps",
+            "author": "Sofia Garcia",
+            "exercise_type": "machine",
+            "difficulty": "beginner",
+            "machine": "Extension de piernas",
+            "muscle": "LEGS",
+            "categories": ["LEGS", "STRENGTH"],
+            "image": "musculacion_personalizada.jpg",
+            "image_url": commons_file_url("Leg extension machine exercise.jpg"),
+            "media_credit": "Wikimedia Commons, archivo 'Leg extension machine exercise.jpg' si esta disponible; fallback local si no.",
+            "video_url": "https://www.youtube.com/watch?v=YyvSfVjQeL0",
+            "reference_url": "https://exrx.net/WeightExercises/Quadriceps/LVLegExtension",
+            "requires_subscription": False,
+            "instructions": html_steps(
+                "Ajusta el respaldo para que la espalda quede apoyada y la rodilla alineada con el eje de la maquina.",
+                "Coloca la almohadilla sobre la parte baja de la tibia, no sobre el tobillo directamente.",
+                "Extiende las rodillas de forma controlada hasta sentir contraccion en cuadriceps.",
+                "Evita bloquear fuerte la articulacion al final del movimiento.",
+                "Baja lento hasta la posicion inicial sin dejar caer la carga.",
+            ),
+            "recommendations": "Ideal como ejercicio tecnico con cargas moderadas, especialmente despues del calentamiento.",
+            "common_mistakes": "Usar impulso, despegar la cadera del asiento, cargar demasiado o bloquear rodillas agresivamente.",
+            "safety_notes": "Si hay dolor anterior de rodilla, reduce rango y consulta al entrenador.",
+        },
     ]
 
     print("Syncing exercise guides...")
@@ -491,8 +709,6 @@ def ensure_guides(uid, models, categories, machines, employees, events, plans):
             "safety_notes": guide["safety_notes"],
             "video_url": guide["video_url"],
             "image_1920": image_base64(guide["image"], guide.get("image_url")),
-            "reference_url": guide.get("reference_url"),
-            "media_credit": guide.get("media_credit"),
             "requires_subscription": guide.get("requires_subscription", False),
             "state": "published",
             "is_published": True,
@@ -577,6 +793,7 @@ def run():
         return
 
     ensure_seed_user_can_manage_guides(uid, models)
+    ensure_exercise_categories(uid, models)
 
     categories = category_ids_by_code(uid, models)
     plans = plan_ids_by_code(uid, models)

@@ -5,8 +5,8 @@ class MaintenanceEquipment(models.Model):
     _inherit = "maintenance.equipment"
 
     is_gym_machine = fields.Boolean(
-        string="Maquina de gimnasio",
-        help="Marca este equipo como una maquina disponible para guias de ejercicios.",
+        string="Máquina de gimnasio",
+        help="Marca este equipo como una máquina disponible para guías de ejercicios.",
     )
     gym_zone = fields.Selection(
         [
@@ -30,10 +30,10 @@ class MaintenanceEquipment(models.Model):
     guide_ids = fields.One2many(
         "ironzone.exercise.guide",
         "equipment_id",
-        string="Guias relacionadas",
+        string="Guías relacionadas",
     )
     guide_count = fields.Integer(
-        string="Guias",
+        string="Guías",
         compute="_compute_guide_count",
     )
 
@@ -45,7 +45,7 @@ class MaintenanceEquipment(models.Model):
         self.ensure_one()
         return {
             "type": "ir.actions.act_window",
-            "name": "Guias de ejercicios",
+            "name": "Guías de ejercicios",
             "res_model": "ironzone.exercise.guide",
             "view_mode": "list,form",
             "domain": [("equipment_id", "=", self.id)],

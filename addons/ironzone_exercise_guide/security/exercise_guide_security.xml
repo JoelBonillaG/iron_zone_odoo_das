@@ -23,10 +23,10 @@
     </record>
 
     <record id="rule_exercise_guide_internal_read" model="ir.rule">
-        <field name="name">Usuarios internos leen guias activas</field>
+        <field name="name">Usuarios internos sin rol no leen guias</field>
         <field name="model_id" ref="model_ironzone_exercise_guide"/>
         <field name="groups" eval="[(4, ref('base.group_user'))]"/>
-        <field name="domain_force">[('active', '=', True)]</field>
+        <field name="domain_force">[('id', '=', 0)]</field>
         <field name="perm_read" eval="True"/>
         <field name="perm_write" eval="False"/>
         <field name="perm_create" eval="False"/>
@@ -38,7 +38,7 @@
         <field name="model_id" ref="model_ironzone_exercise_guide"/>
         <field name="groups" eval="[(4, ref('iz_backend_theme.group_ironzone_trainers'))]"/>
         <field name="domain_force">[('author_user_id', '=', user.id)]</field>
-        <field name="perm_read" eval="False"/>
+        <field name="perm_read" eval="True"/>
         <field name="perm_write" eval="True"/>
         <field name="perm_create" eval="False"/>
         <field name="perm_unlink" eval="True"/>
@@ -54,6 +54,8 @@
         <field name="perm_create" eval="True"/>
         <field name="perm_unlink" eval="False"/>
     </record>
+
+    <delete id="rule_exercise_guide_trainer_read_published" model="ir.rule"/>
 
     <record id="rule_exercise_guide_admin_all" model="ir.rule">
         <field name="name">Administradores gestionan todas las guias</field>

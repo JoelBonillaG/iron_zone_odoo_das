@@ -1,38 +1,60 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <menuitem id="menu_ironzone_exercise_root"
-              name="Guias de ejercicios"
+              name="Guías de ejercicios"
               sequence="55"
-              groups="base.group_user,iz_backend_theme.group_ironzone_trainers,iz_backend_theme.group_ironzone_admin"/>
+              groups="iz_backend_theme.group_ironzone_trainers,iz_backend_theme.group_ironzone_admin"/>
 
     <menuitem id="menu_ironzone_exercise_guides"
-              name="Guias"
+              name="Guías"
               parent="menu_ironzone_exercise_root"
               action="action_ironzone_exercise_guide"
               sequence="10"
               groups="iz_backend_theme.group_ironzone_admin"/>
 
+    <record id="menu_ironzone_exercise_root" model="ir.ui.menu">
+        <field name="groups_id" eval="[(6, 0, [ref('iz_backend_theme.group_ironzone_trainers'), ref('iz_backend_theme.group_ironzone_admin')])]"/>
+    </record>
+
+    <record id="menu_ironzone_exercise_guides" model="ir.ui.menu">
+        <field name="groups_id" eval="[(6, 0, [ref('iz_backend_theme.group_ironzone_admin')])]"/>
+    </record>
+
     <menuitem id="menu_ironzone_exercise_my_guides"
-              name="Mis guias"
+              name="Mis guías"
               parent="menu_ironzone_exercise_root"
               action="action_ironzone_exercise_guide_my"
               sequence="20"
               groups="iz_backend_theme.group_ironzone_trainers"/>
 
+    <record id="action_ironzone_open_portal" model="ir.actions.act_url">
+        <field name="name">Ver portal de Guías</field>
+        <field name="url">/exercise-guides</field>
+        <field name="target">new</field>
+    </record>
+
+    <menuitem id="menu_ironzone_exercise_open_portal"
+              name="Ver portal"
+              parent="menu_ironzone_exercise_root"
+              action="action_ironzone_open_portal"
+              sequence="25"
+              groups="iz_backend_theme.group_ironzone_trainers"/>
+
     <menuitem id="menu_ironzone_gym_machines"
-              name="Maquinas"
+              name="Inventario"
               parent="menu_ironzone_exercise_root"
               action="action_ironzone_gym_machine"
-              sequence="30"/>
+              sequence="30"
+              groups="iz_backend_theme.group_ironzone_admin"/>
 
     <menuitem id="menu_ironzone_exercise_config"
-              name="Configuracion"
+              name="Configuración"
               parent="menu_ironzone_exercise_root"
               sequence="90"
               groups="iz_backend_theme.group_ironzone_admin"/>
 
     <menuitem id="menu_ironzone_exercise_categories"
-              name="Categorias y grupos musculares"
+              name="Categorías y grupos musculares"
               parent="menu_ironzone_exercise_config"
               action="action_ironzone_exercise_category"
               sequence="10"

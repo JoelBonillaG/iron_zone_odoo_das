@@ -18,6 +18,7 @@
     ],
     "data": [
         "data/exercise_category_data.xml",
+        "data/website_menu_data.xml",
         "security/ir.model.access.csv",
         "security/exercise_guide_security.xml",
         "views/exercise_category_views.xml",
