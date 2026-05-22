@@ -55,8 +55,6 @@
         <field name="perm_unlink" eval="False"/>
     </record>
 
-    <delete id="rule_exercise_guide_trainer_read_published" model="ir.rule"/>
-
     <record id="rule_exercise_guide_admin_all" model="ir.rule">
         <field name="name">Administradores gestionan todas las guias</field>
         <field name="model_id" ref="model_ironzone_exercise_guide"/>
