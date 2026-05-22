@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_ironzone_exercise_category_list" model="ir.ui.view">
+        <field name="name">ironzone.exercise.category.list</field>
+        <field name="model">ironzone.exercise.category</field>
+        <field name="arch" type="xml">
+            <list string="Categorias de ejercicios">
+                <field name="sequence" widget="handle"/>
+                <field name="name"/>
+                <field name="code"/>
+                <field name="category_type"/>
+                <field name="active" widget="boolean_toggle"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_ironzone_exercise_category_form" model="ir.ui.view">
+        <field name="name">ironzone.exercise.category.form</field>
+        <field name="model">ironzone.exercise.category</field>
+        <field name="arch" type="xml">
+            <form string="Categoria de ejercicios">
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="name"/>
+                            <field name="code"/>
+                            <field name="category_type"/>
+                        </group>
+                        <group>
+                            <field name="sequence"/>
+                            <field name="color"/>
+                            <field name="active"/>
+                        </group>
+                    </group>
+                    <group>
+                        <field name="description"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_ironzone_exercise_category_search" model="ir.ui.view">
+        <field name="name">ironzone.exercise.category.search</field>
+        <field name="model">ironzone.exercise.category</field>
+        <field name="arch" type="xml">
+            <search string="Categorias">
+                <field name="name"/>
+                <field name="code"/>
+                <filter name="muscle" string="Grupos musculares" domain="[('category_type', '=', 'muscle')]"/>
+                <filter name="exercise" string="Tipos de ejercicio" domain="[('category_type', '=', 'exercise')]"/>
+                <filter name="equipment" string="Tipos de maquina" domain="[('category_type', '=', 'equipment')]"/>
+                <filter name="active" string="Activas" domain="[('active', '=', True)]"/>
+                <filter name="inactive" string="Archivadas" domain="[('active', '=', False)]"/>
+                <group expand="0" string="Agrupar por">
+                    <filter name="group_type" string="Tipo" context="{'group_by': 'category_type'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_ironzone_exercise_category" model="ir.actions.act_window">
+        <field name="name">Categorias y grupos musculares</field>
+        <field name="res_model">ironzone.exercise.category</field>
+        <field name="view_mode">list,form</field>
+        <field name="context">{'search_default_active': 1}</field>
+    </record>
+</odoo>

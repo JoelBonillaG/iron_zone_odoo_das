@@ -1,8 +1,8 @@
-def post_init_hook(cr, registry):
+def post_init_hook(env):
     """Post-install hook: configure website and subscribe existing partners."""
     from odoo import api, SUPERUSER_ID
 
-    env = api.Environment(cr, SUPERUSER_ID, {})
+    env = api.Environment(env.cr, SUPERUSER_ID, {})
 
     # Configure the website (language, menus, pages)
     try:

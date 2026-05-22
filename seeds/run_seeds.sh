@@ -8,18 +8,24 @@ set -euo pipefail
 
 cd "$(dirname "$0")"
 
-if command -v python3 >/dev/null 2>&1; then
-    PYTHON_BIN=python3
+# Detect Python executable
+if command -v py >/dev/null 2>&1; then
+    PYTHON_BIN="py"
+elif command -v python3 >/dev/null 2>&1; then
+    PYTHON_BIN="python3"
 elif command -v python >/dev/null 2>&1; then
-    PYTHON_BIN=python
+    PYTHON_BIN="python"
 else
-    echo "Python not found. Install Python 3 and ensure 'python' is in PATH."
+    echo "Python not found. Install Python 3 and ensure it is in PATH."
     exit 1
 fi
 
+# Run a specific seed
 if [ -n "${1:-}" ]; then
     echo "Running $1.py ..."
     "$PYTHON_BIN" "$1.py"
+
+# Run all seeds
 else
     echo "==> Running 00_company_config.py ..."
     "$PYTHON_BIN" 00_company_config.py
@@ -37,6 +43,7 @@ else
         if [ "$f" = "00_company_config.py" ] || [ "$f" = "00_smtp_config.py" ] || [ "$f" = "01_email_templates_sync.py" ]; then
             continue
         fi
+
         echo "==> Running $f ..."
         "$PYTHON_BIN" "$f"
         echo ""

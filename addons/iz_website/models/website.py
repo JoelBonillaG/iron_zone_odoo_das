@@ -76,6 +76,7 @@ class Website(models.Model):
             "/shop": ("Tienda", 20),
             "/event": ("Eventos", 30),
             "/aboutus": ("Nosotros", 40),
+            "/exercise-guides": ("Guias de ejercicios", 50),
             "/contactus": ("Contacto", 60),
         }
 
