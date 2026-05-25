@@ -43,9 +43,26 @@ class SubscriptionPortalController(CustomerPortal):
     def _prepare_subscription_cards(self, subscriptions):
         cards = []
         for subscription in subscriptions:
-            invoice_ids = subscription.invoice_ids | subscription.sale_order_ids.invoice_ids
+            invoice_ids = (
+                subscription.invoice_ids
+                | subscription.sale_order_id.invoice_ids
+                | subscription.sale_order_ids.invoice_ids
+            )
+            invoice_count = len(invoice_ids)
             paid_invoice_count = len(invoice_ids.filtered(lambda invoice: invoice.payment_state == "paid"))
             status_label, status_color, status_hint = self._subscription_status(subscription)
+            if invoice_count:
+                invoice_summary = f"{paid_invoice_count} de {invoice_count}"
+            else:
+                invoice_summary = "Sin facturas"
+
+            if subscription.subscription_benefits_active:
+                status_message = "Beneficios activos."
+            elif not paid_invoice_count:
+                status_message = "Pago pendiente para activar beneficios."
+            else:
+                status_message = status_hint
+
             cards.append(
                 {
                     "record": subscription,
@@ -54,10 +71,12 @@ class SubscriptionPortalController(CustomerPortal):
                     "status_hint": status_hint,
                     "period_label": self._subscription_period_label(subscription),
                     "line_names": subscription.sale_subscription_line_ids.mapped("product_id.name"),
-                    "invoice_count": len(invoice_ids),
+                    "invoice_count": invoice_count,
                     "paid_invoice_count": paid_invoice_count,
+                    "invoice_summary": invoice_summary,
                     "has_paid_invoice": bool(paid_invoice_count),
                     "benefits_ready": bool(subscription.subscription_benefits_active),
+                    "status_message": status_message,
                 }
             )
         return cards

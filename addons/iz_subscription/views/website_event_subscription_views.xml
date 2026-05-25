@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <template id="cart_line_subscription_benefit" inherit_id="website_sale.cart_lines" name="Subscription benefit in cart">
+        <xpath expr="//t[@t-call='website_sale.cart_line_description_following_lines']" position="after">
+            <div t-if="line.subscription_benefit_id" class="iz-cart-subscription-benefit small mt-1">
+                <i class="fa fa-check-circle me-1" role="img"/>
+                <span>Beneficio de suscripcion:</span>
+                <strong t-field="line.subscription_benefit_id.name"/>
+                <t t-if="line.subscription_discount_percent">
+                    <span>-</span>
+                    <span t-esc="'%d%%' % int(line.subscription_discount_percent)"/>
+                </t>
+            </div>
+        </xpath>
+    </template>
+
+    <template id="checkout_summary_subscription_benefit" inherit_id="website_sale.checkout_layout" name="Subscription benefit in checkout summary">
+        <xpath expr="//td[@name='website_sale_cart_summary_product_name']/h6" position="after">
+            <div t-if="line.subscription_benefit_id" class="iz-cart-subscription-benefit small mt-1">
+                <i class="fa fa-check-circle me-1" role="img"/>
+                <span>Beneficio de suscripcion:</span>
+                <strong t-field="line.subscription_benefit_id.name"/>
+                <t t-if="line.subscription_discount_percent">
+                    <span>-</span>
+                    <span t-esc="'%d%%' % int(line.subscription_discount_percent)"/>
+                </t>
+            </div>
+        </xpath>
+    </template>
+
+    <template id="modal_ticket_subscription_benefit" inherit_id="website_event_sale.modal_ticket_registration" name="Subscription benefit in event ticket modal">
+        <xpath expr="//div[hasclass('o_wevent_registration_multi_select')]" position="after">
+            <t t-if="not website.is_public_user()">
+                <t t-set="subscription_benefit" t-value="request.env.user.partner_id._get_current_subscription_benefits('events')[:1]"/>
+                <t t-set="subscription_discount" t-value="100 if subscription_benefit.benefit_type in ('free', 'access') else subscription_benefit.discount_percent"/>
+                <div t-if="subscription_benefit" class="iz-ticket-subscription-benefit text-end">
+                    <span>Beneficio de suscripcion</span>
+                    <strong t-esc="str(int(subscription_discount)) + '%'"/>
+                </div>
+            </t>
+        </xpath>
+        <xpath expr="//div[hasclass('o_wevent_registration_single_select')]" position="after">
+            <t t-if="not website.is_public_user()">
+                <t t-set="subscription_benefit" t-value="request.env.user.partner_id._get_current_subscription_benefits('events')[:1]"/>
+                <t t-set="subscription_discount" t-value="100 if subscription_benefit.benefit_type in ('free', 'access') else subscription_benefit.discount_percent"/>
+                <div t-if="subscription_benefit" class="iz-ticket-subscription-benefit text-end mt-1">
+                    <span>Beneficio de suscripcion</span>
+                    <strong t-esc="str(int(subscription_discount)) + '%'"/>
+                </div>
+            </t>
+        </xpath>
+    </template>
+
+</odoo>

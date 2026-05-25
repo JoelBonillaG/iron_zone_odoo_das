@@ -204,6 +204,7 @@ class SaleSubscription(models.Model):
         "date",
         "stage_type",
         "invoice_ids.payment_state",
+        "sale_order_id.invoice_ids.payment_state",
         "sale_order_ids.invoice_ids.payment_state",
         "subscription_plan_id.benefit_ids",
     )
@@ -437,12 +438,15 @@ class SaleSubscription(models.Model):
             "context": context,
         }
 
-    @api.depends("invoice_ids", "sale_order_ids.invoice_ids")
+    @api.depends("invoice_ids", "sale_order_id.invoice_ids", "sale_order_ids.invoice_ids")
     def _compute_account_invoice_ids_count(self):
         for record in self:
-            record.account_invoice_ids_count = len(record.invoice_ids) + len(
-                record.sale_order_ids.invoice_ids
+            invoices = (
+                record.invoice_ids
+                | record.sale_order_id.invoice_ids
+                | record.sale_order_ids.invoice_ids
             )
+            record.account_invoice_ids_count = len(invoices)
 
     def action_view_account_invoice_ids(self):
         return {
@@ -456,7 +460,15 @@ class SaleSubscription(models.Model):
             "res_model": "account.move",
             "type": "ir.actions.act_window",
             "domain": [
-                ("id", "in", self.invoice_ids.ids + self.sale_order_ids.invoice_ids.ids)
+                (
+                    "id",
+                    "in",
+                    (
+                        self.invoice_ids
+                        | self.sale_order_id.invoice_ids
+                        | self.sale_order_ids.invoice_ids
+                    ).ids,
+                )
             ],
             "context": self.env.context,
         }
@@ -500,7 +512,11 @@ class SaleSubscription(models.Model):
 
     def _has_paid_invoice(self):
         self.ensure_one()
-        invoices = self.invoice_ids | self.sale_order_ids.invoice_ids
+        invoices = (
+            self.invoice_ids
+            | self.sale_order_id.invoice_ids
+            | self.sale_order_ids.invoice_ids
+        )
         return any(invoice.payment_state == "paid" for invoice in invoices)
 
     def _check_dates(self, start, next_invoice):
