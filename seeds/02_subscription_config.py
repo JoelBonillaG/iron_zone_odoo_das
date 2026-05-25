@@ -57,16 +57,6 @@ def ensure_subscription_templates(uid, models):
             "description": "Facturacion recurrente mensual para suscripciones Iron Zone.",
         },
         {
-            "name": "Trimestral",
-            "code": "IZ_P01",
-            "recurring_interval": 3,
-            "recurring_rule_type": "months",
-            "recurring_rule_boundary": "unlimited",
-            "recurring_rule_count": 3,
-            "invoicing_mode": "draft",
-            "description": "Facturacion recurrente cada tres meses para suscripciones Iron Zone.",
-        },
-        {
             "name": "Anual",
             "code": "IZ_PR01",
             "recurring_interval": 1,
@@ -118,10 +108,8 @@ def ensure_subscription_plans(uid, models):
         return {}
 
     plans = [
-        {"name": "IronZone Basico",   "code": "IZ_B01",  "sequence": 10, "priority": 10, "description": "Plan base para clientes que empiezan con acceso y beneficios iniciales."},
-        {"name": "IronZone Pro",      "code": "IZ_P01",  "sequence": 20, "priority": 20, "description": "Plan intermedio para clientes con mayor permanencia y beneficios superiores."},
-        {"name": "IronZone Premium",  "code": "IZ_PR01", "sequence": 30, "priority": 30, "description": "Plan alto para clientes anuales con beneficios completos en clases."},
-        {"name": "IronZone Integral", "code": "IZ_I01",  "sequence": 40, "priority": 40, "description": "Plan integral para clientes con entrenamiento y acompanamiento nutricional."},
+        {"name": "IronZone Mensual", "code": "IZ_B01",  "sequence": 10, "priority": 10, "description": "Suscripcion mensual con descuento en clases.", "active": True},
+        {"name": "IronZone Anual",   "code": "IZ_PR01", "sequence": 20, "priority": 20, "description": "Suscripcion anual con clases incluidas.", "active": True},
     ]
 
     plan_ids = {}
@@ -134,6 +122,15 @@ def ensure_subscription_plans(uid, models):
         plan_ids[plan["code"]] = plan_id
         action = "Created" if created else "Updated"
         print(f"  {action} subscription plan: {plan['name']}")
+    old_plans = search_read(
+        uid, models, "iz.subscription.plan",
+        [("code", "in", ["IZ_P01", "IZ_I01"])], ["id"],
+    )
+    if old_plans:
+        models.execute_kw(
+            DB, uid, PASSWORD, "iz.subscription.plan", "write",
+            [[plan["id"] for plan in old_plans], {"active": False}],
+        )
     return plan_ids
 
 
@@ -143,11 +140,20 @@ def ensure_subscription_benefits(uid, models, plan_ids):
     if not plan_ids or not model_exists(uid, models, "iz.subscription.benefit"):
         return
 
+    old_benefits = search_read(
+        uid, models, "iz.subscription.benefit",
+        ["|", ("plan_id", "in", list(plan_ids.values())), ("plan_id.code", "in", ["IZ_P01", "IZ_I01"])],
+        ["id"],
+    )
+    if old_benefits:
+        models.execute_kw(
+            DB, uid, PASSWORD, "iz.subscription.benefit", "unlink",
+            [[benefit["id"] for benefit in old_benefits]],
+        )
+
     benefits = [
-        {"name": "10% en clases grupales",    "plan_code": "IZ_B01",  "sequence": 10, "benefit_scope": "events", "benefit_type": "discount", "discount_percent": 10.0,  "description": "Descuento base para clases y eventos del gimnasio."},
-        {"name": "20% en clases grupales",    "plan_code": "IZ_P01",  "sequence": 10, "benefit_scope": "events", "benefit_type": "discount", "discount_percent": 20.0,  "description": "Descuento para clientes con plan trimestral."},
-        {"name": "Clases grupales incluidas", "plan_code": "IZ_PR01", "sequence": 10, "benefit_scope": "events", "benefit_type": "free",     "discount_percent": 100.0, "description": "Acceso sin costo a clases y eventos base."},
-        {"name": "Clases y nutricion incluidas", "plan_code": "IZ_I01", "sequence": 10, "benefit_scope": "events", "benefit_type": "free", "discount_percent": 100.0, "description": "Acceso incluido a clases base como parte del plan integral."},
+        {"name": "5% de descuento en clases", "plan_code": "IZ_B01", "sequence": 10, "benefit_scope": "events", "benefit_type": "discount", "discount_percent": 5.0, "description": "Descuento en clases y eventos del gimnasio."},
+        {"name": "Todas las clases incluidas gratis", "plan_code": "IZ_PR01", "sequence": 10, "benefit_scope": "events", "benefit_type": "free", "discount_percent": 100.0, "description": "Acceso gratis a todas las clases incluidas."},
     ]
 
     print("Syncing subscription benefits...")
@@ -169,7 +175,7 @@ def ensure_subscription_benefits(uid, models, plan_ids):
 
 def ensure_tags(uid, models):
     tag_names = [
-        "Mensual", "Trimestral", "Anual", "Nutricion", "Premium",
+        "Mensual", "Anual", "Premium",
         "Familiar", "Corporativa", "Promocion", "Pendiente de pago",
         "Pago confirmado", "Renovacion manual", "Renovacion automatica",
     ]

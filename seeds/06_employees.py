@@ -91,6 +91,8 @@ IRON_ZONE_GROUPS = {
             "base.group_user",
             "base.group_partner_manager",
             "account.group_account_invoice",
+            "account.group_account_user",
+            "account.group_account_manager",
             "sales_team.group_sale_salesman_all_leads",
         ],
     },

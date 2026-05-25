@@ -124,7 +124,6 @@ class SubscriptionPortalController(CustomerPortal):
         benefit_type_labels = {
             "discount": "Descuento",
             "free": "Acceso gratis",
-            "access": "Acceso incluido",
         }
 
         values = {

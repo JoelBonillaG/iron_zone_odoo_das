@@ -192,9 +192,9 @@ def ensure_internal_categories(uid, models):
     root_id, _ = create_or_update(uid, models, "product.category", [("name", "=", "Iron Zone")], {"name": "Iron Zone"}, fields=["id"])
     services_id, _ = create_or_update(uid, models, "product.category", [("name", "=", "Servicios"), ("parent_id", "=", root_id)], {"name": "Servicios", "parent_id": root_id}, fields=["id"])
     subscriptions_id, _ = create_or_update(uid, models, "product.category", [("name", "=", "Suscripciones"), ("parent_id", "=", services_id)], {"name": "Suscripciones", "parent_id": services_id}, fields=["id"])
-    nutrition_id, _ = create_or_update(uid, models, "product.category", [("name", "=", "Planes integrales"), ("parent_id", "=", subscriptions_id)], {"name": "Planes integrales", "parent_id": subscriptions_id}, fields=["id"])
-    print("Synced internal product categories: Iron Zone / Servicios / Suscripciones")
-    return {"subscriptions": subscriptions_id, "nutrition": nutrition_id}
+    products_id, _ = create_or_update(uid, models, "product.category", [("name", "=", "Productos"), ("parent_id", "=", root_id)], {"name": "Productos", "parent_id": root_id}, fields=["id"])
+    print("Synced internal product categories: Iron Zone / Servicios / Suscripciones / Productos")
+    return {"subscriptions": subscriptions_id, "products": products_id}
 
 
 def get_subscription_template_ids(uid, models):
@@ -251,6 +251,10 @@ def run():
         uid, models, "product.public.category",
         [("name", "=", "Suscripciones")], {"name": "Suscripciones"},
     )
+    categ_products, _ = create_or_update(
+        uid, models, "product.public.category",
+        [("name", "=", "Productos")], {"name": "Productos"},
+    )
 
     PRODUCTS = [
         {
@@ -258,7 +262,7 @@ def run():
             "list_price": 35.00,
             "standard_price": 0.0,
             "type": "service",
-            "description_sale": "Acceso ilimitado por 1 mes a zona de fuerza, cardio y clases base.",
+            "description_sale": "Suscripcion mensual. Beneficio: 5% de descuento en clases.",
             "categ_id": internal_categories["subscriptions"],
             "public_categ_ids": [(6, 0, [categ_subscriptions])],
             "_subscription_template": "Mensual",
@@ -266,41 +270,25 @@ def run():
             "_img": "membership_basic.png",
         },
         {
-            "name": "Suscripcion Trimestral",
-            "list_price": 90.00,
-            "standard_price": 0.0,
-            "type": "service",
-            "description_sale": "Acceso ilimitado por 3 meses con mejor relacion costo / permanencia.",
-            "categ_id": internal_categories["subscriptions"],
-            "public_categ_ids": [(6, 0, [categ_subscriptions])],
-            "_subscription_template": "Trimestral",
-            "_subscription_plan": "IZ_P01",
-            "_img": "membership_trim.png",
-        },
-        {
             "name": "Suscripcion Anual",
             "list_price": 300.00,
             "standard_price": 0.0,
             "type": "service",
-            "description_sale": "Acceso ilimitado por 12 meses para clientes que priorizan continuidad.",
+            "description_sale": "Suscripcion anual. Beneficio: todas las clases incluidas gratis.",
             "categ_id": internal_categories["subscriptions"],
             "public_categ_ids": [(6, 0, [categ_subscriptions])],
             "_subscription_template": "Anual",
             "_subscription_plan": "IZ_PR01",
             "_img": "membership_gold.png",
         },
-        {
-            "name": "Plan Nutrición + Gym",
-            "list_price": 75.00,
-            "standard_price": 10.0,
-            "type": "service",
-            "description_sale": "Paquete mensual de asesoria nutricional y acceso al gimnasio.",
-            "categ_id": internal_categories["nutrition"],
-            "public_categ_ids": [(6, 0, [categ_subscriptions])],
-            "_subscription_template": "Mensual",
-            "_subscription_plan": "IZ_I01",
-            "_img": "combo_plan.png",
-        },
+        {"name": "Proteina Whey 2 lb", "list_price": 45.00, "standard_price": 28.0, "type": "consu", "description_sale": "Suplemento de proteina para recuperacion y ganancia muscular.", "categ_id": internal_categories["products"], "public_categ_ids": [(6, 0, [categ_products])], "_stock": 3, "_img": "protein_whey.png"},
+        {"name": "Barras de proteina", "list_price": 3.50, "standard_price": 1.5, "type": "consu", "description_sale": "Snack alto en proteina para antes o despues del entrenamiento.", "categ_id": internal_categories["products"], "public_categ_ids": [(6, 0, [categ_products])], "_stock": 5, "_img": "protein_bar.png"},
+        {"name": "Camiseta IronZone", "list_price": 18.00, "standard_price": 8.0, "type": "consu", "description_sale": "Camiseta deportiva oficial del gimnasio.", "categ_id": internal_categories["products"], "public_categ_ids": [(6, 0, [categ_products])], "_stock": 4, "_img": "shirt.png"},
+        {"name": "Shaker IronZone", "list_price": 8.00, "standard_price": 3.0, "type": "consu", "description_sale": "Vaso mezclador para proteina y bebidas deportivas.", "categ_id": internal_categories["products"], "public_categ_ids": [(6, 0, [categ_products])], "_stock": 5, "_img": "shaker.png"},
+        {"name": "Toalla deportiva", "list_price": 10.00, "standard_price": 4.0, "type": "consu", "description_sale": "Toalla compacta para entrenamiento.", "categ_id": internal_categories["products"], "public_categ_ids": [(6, 0, [categ_products])], "_stock": 4, "_img": "towel.png"},
+        {"name": "Guantes de entrenamiento", "list_price": 16.00, "standard_price": 7.0, "type": "consu", "description_sale": "Guantes para mejorar agarre y proteger las manos.", "categ_id": internal_categories["products"], "public_categ_ids": [(6, 0, [categ_products])], "_stock": 3, "_img": "gloves.png"},
+        {"name": "Bandas de resistencia", "list_price": 12.00, "standard_price": 5.0, "type": "consu", "description_sale": "Bandas para calentamiento, movilidad y ejercicios funcionales.", "categ_id": internal_categories["products"], "public_categ_ids": [(6, 0, [categ_products])], "_stock": 5, "_img": "resistance_bands.png"},
+        {"name": "Straps de levantamiento", "list_price": 14.00, "standard_price": 6.0, "type": "consu", "description_sale": "Correas para mejorar el agarre en peso muerto y jalones.", "categ_id": internal_categories["products"], "public_categ_ids": [(6, 0, [categ_products])], "_stock": 2, "_img": "lifting_straps.png"},
     ]
 
     created_count = 0
@@ -310,18 +298,24 @@ def run():
     for product in PRODUCTS:
         p = dict(product)
         img_file = p.pop("_img", None)
+        stock_qty = p.pop("_stock", None)
         subscription_template_name = p.pop("_subscription_template", None)
         subscription_plan_code = p.pop("_subscription_plan", None)
 
         p["sale_ok"] = True
-        p["purchase_ok"] = False
+        p["purchase_ok"] = stock_qty is not None
         p["is_published"] = True
+        p["description_ecommerce"] = p["description_sale"]
         if "invoice_policy" in product_fields:
             p["invoice_policy"] = "order"
-        if "taxes_id" in product_fields and sale_services_tax:
-            p["taxes_id"] = [(6, 0, [sale_services_tax])]
+        if "taxes_id" in product_fields:
+            tax_id = sale_services_tax if p["type"] == "service" else sale_goods_tax
+            if tax_id:
+                p["taxes_id"] = [(6, 0, [tax_id])]
         if "website_published" in product_fields:
             p["website_published"] = True
+        if "is_storable" in product_fields:
+            p["is_storable"] = stock_qty is not None
         if "subscribable" in product_fields:
             p["subscribable"] = bool(subscription_template_name and subscription_template_ids)
         if "subscription_template_id" in product_fields:
@@ -341,10 +335,61 @@ def run():
             created_count += 1
         else:
             updated_count += 1
+        if stock_qty is not None:
+            product_data = models.execute_kw(
+                DB, uid, PASSWORD, "product.template", "read",
+                [[template_id], ["product_variant_id"]],
+            )[0]
+            product_id = product_data["product_variant_id"][0]
+            location_id = xmlid_to_res_id(uid, models, "stock.stock_location_stock")
+            quant = search_one(
+                uid, models, "stock.quant",
+                [("product_id", "=", product_id), ("location_id", "=", location_id)],
+                fields=["id"],
+            )
+            if not quant:
+                quant_id = models.execute_kw(
+                    DB, uid, PASSWORD, "stock.quant", "create",
+                    [{"product_id": product_id, "location_id": location_id}],
+                    {"context": {"inventory_mode": True}},
+                )
+            else:
+                quant_id = quant["id"]
+            models.execute_kw(
+                DB, uid, PASSWORD, "stock.quant", "write",
+                [[quant_id], {"inventory_quantity_auto_apply": stock_qty}],
+                {"context": {"inventory_mode": True}},
+            )
         action = "Created" if created else "Updated"
-        print(f"  {action} subscription product: {product['name']} (Template ID: {template_id})")
+        print(f"  {action} shop product: {product['name']} (Template ID: {template_id})")
 
     unpublish_duplicate_templates(uid, models, product_names, product_fields)
+    legacy_names = [
+        "Suscripcion Trimestral",
+        "Plan Nutricion + Gym",
+        "Plan Nutrición + Gym",
+        "Plan NutriciÃ³n + Gym",
+    ]
+    legacy = search_read(uid, models, "product.template", [("name", "in", legacy_names)], ["id"])
+    if legacy:
+        models.execute_kw(
+            DB, uid, PASSWORD, "product.template", "write",
+            [[item["id"] for item in legacy], {"is_published": False, "website_published": False, "sale_ok": False}],
+        )
+    published = search_read(
+        uid, models, "product.template",
+        [("is_published", "=", True), ("website_published", "=", True), ("sale_ok", "=", True)],
+        ["id", "name"],
+    )
+    extra_ids = [item["id"] for item in published if item["name"] not in product_names]
+    if extra_ids:
+        models.execute_kw(
+            DB, uid, PASSWORD, "product.template", "write",
+            [extra_ids, {"is_published": False, "website_published": False}],
+        )
+    website = search_one(uid, models, "website", [], fields=["id"])
+    if website:
+        models.execute_kw(DB, uid, PASSWORD, "website", "write", [[website["id"]], {"shop_ppg": 10}])
     print(f"Done: {created_count} created, {updated_count} updated.")
 
 

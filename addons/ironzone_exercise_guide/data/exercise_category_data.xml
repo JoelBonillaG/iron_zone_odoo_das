@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+    <record id="category_muscle_chest" model="ironzone.exercise.category">
+        <field name="name">Pecho</field>
+        <field name="code">CHEST</field>
+        <field name="category_type">muscle</field>
+        <field name="sequence">10</field>
+    </record>
+    <record id="category_muscle_back" model="ironzone.exercise.category">
+        <field name="name">Espalda</field>
+        <field name="code">BACK</field>
+        <field name="category_type">muscle</field>
+        <field name="sequence">20</field>
+    </record>
+    <record id="category_muscle_legs" model="ironzone.exercise.category">
+        <field name="name">Piernas</field>
+        <field name="code">LEGS</field>
+        <field name="category_type">muscle</field>
+        <field name="sequence">30</field>
+    </record>
+    <record id="category_muscle_shoulders" model="ironzone.exercise.category">
+        <field name="name">Hombros</field>
+        <field name="code">SHOULDERS</field>
+        <field name="category_type">muscle</field>
+        <field name="sequence">40</field>
+    </record>
+    <record id="category_muscle_core" model="ironzone.exercise.category">
+        <field name="name">Core y abdomen</field>
+        <field name="code">CORE</field>
+        <field name="category_type">muscle</field>
+        <field name="sequence">50</field>
+    </record>
+    <record id="category_type_strength" model="ironzone.exercise.category">
+        <field name="name">Fuerza</field>
+        <field name="code">STRENGTH</field>
+        <field name="category_type">exercise</field>
+        <field name="sequence">60</field>
+    </record>
+    <record id="category_type_cardio" model="ironzone.exercise.category">
+        <field name="name">Cardio</field>
+        <field name="code">CARDIO</field>
+        <field name="category_type">exercise</field>
+        <field name="sequence">70</field>
+    </record>
+    <record id="category_type_mobility" model="ironzone.exercise.category">
+        <field name="name">Movilidad</field>
+        <field name="code">MOBILITY</field>
+        <field name="category_type">exercise</field>
+        <field name="sequence">80</field>
+    </record>
+</odoo>

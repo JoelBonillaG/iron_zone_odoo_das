@@ -57,7 +57,7 @@ class SaleOrderLine(models.Model):
                 continue
             discount = (
                 100.0
-                if benefit.benefit_type in ("free", "access")
+                if benefit.benefit_type == "free"
                 else benefit.discount_percent
             )
             discount = min(max(discount, 0.0), 100.0)

@@ -31,12 +31,13 @@
             <attribute name="class" add="iz-product_info" separator=" "/>
         </xpath>
         <xpath expr="//h6[hasclass('o_wsale_products_item_title')]" position="after">
-            <t t-if="product.subscription_plan_id">
+            <t t-set="product_subscription_plan" t-value="product.sudo().subscription_plan_id"/>
+            <t t-if="product_subscription_plan">
                 <p class="iz-product_note iz-product_plan">
                     <span>Plan:</span>
-                    <strong t-esc="product.subscription_plan_id.name"/>
+                    <strong t-esc="product_subscription_plan.name"/>
                 </p>
-                <t t-set="plan_benefits" t-value="product.subscription_plan_id.benefit_ids.filtered(lambda benefit: benefit.active)"/>
+                <t t-set="plan_benefits" t-value="product_subscription_plan.benefit_ids.filtered(lambda benefit: benefit.active)"/>
                 <ul class="iz-product_benefits" t-if="plan_benefits">
                     <t t-foreach="plan_benefits" t-as="benefit">
                         <li>

@@ -1,0 +1,231 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="portal_my_home_exercise_guides" inherit_id="portal.portal_my_home" name="Iron Zone Portal Exercise Guides Card">
+        <xpath expr="//div[@id='portal_common_category']" position="before">
+            <div id="portal_exercise_guides_category" class="o_portal_category mt-3">
+                <h3 class="o_portal_category_title">Iron Zone</h3>
+                <t t-call="portal.portal_docs_entry">
+                    <t t-set="icon" t-value="'/iz_website/static/src/img/iz-mark.png'"/>
+                    <t t-set="title">Guías de ejercicios</t>
+                    <t t-set="text">Accede al catálogo de guías y revisa la información básica de cada máquina o ejercicio.</t>
+                    <t t-set="url" t-value="'/exercise-guides'"/>
+                    <t t-set="placeholder_count" t-value="'exercise_guide_count'"/>
+                </t>
+            </div>
+        </xpath>
+    </template>
+
+    <template id="portal_exercise_guides" name="Guías de ejercicios">
+        <t t-call="website.layout">
+            <div class="container py-5">
+                <section class="mb-4">
+                    <div class="row g-4 align-items-end">
+                        <div class="col-lg-7">
+                            <p class="text-uppercase text-primary small fw-semibold mb-2">Iron Zone</p>
+                            <h1 class="display-6 mb-2">Guías de ejercicios</h1>
+                            <p class="text-muted mb-0">
+                                Consulta la información esencial de cada guía, máquina y grupo muscular.
+                            </p>
+                        </div>
+                        <div class="col-lg-5">
+                            <t t-if="current_plan and not hide_subscription_ctas">
+                                <div class="border rounded p-3 bg-light">
+                                    <span class="small text-muted d-block">Plan activo</span>
+                                    <strong t-esc="current_plan.name"/>
+                                </div>
+                            </t>
+                        </div>
+                    </div>
+                </section>
+
+                <form method="get" action="/exercise-guides" class="row g-2 mb-4">
+                    <div class="col-lg-3">
+                        <label class="form-label small text-muted mb-1">Buscar guía</label>
+                        <input type="search" name="search" class="form-control" placeholder="Buscar guía" t-att-value="search"/>
+                    </div>
+                    <div class="col-lg-2">
+                        <label class="form-label small text-muted mb-1">Tipo de ejercicio</label>
+                        <select name="exercise_type" class="form-select">
+                            <option value="">Todos los tipos</option>
+                            <option value="individual" t-att-selected="'selected' if exercise_type == 'individual' else None">Individual</option>
+                            <option value="machine" t-att-selected="'selected' if exercise_type == 'machine' else None">Con máquina</option>
+                            <option value="group" t-att-selected="'selected' if exercise_type == 'group' else None">Grupal</option>
+                        </select>
+                    </div>
+                    <div class="col-lg-2">
+                        <label class="form-label small text-muted mb-1">Nivel de dificultad</label>
+                        <select name="difficulty" class="form-select">
+                            <option value="">Todas las dificultades</option>
+                            <option value="beginner" t-att-selected="'selected' if difficulty == 'beginner' else None">Principiante</option>
+                            <option value="intermediate" t-att-selected="'selected' if difficulty == 'intermediate' else None">Intermedio</option>
+                            <option value="advanced" t-att-selected="'selected' if difficulty == 'advanced' else None">Avanzado</option>
+                        </select>
+                    </div>
+                    <div class="col-lg-2">
+                        <label class="form-label small text-muted mb-1">Grupo muscular</label>
+                        <select name="muscle_group_id" class="form-select">
+                            <option value="">Todos los grupos musculares</option>
+                            <t t-foreach="muscle_groups" t-as="group">
+                                <option t-att-value="group.id" t-att-selected="'selected' if muscle_group_id == group.id else None" t-esc="group.name"/>
+                            </t>
+                        </select>
+                    </div>
+                    <div t-att-class="'col-lg-2' + ('' if exercise_type == 'machine' or equipment_id else ' d-none')">
+                        <label class="form-label small text-muted mb-1">Maquina</label>
+                        <select name="equipment_id" class="form-select">
+                            <option value="">Todas las maquinas</option>
+                            <t t-foreach="equipments" t-as="equipment">
+                                <option t-att-value="equipment.id" t-att-selected="'selected' if equipment_id == equipment.id else None" t-esc="equipment.name"/>
+                            </t>
+                        </select>
+                    </div>
+                    <div class="col-lg-1 d-grid">
+                        <button class="btn btn-primary" type="submit">
+                            <i class="fa fa-search"/>
+                        </button>
+                    </div>
+                    <div class="col-lg-1 d-grid">
+                        <a href="/exercise-guides" class="btn btn-outline-secondary" title="Limpiar filtros">
+                            <i class="fa fa-times"/>
+                        </a>
+                    </div>
+                </form>
+
+                <t t-if="guides">
+                    <div class="row g-4">
+                        <t t-foreach="guides" t-as="guide">
+                            <div class="col-md-6 col-xl-4">
+                                <article class="border rounded h-100 overflow-hidden bg-white shadow-sm">
+                                    <a t-att-href="'/exercise-guides/%s' % guide.id" class="text-decoration-none text-reset">
+                                        <div class="bg-light" style="height: 190px;">
+                                            <img t-if="guide.image_1920"
+                                                 t-att-src="'/web/image/ironzone.exercise.guide/%s/image_1920' % guide.id"
+                                                 class="w-100 h-100"
+                                                 style="object-fit: cover;"/>
+                                            <div t-else="" class="w-100 h-100 d-flex align-items-center justify-content-center text-muted">
+                                                <i class="fa fa-dumbbell fa-3x"/>
+                                            </div>
+                                        </div>
+                                        <div class="p-3">
+                                            <div class="d-flex justify-content-between gap-2 mb-2">
+                                                <span class="badge text-bg-light" t-esc="dict(guide._fields['exercise_type'].selection).get(guide.exercise_type)"/>
+                                                <span t-if="guide.requires_subscription" class="badge text-bg-warning">Socios</span>
+                                            </div>
+                                            <h2 class="h5 mb-2" t-esc="guide.name"/>
+                                            <p class="text-muted small mb-3" t-if="guide.primary_muscle_group_id or guide.equipment_id">
+                                                <t t-if="guide.primary_muscle_group_id" t-esc="guide.primary_muscle_group_id.name"/>
+                                                <t t-if="guide.equipment_id"> · <t t-esc="guide.equipment_id.name"/></t>
+                                            </p>
+                                            <span class="small text-primary fw-semibold">Ver guía</span>
+                                        </div>
+                                    </a>
+                                </article>
+                            </div>
+                        </t>
+                    </div>
+                    <div class="mt-4">
+                        <t t-call="website.pager"/>
+                    </div>
+                </t>
+                <t t-else="">
+                    <div class="text-center border rounded py-5">
+                        <i class="fa fa-search fa-2x text-muted mb-3"/>
+                        <h2 class="h5">No encontramos guías</h2>
+                        <p class="text-muted mb-0">Prueba cambiando los filtros o vuelve más tarde.</p>
+                    </div>
+                </t>
+            </div>
+        </t>
+    </template>
+
+    <template id="portal_exercise_guide_detail" name="Detalle de guía de ejercicio">
+        <t t-call="website.layout">
+            <div class="container py-5">
+                <article class="mx-auto" style="max-width: 980px;">
+                    <a href="/exercise-guides" class="text-decoration-none small">
+                        <i class="fa fa-arrow-left me-1"/> Guías
+                    </a>
+                    <div class="row g-4 mt-1">
+                        <div class="col-lg-5">
+                            <div class="border rounded overflow-hidden bg-light">
+                                <img t-if="guide.image_1920"
+                                     t-att-src="'/web/image/ironzone.exercise.guide/%s/image_1920' % guide.id"
+                                     class="w-100"
+                                     style="aspect-ratio: 4 / 3; object-fit: cover;"/>
+                                <div t-else="" class="d-flex align-items-center justify-content-center text-muted" style="aspect-ratio: 4 / 3;">
+                                    <i class="fa fa-dumbbell fa-3x"/>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-7">
+                            <div class="d-flex flex-wrap gap-2 mb-3">
+                                <span class="badge text-bg-primary" t-esc="dict(guide._fields['difficulty'].selection).get(guide.difficulty)"/>
+                                <span class="badge text-bg-light" t-esc="dict(guide._fields['exercise_type'].selection).get(guide.exercise_type)"/>
+                                <span t-if="guide.requires_subscription" class="badge text-bg-warning">Contenido para socios</span>
+                            </div>
+                            <h1 class="display-6 mb-3" t-esc="guide.name"/>
+                            <dl class="row small">
+                                <dt t-if="guide.primary_muscle_group_id" class="col-sm-4 text-muted">Grupo muscular</dt>
+                                <dd t-if="guide.primary_muscle_group_id" class="col-sm-8" t-esc="guide.primary_muscle_group_id.name"/>
+                                <dt t-if="guide.equipment_id" class="col-sm-4 text-muted">Máquina</dt>
+                                <dd t-if="guide.equipment_id" class="col-sm-8" t-esc="guide.equipment_id.name"/>
+                            </dl>
+                        </div>
+                    </div>
+
+                    <section class="mt-5">
+                        <h2 class="h4">Instrucciones</h2>
+                        <div class="lead" t-field="guide.instructions"/>
+                    </section>
+                    <section class="mt-4" t-if="guide.recommendations or guide.common_mistakes or guide.safety_notes">
+                        <div class="border rounded p-4 bg-white">
+                            <h2 class="h5 mb-3">Notas rápidas del ejercicio</h2>
+                            <p t-if="guide.recommendations" class="mb-2" t-esc="guide.recommendations"/>
+                            <p t-if="guide.common_mistakes" class="mb-2" t-esc="guide.common_mistakes"/>
+                            <p t-if="guide.safety_notes" class="mb-0 text-muted" t-esc="guide.safety_notes"/>
+                        </div>
+                    </section>
+                    <section t-if="guide.video_url or guide.video_file" class="mt-4">
+                        <h2 class="h4">Video de referencia</h2>
+                        <div t-if="guide.video_embed_url" class="ratio ratio-16x9 rounded border overflow-hidden bg-dark">
+                            <video t-if="guide.video_is_direct" controls="controls" class="w-100 h-100">
+                                <source t-att-src="guide.video_embed_url"/>
+                            </video>
+                            <iframe t-else="" t-att-src="guide.video_embed_url" title="Video de referencia" allowfullscreen="allowfullscreen" loading="lazy"/>
+                        </div>
+                        <a t-elif="guide.video_url" t-att-href="guide.video_url" target="_blank" class="btn btn-outline-primary">
+                            Abrir video
+                        </a>
+                        <video t-if="guide.video_file" controls="controls" class="w-100 rounded border mt-2">
+                            <source t-att-src="'/web/content/ironzone.exercise.guide/%s/video_file/%s' % (guide.id, guide.video_filename or 'video.mp4')" type="video/mp4"/>
+                        </video>
+                    </section>
+                    <!-- reference_url and media_credit removed from module -->
+                </article>
+            </div>
+        </t>
+    </template>
+
+    <template id="portal_exercise_guide_locked" name="Guía bloqueada por suscripción">
+        <t t-call="website.layout">
+            <div class="container py-5">
+                <div class="mx-auto text-center border rounded p-5" style="max-width: 720px;">
+                    <i class="fa fa-lock fa-3x text-warning mb-3"/>
+                    <h1 class="h3">Guía disponible para socios activos</h1>
+                    <p class="text-muted mb-4">
+                        Esta guía requiere una suscripción activa y pagada. Revisa tus suscripciones o elige un plan para habilitar este contenido.
+                    </p>
+                    <div class="d-flex flex-wrap gap-2 justify-content-center">
+                        <t t-if="not hide_subscription_ctas">
+                            <a href="/my/subscriptions" class="btn btn-primary">Mis suscripciones</a>
+                            <a href="/shop" class="btn btn-outline-primary">Ver planes</a>
+                        </t>
+                        <t t-else="">
+                            <a class="btn btn-outline-secondary disabled">Contacta con administración para más información</a>
+                        </t>
+                    </div>
+                </div>
+            </div>
+        </t>
+    </template>
+</odoo>

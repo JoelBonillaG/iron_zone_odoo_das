@@ -18,6 +18,7 @@
                                     <ul class="list-unstyled">
                                         <li class="mb-2"><a href="/" class="text-white-50 text-decoration-none">Inicio</a></li>
                                         <li class="mb-2"><a href="/shop" class="text-white-50 text-decoration-none">Tienda</a></li>
+                                        <li class="mb-2"><a href="/exercise-guides" class="text-white-50 text-decoration-none">Guia de ejercicios</a></li>
                                         <li class="mb-2"><a href="/aboutus" class="text-white-50 text-decoration-none">Nosotros</a></li>
                                         <li class="mb-2"><a href="/contactus" class="text-white-50 text-decoration-none">Contacto</a></li>
                                     </ul>

@@ -140,7 +140,7 @@
                                                                     <t t-if="benefit.benefit_type == 'discount'">
                                                                         - <t t-esc="int(benefit.discount_percent)"/>% de descuento
                                                                     </t>
-                                                                    <t t-if="benefit.benefit_type in ('free', 'access')">
+                                                                    <t t-if="benefit.benefit_type == 'free'">
                                                                         - incluido
                                                                     </t>
                                                                 </p>

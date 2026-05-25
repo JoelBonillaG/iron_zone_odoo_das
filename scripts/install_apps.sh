@@ -36,6 +36,7 @@ DEFAULT_MODULES=(
   iz_inventory
   iz_backend_theme
   iz_subscription
+  ironzone_exercise_guide
 
   # Ecuador electronic invoicing custom modules
   l10n_ec_base
