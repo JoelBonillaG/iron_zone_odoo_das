@@ -9,12 +9,12 @@ set -euo pipefail
 cd "$(dirname "$0")"
 
 # Detect Python executable
-if command -v py >/dev/null 2>&1; then
-    PYTHON_BIN="py"
-elif command -v python3 >/dev/null 2>&1; then
+if command -v python3 >/dev/null 2>&1 && python3 --version >/dev/null 2>&1; then
     PYTHON_BIN="python3"
-elif command -v python >/dev/null 2>&1; then
+elif command -v python >/dev/null 2>&1 && python --version >/dev/null 2>&1; then
     PYTHON_BIN="python"
+elif command -v py >/dev/null 2>&1 && py --version >/dev/null 2>&1; then
+    PYTHON_BIN="py"
 else
     echo "Python not found. Install Python 3 and ensure it is in PATH."
     exit 1

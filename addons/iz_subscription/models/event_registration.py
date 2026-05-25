@@ -74,7 +74,7 @@ class EventRegistration(models.Model):
                 "subscription_benefit_id": benefit.id,
                 "subscription_discount_percent": (
                     100.0
-                    if benefit.benefit_type in ("free", "access")
+                    if benefit.benefit_type == "free"
                     else benefit.discount_percent
                 ),
                 "subscription_final_price": benefit.apply_to_amount(price),

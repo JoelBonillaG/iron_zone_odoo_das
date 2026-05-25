@@ -30,7 +30,6 @@ class IzSubscriptionBenefit(models.Model):
         selection=[
             ("discount", "Descuento"),
             ("free", "Acceso gratis"),
-            ("access", "Acceso incluido"),
         ],
         string="Tipo de beneficio",
         required=True,
@@ -68,7 +67,7 @@ class IzSubscriptionBenefit(models.Model):
 
     def apply_to_amount(self, amount):
         self.ensure_one()
-        if self.benefit_type in ("free", "access"):
+        if self.benefit_type == "free":
             return 0.0
         discount = min(max(self.discount_percent, 0.0), 100.0)
         return amount * (1 - discount / 100.0)
