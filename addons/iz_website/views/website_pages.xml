@@ -6,9 +6,8 @@
             <t name="Inicio" t-name="website.homepage">
                 <t t-call="website.layout">
                     <div id="wrap" class="iz-site">
-                        <t t-set="monthly_plan" t-value="request.env['product.template'].sudo().search([('name', '=', 'Membresía Mensual')], limit=1)"/>
-                        <t t-set="quarterly_plan" t-value="request.env['product.template'].sudo().search([('name', '=', 'Membresía Trimestral')], limit=1)"/>
-                        <t t-set="annual_plan" t-value="request.env['product.template'].sudo().search([('name', '=', 'Membresía Anual')], limit=1)"/>
+                        <t t-set="monthly_plan" t-value="request.env['product.template'].sudo().search([('subscription_plan_id.code', '=', 'IZ_B01'), ('sale_ok', '=', True)], limit=1)"/>
+                        <t t-set="annual_plan" t-value="request.env['product.template'].sudo().search([('subscription_plan_id.code', '=', 'IZ_PR01'), ('sale_ok', '=', True)], limit=1)"/>
 
                         <section class="iz-hero">
                             <div class="iz-hero_media"/>
@@ -105,13 +104,13 @@
                                 <div class="iz-section_head iz-plan_intro">
                                     <p class="iz-eyebrow">Membresías</p>
                                     <h2>Elige el ritmo que encaja contigo.</h2>
-                                    <p class="iz-lead">Tres alternativas simples para empezar, mantener el avance o comprometerte todo el año.</p>
+                                    <p class="iz-lead">Dos alternativas simples para empezar o comprometerte todo el año.</p>
                                 </div>
 
                                 <div class="iz-pricing_grid">
                                     <a t-att-href="monthly_plan.website_url or '/shop?search=Membres%C3%ADa%20Mensual'" class="iz-price_card">
                                         <span class="iz-plan_name">Mensual</span>
-                                        <strong class="iz-price">$35</strong>
+                                        <strong class="iz-price" t-out="monthly_plan.list_price if monthly_plan else 35.0" t-options="{'widget': 'monetary', 'display_currency': website.currency_id}"/>
                                         <p>Para empezar sin compromiso largo.</p>
                                         <ul>
                                             <li>Acceso ilimitado por 1 mes</li>
@@ -120,21 +119,10 @@
                                         </ul>
                                         <span class="iz-plan_cta">Seleccionar plan</span>
                                     </a>
-                                    <a t-att-href="quarterly_plan.website_url or '/shop?search=Membres%C3%ADa%20Trimestral'" class="iz-price_card is-featured">
+                                    <a t-att-href="annual_plan.website_url or '/shop?search=Membres%C3%ADa%20Anual'" class="iz-price_card is-featured">
                                         <span class="iz-plan_badge">Recomendado</span>
-                                        <span class="iz-plan_name">Trimestral</span>
-                                        <strong class="iz-price">$90</strong>
-                                        <p>Para sostener progreso con mejor valor.</p>
-                                        <ul>
-                                            <li>Acceso ilimitado por 3 meses</li>
-                                            <li>Clases grupales seleccionadas</li>
-                                            <li>Control de progreso</li>
-                                        </ul>
-                                        <span class="iz-plan_cta">Seleccionar plan</span>
-                                    </a>
-                                    <a t-att-href="annual_plan.website_url or '/shop?search=Membres%C3%ADa%20Anual'" class="iz-price_card">
                                         <span class="iz-plan_name">Anual</span>
-                                        <strong class="iz-price">$300</strong>
+                                        <strong class="iz-price" t-out="annual_plan.list_price if annual_plan else 300.0" t-options="{'widget': 'monetary', 'display_currency': website.currency_id}"/>
                                         <p>Para entrenar todo el año con prioridad.</p>
                                         <ul>
                                             <li>Acceso ilimitado por 12 meses</li>

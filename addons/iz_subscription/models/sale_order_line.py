@@ -51,6 +51,7 @@ class SaleOrderLine(models.Model):
             plan, _subscription, benefit = line._get_subscription_event_benefit()
             if not benefit:
                 if "event_ticket_id" in line._fields and line.event_ticket_id:
+                    line.discount = 0.0
                     line.subscription_benefit_id = False
                     line.subscription_plan_id = False
                     line.subscription_discount_percent = 0.0
