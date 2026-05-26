@@ -31,9 +31,24 @@
             <attribute name="class" add="iz-product_info" separator=" "/>
         </xpath>
         <xpath expr="//h6[hasclass('o_wsale_products_item_title')]" position="after">
-            <p class="iz-product_note" t-if="product.public_categ_ids">
-                <t t-esc="product.public_categ_ids[0].name"/>
-            </p>
+            <t t-set="product_subscription_plan" t-value="product.sudo().subscription_plan_id"/>
+            <t t-if="product_subscription_plan">
+                <p class="iz-product_note iz-product_plan">
+                    <span>Plan:</span>
+                    <strong t-esc="product_subscription_plan.name"/>
+                </p>
+                <t t-set="plan_benefits" t-value="product_subscription_plan.benefit_ids.filtered(lambda benefit: benefit.active)"/>
+                <ul class="iz-product_benefits" t-if="plan_benefits">
+                    <t t-foreach="plan_benefits" t-as="benefit">
+                        <li>
+                            <strong t-esc="benefit.name"/>
+                            <t t-if="benefit.description">
+                                <span class="ms-1" t-esc="benefit.description"/>
+                            </t>
+                        </li>
+                    </t>
+                </ul>
+            </t>
         </xpath>
     </template>
 

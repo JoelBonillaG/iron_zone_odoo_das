@@ -56,13 +56,7 @@ class Website(models.Model):
     @api.model
     def _iz_configure_menus(self, website, spanish=False):
         menu_model = self.env["website.menu"]
-        roots = menu_model.search([
-            "&",
-            "|",
-            ("website_id", "=", False),
-            ("website_id", "=", website.id),
-            ("parent_id", "=", False),
-        ])
+        roots = website.menu_id
         if not roots:
             roots = menu_model.create({
                 "name": "Menu principal",
@@ -76,6 +70,7 @@ class Website(models.Model):
             "/shop": ("Tienda", 20),
             "/event": ("Eventos", 30),
             "/aboutus": ("Nosotros", 40),
+            "/exercise-guides": ("Guia de ejercicios", 50),
             "/contactus": ("Contacto", 60),
         }
 
@@ -84,7 +79,14 @@ class Website(models.Model):
             if spanish:
                 root.with_context(lang=spanish.code).name = "Menu principal"
             for url, (label, sequence) in labels.items():
-                menu = menu_model.search([("parent_id", "=", root.id), ("url", "=", url)], limit=1)
+                matching_menus = menu_model.search(
+                    [("parent_id", "=", root.id), ("url", "=", url)],
+                    order="sequence, id",
+                )
+                menu = matching_menus[:1]
+                duplicates = matching_menus - menu
+                if duplicates:
+                    duplicates.unlink()
                 if menu:
                     menu.write({"name": label, "sequence": sequence})
                 else:

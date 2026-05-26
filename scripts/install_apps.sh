@@ -19,6 +19,7 @@ DEFAULT_MODULES=(
   l10n_ec
   website_payment
   payment_demo
+  payment_stripe
   payment_custom
   hr
   mass_mailing
@@ -34,7 +35,8 @@ DEFAULT_MODULES=(
   iz_website
   iz_inventory
   iz_backend_theme
-  training_plans
+  iz_subscription
+  ironzone_exercise_guide
 
   # Ecuador electronic invoicing custom modules
   l10n_ec_base

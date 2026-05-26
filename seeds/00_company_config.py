@@ -87,7 +87,7 @@ currency_ids = models.execute_kw(
 
 values = {
     "name": "Iron Zone",
-    "email": get_env("SMTP_FROM", get_env("SMTP_USER", "contacto@ironzone.ec")),
+    "email": "contacto@ironzone.ec",
     "phone": "+593 3 282 4450",
     "street": "Av. Cevallos y Montalvo 245",
     "city": "Ambato",

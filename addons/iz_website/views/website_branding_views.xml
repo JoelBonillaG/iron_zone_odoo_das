@@ -26,14 +26,6 @@
         </xpath>
     </template>
 
-    <template id="iz_customer_home_dropdown_link" inherit_id="portal.user_dropdown" name="Iron Zone Customer Home Dropdown Link" priority="85">
-        <xpath expr="//a[@id='o_backend_user_dropdown_link']" position="before">
-            <a href="/my" role="menuitem" class="dropdown-item ps-3" id="o_customer_home_dropdown_link">
-                <i class="fa fa-fw fa-home me-1 small text-primary text-primary-emphasis"/> Inicio de mi cuenta
-            </a>
-        </xpath>
-    </template>
-
     <template id="iz_header_register_cta" inherit_id="website.header_call_to_action" name="Iron Zone Header Register CTA" priority="90">
         <xpath expr="//a[hasclass('btn_cta')]" position="replace">
             <a href="/contactus" class="oe_unremovable btn btn-primary btn_cta">Contactarse</a>

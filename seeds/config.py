@@ -39,13 +39,32 @@ DB       = env_value("ODOO_DB", "DB_NAME", "DB", default="iron_zone")
 USERNAME = env_value("ODOO_USERNAME", "ODOO_USER", "USERNAME", default="admin@ironzone.com")
 PASSWORD = env_value("ODOO_PASSWORD", "PASSWORD", default="admin123")
 
-def connect():
+def resolve_credentials():
     common = xmlrpc.client.ServerProxy(f"{URL}/xmlrpc/2/common")
-    uid = common.authenticate(DB, USERNAME, PASSWORD, {})
-    if not uid:
+    candidates = [
+        (USERNAME, PASSWORD),
+        ("admin", "admin"),
+        ("admin@ironzone.com", "admin123"),
+    ]
+    seen = set()
+    for login, password in candidates:
+        key = (login, password)
+        if key in seen:
+            continue
+        seen.add(key)
+        uid = common.authenticate(DB, login, password, {})
+        if uid:
+            return uid, login, password
+    return False, USERNAME, PASSWORD
+
+
+UID, USERNAME, PASSWORD = resolve_credentials()
+
+def connect():
+    if not UID:
         raise Exception("Auth failed. Verify USERNAME/PASSWORD in seeds/config.py")
     models = xmlrpc.client.ServerProxy(f"{URL}/xmlrpc/2/object")
-    return uid, models
+    return UID, models
 
 def create(uid, models, model, vals_list):
     return models.execute_kw(DB, uid, PASSWORD, model, "create", [vals_list])

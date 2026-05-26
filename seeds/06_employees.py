@@ -3,6 +3,11 @@ from config import DB, PASSWORD, USERNAME, connect, create
 
 DEFAULT_PASSWORD = "admin123"
 
+LEGACY_JOB_NAMES = {
+    "Recepcionista de Membresias": "Recepcionista de Suscripciones",
+    "Administrador de Membresias": "Administrador de Suscripciones",
+}
+
 DEPARTMENTS = [
     {"name": "Administracion"},
     {"name": "Entrenamiento"},
@@ -19,8 +24,8 @@ DEPARTMENTS = [
 JOBS = [
     {"name": "Instructor de CrossFit", "department": "Entrenamiento"},
     {"name": "Instructor de Yoga", "department": "Entrenamiento"},
-    {"name": "Recepcionista de Membresias", "department": "Atencion al Cliente"},
-    {"name": "Administrador de Membresias", "department": "Administracion"},
+    {"name": "Recepcionista de Suscripciones", "department": "Atencion al Cliente"},
+    {"name": "Administrador de Suscripciones", "department": "Administracion"},
     {"name": "Asesor Comercial", "department": "Ventas"},
     {"name": "Ejecutivo de Ventas", "department": "Ventas"},
     {"name": "Analista de Facturacion", "department": "Finanzas"},
@@ -62,7 +67,7 @@ IRON_ZONE_GROUPS = {
         ],
     },
     "membership": {
-        "name": "Iron Zone / Recepcion Membresias",
+        "name": "Iron Zone / Recepcion Suscripciones",
         "xmlid": "iz_backend_theme.group_ironzone_membership",
         "implied": [
             "base.group_user",
@@ -86,6 +91,8 @@ IRON_ZONE_GROUPS = {
             "base.group_user",
             "base.group_partner_manager",
             "account.group_account_invoice",
+            "account.group_account_user",
+            "account.group_account_manager",
             "sales_team.group_sale_salesman_all_leads",
         ],
     },
@@ -153,7 +160,7 @@ EMPLOYEES = [
         "name": "Ana Torres",
         "login": "ana.torres@ironzone.ec",
         "work_email": "ana.torres@ironzone.ec",
-        "job": "Recepcionista de Membresias",
+        "job": "Recepcionista de Suscripciones",
         "department": "Atencion al Cliente",
         "mobile_phone": "0991234527",
         "work_phone": "032400107",
@@ -163,7 +170,7 @@ EMPLOYEES = [
         "name": "Luis Herrera",
         "login": "luis.herrera@ironzone.ec",
         "work_email": "luis.herrera@ironzone.ec",
-        "job": "Administrador de Membresias",
+        "job": "Administrador de Suscripciones",
         "department": "Administracion",
         "mobile_phone": "0991234528",
         "work_phone": "032400108",
@@ -582,6 +589,19 @@ def run():
 
     job_ids = {}
     print("Syncing employee job positions...")
+    for old_name, new_name in LEGACY_JOB_NAMES.items():
+        old_jobs = models.execute_kw(
+            DB,
+            uid,
+            PASSWORD,
+            "hr.job",
+            "search",
+            [[("name", "=", old_name)]],
+        )
+        if old_jobs:
+            models.execute_kw(DB, uid, PASSWORD, "hr.job", "write", [old_jobs, {"active": False}])
+            print(f"  Archived legacy job position: {old_name} -> {new_name}")
+
     for job in JOBS:
         values = {
             "name": job["name"],
