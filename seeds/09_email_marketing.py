@@ -244,7 +244,7 @@ def run():
 
     print("\n" + "=" * 60)
     print("Email Marketing Seed completado.")
-    print("Puedes enviar los mailings desde: Odoo → Email Marketing → Envíos")
+    print("Puedes enviar los mailings desde: Odoo -> Email Marketing -> Envios")
     print("=" * 60)
 
 
