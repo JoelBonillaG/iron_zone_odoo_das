@@ -31,6 +31,9 @@ class AccountMove(models.Model):
     l10n_ec_authorized_email_sent_date = fields.Datetime(
         string="Authorized Documents Sent On", copy=False
     )
+    l10n_ec_sri_is_demo_authorization = fields.Boolean(
+        string="Demo SRI Authorization", copy=False
+    )
 
     def _generate_l10n_ec_xml_content(self):
         self.ensure_one()
@@ -75,11 +78,15 @@ class AccountMove(models.Model):
                 xml_content,
                 "application/xml",
             )
-            move.l10n_ec_sri_status = "signed"
+            move.l10n_ec_sri_status = "authorized"
             move.l10n_ec_sri_error = False
+            move.l10n_ec_authorization_date = fields.Datetime.now()
+            move.l10n_ec_sri_is_demo_authorization = True
             move.l10n_ec_sri_response = _(
-                "Demo local: XML generated without signature and without SRI transmission."
+                "AUTORIZADO (DEMO). Documento generado localmente para pruebas. "
+                "No fue enviado al SRI y no tiene validez legal."
             )
+            move._l10n_ec_send_authorized_documents_email()
 
     def action_send_sri(self):
         """
@@ -89,7 +96,10 @@ class AccountMove(models.Model):
         attachment generation and email delivery) is processed by the cron.
         """
         for move in self:
-            if move.l10n_ec_sri_status in ["authorized", "sent", "signed"]:
+            if (
+                move.l10n_ec_sri_status in ["authorized", "sent", "signed"]
+                and not move.l10n_ec_sri_is_demo_authorization
+            ):
                 continue
 
             if move.company_id.l10n_ec_sri_environment == "demo":
@@ -98,6 +108,18 @@ class AccountMove(models.Model):
 
             if move.state != "posted":
                 raise UserError(_("Invoice must be Posted before sending to SRI."))
+
+            if move.l10n_ec_sri_is_demo_authorization:
+                move.write(
+                    {
+                        "l10n_ec_sri_access_key": False,
+                        "l10n_ec_xml_data": False,
+                        "l10n_ec_authorization_date": False,
+                        "l10n_ec_authorized_email_sent": False,
+                        "l10n_ec_authorized_email_sent_date": False,
+                        "l10n_ec_sri_is_demo_authorization": False,
+                    }
+                )
 
             move._l10n_ec_prepare_signed_xml_for_sri()
             move.l10n_ec_sri_status = "signed"
@@ -202,6 +224,7 @@ class AccountMove(models.Model):
             if response.get("status") == "AUTORIZADO":
                 move.l10n_ec_sri_status = "authorized"
                 move.l10n_ec_sri_error = False
+                move.l10n_ec_sri_is_demo_authorization = False
                 move.l10n_ec_sri_response = _("AUTORIZADO")
                 if response.get("date"):
                     move.l10n_ec_authorization_date = (

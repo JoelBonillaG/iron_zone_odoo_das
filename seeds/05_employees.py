@@ -1,4 +1,4 @@
-from config import DB, PASSWORD, connect, create
+from config import DB, PASSWORD, USERNAME, connect, create
 
 
 DEFAULT_PASSWORD = "admin123"
@@ -370,23 +370,31 @@ def assign_admin_group(uid, models, group_ids):
     admin_group_id = group_ids.get("admin")
     if not admin_group_id:
         return
-    admin_user = search_one(
-        uid,
-        models,
-        "res.users",
-        [("login", "=", "admin@ironzone.com")],
-        fields=["id", "name"],
-    )
-    if admin_user:
-        models.execute_kw(
-            DB,
+    admin_logins = ["admin@ironzone.com"]
+    if USERNAME and USERNAME not in admin_logins:
+        admin_logins.append(USERNAME)
+
+    for login in admin_logins:
+        admin_user = search_one(
             uid,
-            PASSWORD,
+            models,
             "res.users",
-            "write",
-            [[admin_user["id"]], {"groups_id": [(4, admin_group_id)]}],
+            [("login", "=", login)],
+            fields=["id", "name", "login"],
         )
-        print("  Updated admin user with Iron Zone / Administracion y Gerencia")
+        if admin_user:
+            models.execute_kw(
+                DB,
+                uid,
+                PASSWORD,
+                "res.users",
+                "write",
+                [[admin_user["id"]], {"groups_id": [(4, admin_group_id)]}],
+            )
+            print(
+                "  Updated admin user with Iron Zone / Administracion y Gerencia: "
+                f"{admin_user['login']}"
+            )
 
 
 def model_id(uid, models, model):
