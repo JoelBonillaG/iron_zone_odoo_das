@@ -1,4 +1,5 @@
 from . import account_move
+from . import event_event
 from . import event_registration
 from . import iz_subscription_benefit
 from . import iz_subscription_plan
