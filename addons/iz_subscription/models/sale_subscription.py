@@ -181,8 +181,7 @@ class SaleSubscription(models.Model):
                 subscription.date_start <= today and subscription.stage_id.type == "pre"
             ):
                 subscription.action_start_subscription()
-                if not subscription._has_paid_invoice():
-                    subscription.generate_invoice()
+                subscription.generate_invoice()
 
     @api.depends("sale_subscription_line_ids")
     def _compute_total(self):
@@ -296,40 +295,6 @@ class SaleSubscription(models.Model):
             [("type", "=", "in_progress")], limit=1
         )
         self.stage_id = in_progress_stage
-        self._close_lower_priority_active_subscriptions()
-
-    def _close_lower_priority_active_subscriptions(self):
-        today = fields.Date.context_today(self)
-        closed_stage = self.env["sale.subscription.stage"].search(
-            [("type", "=", "post")], limit=1
-        )
-        change_reason = self.env["sale.subscription.close.reason"].search(
-            [("name", "ilike", "Cambio de plan")], limit=1
-        )
-        if not closed_stage:
-            return
-        for subscription in self:
-            plan = subscription._get_subscription_plan()
-            if not plan or subscription.stage_type != "in_progress":
-                continue
-            replaced_subscriptions = self.search(
-                [
-                    ("id", "!=", subscription.id),
-                    ("partner_id", "=", subscription.partner_id.id),
-                    ("stage_type", "=", "in_progress"),
-                    ("active", "=", True),
-                    ("subscription_plan_id.priority", "<", plan.priority),
-                ]
-            )
-            for replaced in replaced_subscriptions:
-                values = {
-                    "stage_id": closed_stage.id,
-                    "date": today,
-                    "recurring_next_date": False,
-                }
-                if change_reason:
-                    values["close_reason_id"] = change_reason.id
-                replaced.write(values)
 
     def action_close_subscription(self):
         return {

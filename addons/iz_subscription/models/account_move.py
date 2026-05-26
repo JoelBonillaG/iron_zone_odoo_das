@@ -23,26 +23,14 @@ class AccountMove(models.Model):
         return subscriptions
 
     def _activate_paid_subscriptions(self):
-        today = fields.Date.context_today(self)
         subscriptions = self._get_related_subscriptions_for_benefits()
         subscriptions = subscriptions.filtered(
             lambda subscription: subscription.active
             and subscription.stage_type not in ("in_progress", "post")
             and subscription._has_paid_invoice()
         )
-        to_start = subscriptions.filtered(
-            lambda subscription: not subscription.date_start
-            or subscription.date_start <= today
-        )
-        to_schedule = subscriptions - to_start
-        if to_schedule:
-            ready_stage = self.env["sale.subscription.stage"].search(
-                [("type", "=", "pre")], limit=1
-            )
-            if ready_stage:
-                to_schedule.write({"stage_id": ready_stage.id})
-        if to_start:
-            to_start.action_start_subscription()
+        if subscriptions:
+            subscriptions.action_start_subscription()
 
     def write(self, values):
         res = super().write(values)

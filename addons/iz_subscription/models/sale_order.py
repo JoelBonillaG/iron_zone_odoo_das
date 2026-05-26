@@ -5,7 +5,8 @@ from datetime import date
 
 from dateutil.relativedelta import relativedelta
 
-from odoo import Command, api, fields, models
+from odoo import Command, api, fields, models, _
+from odoo.exceptions import ValidationError
 
 
 class SaleOrder(models.Model):
@@ -55,7 +56,6 @@ class SaleOrder(models.Model):
                 Command.create(line.get_subscription_line_values()) for line in lines
             ]
             subscription_plan = self._get_subscription_plan_from_lines(lines)
-            date_start = self._get_subscription_start_date(subscription_plan)
             pricelist_id = self.pricelist_id.id or self.partner_id.property_product_pricelist.id
             if not pricelist_id:
                 company_id = self.company_id.id or self.env.company.id
@@ -72,7 +72,7 @@ class SaleOrder(models.Model):
                     "template_id": subscription_tmpl.id,
                     "subscription_plan_id": subscription_plan.id,
                     "pricelist_id": pricelist_id,
-                    "date_start": date_start,
+                    "date_start": date.today(),
                     "sale_order_id": self.id,
                     "sale_subscription_line_ids": subscription_lines,
                 }
@@ -91,22 +91,6 @@ class SaleOrder(models.Model):
                 subscription_tmpl.recurring_interval,
             )
 
-    def _get_subscription_start_date(self, target_plan):
-        self.ensure_one()
-        current_plan, current_subscription = self.partner_id._get_current_subscription_plan()
-        if (
-            current_plan
-            and target_plan
-            and target_plan.priority < current_plan.priority
-            and current_subscription
-        ):
-            return (
-                current_subscription.date
-                or current_subscription.recurring_next_date
-                or fields.Date.context_today(self)
-            )
-        return fields.Date.context_today(self)
-
     def _get_subscription_plan_from_lines(self, lines):
         subscription_plans = lines.mapped(
             "product_id.product_tmpl_id.subscription_plan_id"
@@ -114,6 +98,29 @@ class SaleOrder(models.Model):
         return subscription_plans.sorted(
             key=lambda plan: (-plan.priority, plan.sequence, plan.id)
         )[:1]
+
+    def _check_subscription_downgrade(self):
+        for order in self:
+            current_plan, _current_subscription = (
+                order.partner_id._get_current_subscription_plan()
+            )
+            if not current_plan:
+                continue
+            for _tmpl, lines in order.group_subscription_lines().items():
+                target_plan = order._get_subscription_plan_from_lines(lines)
+                if not target_plan:
+                    continue
+                if target_plan.priority < current_plan.priority:
+                    raise ValidationError(
+                        _(
+                            "No puedes cambiar a %(target_plan)s porque tu suscripcion "
+                            "activa %(current_plan)s tiene un rango mayor."
+                        )
+                        % {
+                            "target_plan": target_plan.display_name,
+                            "current_plan": current_plan.display_name,
+                        }
+                    )
 
     def group_subscription_lines(self):
         """
@@ -135,6 +142,7 @@ class SaleOrder(models.Model):
         """
         Create a subscription per template from the Order's products
         """
+        self._check_subscription_downgrade()
         res = super().action_confirm()
         for record in self:
             grouped = record.group_subscription_lines()
@@ -146,9 +154,6 @@ class SaleOrder(models.Model):
         order_line = super()._cart_update_order_line(
             product_id, quantity, order_line, **kwargs
         )
-        event_lines = self.order_line.filtered(
-            lambda line: "event_ticket_id" in line._fields and line.event_ticket_id
-        )
-        if event_lines:
-            event_lines._apply_subscription_event_benefit()
+        if order_line and kwargs.get("event_ticket_id"):
+            order_line._apply_subscription_event_benefit()
         return order_line
