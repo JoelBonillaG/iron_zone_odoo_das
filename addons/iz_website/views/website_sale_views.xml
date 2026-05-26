@@ -32,10 +32,15 @@
         </xpath>
         <xpath expr="//h6[hasclass('o_wsale_products_item_title')]" position="after">
             <t t-set="product_subscription_plan" t-value="product.sudo().subscription_plan_id"/>
+            <t t-set="current_subscription_plan" t-value="False if website.is_public_user() else request.env.user.partner_id._get_current_subscription_plan()[0]"/>
+            <t t-set="has_current_subscription_plan" t-value="current_subscription_plan and product_subscription_plan and current_subscription_plan.id == product_subscription_plan.id"/>
             <t t-if="product_subscription_plan">
                 <p class="iz-product_note iz-product_plan">
                     <span>Plan:</span>
                     <strong t-esc="product_subscription_plan.name"/>
+                </p>
+                <p t-if="has_current_subscription_plan" class="iz-product_note iz-product_current_plan">
+                    Ya tienes este plan activo
                 </p>
                 <t t-set="plan_benefits" t-value="product_subscription_plan.benefit_ids.filtered(lambda benefit: benefit.active)"/>
                 <ul class="iz-product_benefits" t-if="plan_benefits">
@@ -49,6 +54,9 @@
                     </t>
                 </ul>
             </t>
+        </xpath>
+        <xpath expr="//div[hasclass('o_wsale_product_btn')]" position="attributes">
+            <attribute name="t-if">not has_current_subscription_plan</attribute>
         </xpath>
     </template>
 
@@ -66,6 +74,17 @@
                 <div t-if="product.description_ecommerce" t-field="product.description_ecommerce" class="oe_structure"/>
                 <p t-elif="product.description_sale" t-field="product.description_sale"/>
             </div>
+        </xpath>
+        <xpath expr="//div[@id='add_to_cart_wrap']" position="before">
+            <t t-set="current_subscription_plan" t-value="False if website.is_public_user() else request.env.user.partner_id._get_current_subscription_plan()[0]"/>
+            <t t-set="product_subscription_plan" t-value="product.sudo().subscription_plan_id"/>
+            <t t-set="has_current_subscription_plan" t-value="current_subscription_plan and product_subscription_plan and current_subscription_plan.id == product_subscription_plan.id"/>
+            <div t-if="has_current_subscription_plan" class="iz-current-plan_notice mb-2 me-auto">
+                Ya tienes este plan activo. Puedes elegir un plan superior o programar un cambio a otro plan.
+            </div>
+        </xpath>
+        <xpath expr="//div[@id='add_to_cart_wrap']" position="attributes">
+            <attribute name="t-if">not has_current_subscription_plan</attribute>
         </xpath>
         <xpath expr="//div[@id='o_product_terms_and_share']" position="attributes">
             <attribute name="class">iz-product_terms_share</attribute>
