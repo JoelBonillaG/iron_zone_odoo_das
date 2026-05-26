@@ -7,10 +7,10 @@
         <field name="arch" type="xml">
             <!-- Header Buttons -->
             <xpath expr="//header" position="inside">
-                 <button name="action_generate_demo_xml" string="Generate Demo XML" type="object" class="oe_highlight"
-                         invisible="state != 'posted' or l10n_ec_sri_environment != 'demo'"/>
+                 <button name="action_generate_demo_xml" string="Send to SRI (Demo)" type="object" class="oe_highlight"
+                         invisible="state != 'posted' or l10n_ec_sri_environment != 'demo' or (l10n_ec_sri_status == 'authorized' and l10n_ec_sri_is_demo_authorization)"/>
                  <button name="action_send_sri" string="Send to SRI" type="object" class="oe_highlight"
-                         invisible="state != 'posted' or l10n_ec_sri_environment == 'demo' or l10n_ec_sri_status in ('signed', 'sent', 'authorized')"/>
+                         invisible="state != 'posted' or l10n_ec_sri_environment == 'demo' or (l10n_ec_sri_status in ('signed', 'sent', 'authorized') and not l10n_ec_sri_is_demo_authorization)"/>
                  <button name="action_check_sri" string="Check SRI Status" type="object"
                          invisible="l10n_ec_sri_status != 'sent'"/>
             </xpath>
@@ -20,6 +20,7 @@
                 <page string="SRI Electronics" name="sri_electronics">
                     <group>
                         <group>
+                            <field name="l10n_ec_sri_is_demo_authorization" invisible="1"/>
                             <field name="l10n_ec_sri_environment"/>
                             <field name="l10n_ec_sri_status" widget="Badge"
                                    decoration-success="l10n_ec_sri_status == 'authorized'"
