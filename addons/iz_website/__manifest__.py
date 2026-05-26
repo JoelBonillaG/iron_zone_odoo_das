@@ -23,6 +23,7 @@
         "data/email_templates.xml",
         "data/mass_mailing.xml",
         "data/cron.xml",
+        "data/website_config.xml",
         "data/ir.model.access.csv",
         "views/website_layout.xml",
         "views/website_footer.xml",

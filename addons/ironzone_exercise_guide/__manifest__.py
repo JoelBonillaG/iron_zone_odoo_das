@@ -13,12 +13,12 @@
         "event",
         "portal",
         "website",
+        "iz_website",
         "iz_backend_theme",
         "iz_subscription",
     ],
     "data": [
         "data/exercise_category_data.xml",
-        "data/website_menu_data.xml",
         "security/ir.model.access.csv",
         "security/exercise_guide_security.xml",
         "views/exercise_category_views.xml",
