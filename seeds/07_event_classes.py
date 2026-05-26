@@ -502,6 +502,7 @@ def run():
     )
 
     instructor_user_ids = {}
+    instructor_employee_ids = {}
     print("Mapping instructors from employees...")
     for class_info in CLASSES:
         instructor_name = class_info["instructor"]
@@ -518,6 +519,7 @@ def run():
         if instructor:
             user_id = ensure_user_for_employee(uid, models, instructor)
             instructor_user_ids[instructor_name] = user_id
+            instructor_employee_ids[instructor_name] = instructor["id"]
             print(f"  Found instructor: {instructor_name} (Employee ID: {instructor['id']}, User ID: {user_id})")
         else:
             print(f"  Warning: Instructor not found: {instructor_name}")
@@ -562,6 +564,7 @@ def run():
         hour, minute = [int(part) for part in class_info["time"].split(":")]
         event_datetime = event_date.replace(hour=hour, minute=minute)
         instructor_user_id = instructor_user_ids.get(class_info["instructor"])
+        instructor_employee_id = instructor_employee_ids.get(class_info["instructor"])
 
         img_base64 = False
         image_filename = class_info.get("image")
@@ -575,6 +578,27 @@ def run():
         desc_html = '<div style="font-size: 1.3rem; line-height: 1.8; color: #cfcfcf; padding: 15px;">'
         desc_html += f'<p>{class_info.get("description", "")}</p></div>'
 
+        # Determine difficulty level from class name
+        difficulty = "intermediate"
+        if "Avanzado" in class_info["name"]:
+            difficulty = "advanced"
+        elif "Principiante" in class_info["name"] or "Ninos" in class_info["name"]:
+            difficulty = "beginner"
+
+        # Determine sala/espacio from class name
+        sala_espacio = "Gimnasio Principal"
+        lower_name = class_info["name"].lower()
+        if "spin" in lower_name:
+            sala_espacio = "Sala de Spinning"
+        elif "yoga" in lower_name or "pilates" in lower_name or "meditacion" in lower_name or "danza" in lower_name:
+            sala_espacio = "Sala de Yoga & Bienestar"
+        elif "crossfit" in lower_name or "hiit" in lower_name or "funcional" in lower_name:
+            sala_espacio = "Zona de Alta Intensidad (Box)"
+        elif "boxeo" in lower_name or "taekwondo" in lower_name:
+            sala_espacio = "Sala de Combate / Tatami"
+        elif "natacion" in lower_name or "acuagym" in lower_name:
+            sala_espacio = "Piscina Climatizada"
+
         values = {
             "name": class_info["name"],
             "description": desc_html,
@@ -584,6 +608,9 @@ def run():
             "date_begin": odoo_datetime(event_datetime),
             "date_end": odoo_datetime(event_datetime + timedelta(hours=1)),
             "user_id": instructor_user_id or False,
+            "trainer_id": instructor_employee_id or False,
+            "sala_espacio": sala_espacio,
+            "dificultad": difficulty,
             "stage_id": stage_ids.get(class_info.get("stage", "Nuevo")),
             "website_published": True,
             "website_menu": False,
