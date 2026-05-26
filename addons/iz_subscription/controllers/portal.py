@@ -1,4 +1,5 @@
 from odoo import http
+from odoo import fields
 from odoo.http import request
 from odoo.addons.portal.controllers.portal import CustomerPortal
 
@@ -42,6 +43,7 @@ class SubscriptionPortalController(CustomerPortal):
 
     def _prepare_subscription_cards(self, subscriptions):
         cards = []
+        today = fields.Date.context_today(request.env["sale.subscription"])
         for subscription in subscriptions:
             invoice_ids = (
                 subscription.invoice_ids
@@ -56,10 +58,27 @@ class SubscriptionPortalController(CustomerPortal):
             else:
                 invoice_summary = "Sin facturas"
 
-            if subscription.subscription_benefits_active:
-                status_message = "Beneficios activos."
+            if (
+                subscription.stage_type in ("draft", "pre")
+                and subscription.date_start
+                and subscription.date_start > today
+                and paid_invoice_count
+            ):
+                status_message = (
+                    "Se aplicara cuando termine tu suscripcion actual: "
+                    f"{subscription.date_start.strftime('%d/%m/%Y')}."
+                )
+            elif subscription.subscription_benefits_active:
+                status_message = (
+                    "Suscripcion activa. Tus beneficios ahora corresponden a este plan."
+                )
             elif not paid_invoice_count:
                 status_message = "Pago pendiente para activar beneficios."
+            elif subscription.stage_type == "post" and subscription.close_reason_id:
+                status_message = (
+                    f"Usada desde {subscription.date_start.strftime('%d/%m/%Y')} "
+                    f"hasta {subscription.date.strftime('%d/%m/%Y') if subscription.date else 'su cierre'}."
+                )
             else:
                 status_message = status_hint
 
