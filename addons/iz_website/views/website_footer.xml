@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="website.footer_custom" model="ir.ui.view">
+        <field name="arch" type="xml">
+            <data inherit_id="website.layout" name="Iron Zone Footer" active="True">
+                <xpath expr="//div[@id='footer']" position="replace">
+                    <div id="footer" class="oe_structure oe_structure_solo bg-black text-white pt64 pb32" t-ignore="true" t-if="not no_footer">
+                        <div class="container">
+                            <div class="row">
+                                <div class="col-lg-5 mb-5 mb-lg-0">
+                                    <h3 class="iron-accent fw-bold mb-4">IRON ZONE</h3>
+                                    <p class="text-white-50 lh-lg" style="max-width: 400px;">
+                                        El templo del fitness en Ambato. Equipamiento de élite, comunidad imparable y resultados garantizados.
+                                    </p>
+                                </div>
+                                <div class="col-lg-3 mb-5 mb-lg-0">
+                                    <h6 class="text-white fw-bold text-uppercase mb-4" style="letter-spacing: 2px;">Explorar</h6>
+                                    <ul class="list-unstyled">
+                                        <li class="mb-2"><a href="/" class="text-white-50 text-decoration-none">Inicio</a></li>
+                                        <li class="mb-2"><a href="/shop" class="text-white-50 text-decoration-none">Tienda</a></li>
+                                        <li class="mb-2"><a href="/exercise-guides" class="text-white-50 text-decoration-none">Guia de ejercicios</a></li>
+                                        <li class="mb-2"><a href="/aboutus" class="text-white-50 text-decoration-none">Nosotros</a></li>
+                                        <li class="mb-2"><a href="/contactus" class="text-white-50 text-decoration-none">Contacto</a></li>
+                                    </ul>
+                                </div>
+                                <div class="col-lg-4">
+                                    <h6 class="text-white fw-bold text-uppercase mb-4" style="letter-spacing: 2px;">Contáctanos</h6>
+                                    <ul class="list-unstyled text-white-50">
+                                        <li class="mb-3 d-flex align-items-start">
+                                            <i class="fa fa-map-marker iron-accent mt-1 me-3"/>
+                                            <span><span t-field="res_company.street"/>, <span t-field="res_company.city"/>, <span t-field="res_company.country_id.name"/></span>
+                                        </li>
+                                        <li class="mb-3 d-flex align-items-center">
+                                            <i class="fa fa-envelope iron-accent me-3"/>
+                                            <span t-field="res_company.email"/>
+                                        </li>
+                                        <li class="mb-3 d-flex align-items-center">
+                                            <i class="fa fa-phone iron-accent me-3"/>
+                                            <span t-field="res_company.phone"/>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </xpath>
+            </data>
+        </field>
+    </record>
+</odoo>

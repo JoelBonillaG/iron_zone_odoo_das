@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+    <record id="iz_event_registration_tree_membership" model="ir.ui.view">
+        <field name="name">event.registration.list.subscription.benefits</field>
+        <field name="model">event.registration</field>
+        <field name="inherit_id" ref="event.view_event_registration_tree" />
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='event_ticket_id']" position="after">
+                <field name="subscription_plan_id" string="Plan" optional="show" />
+                <field name="subscription_benefit_id" string="Beneficio" optional="show" />
+                <field name="subscription_final_price" string="Precio suscripcion" optional="show" />
+            </xpath>
+        </field>
+    </record>
+
+    <record id="iz_event_registration_form_membership" model="ir.ui.view">
+        <field name="name">event.registration.form.subscription.benefits</field>
+        <field name="model">event.registration</field>
+        <field name="inherit_id" ref="event.view_event_registration_form" />
+        <field name="arch" type="xml">
+            <xpath expr="//group[@name='event']" position="after">
+                <group string="Suscripcion" name="subscription_benefit">
+                    <field name="subscription_id" />
+                    <field name="subscription_plan_id" string="Plan" />
+                    <field name="subscription_benefit_id" />
+                    <field name="subscription_discount_percent" />
+                    <field name="subscription_original_price" />
+                    <field name="subscription_final_price" />
+                </group>
+            </xpath>
+        </field>
+    </record>
+</odoo>

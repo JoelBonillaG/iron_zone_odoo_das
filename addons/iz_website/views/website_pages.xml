@@ -1,0 +1,206 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="website.homepage" model="ir.ui.view">
+        <field name="name">Inicio</field>
+        <field name="arch" type="xml">
+            <t name="Inicio" t-name="website.homepage">
+                <t t-call="website.layout">
+                    <div id="wrap" class="iz-site">
+                        <t t-set="monthly_plan" t-value="request.env['product.template'].sudo().search([('subscription_plan_id.code', '=', 'IZ_B01'), ('sale_ok', '=', True)], limit=1)"/>
+                        <t t-set="annual_plan" t-value="request.env['product.template'].sudo().search([('subscription_plan_id.code', '=', 'IZ_PR01'), ('sale_ok', '=', True)], limit=1)"/>
+
+                        <section class="iz-hero">
+                            <div class="iz-hero_media"/>
+                            <div class="iz-hero_overlay"/>
+                            <div class="container iz-hero_content">
+                                <div class="iz-hero_copy">
+                                    <p class="iz-eyebrow">Iron Zone</p>
+                                    <div class="iz-hero_frame">
+                                        <h1>Transforma tu cuerpo.</h1>
+                                    </div>
+                                    <p>Planes flexibles, clases guiadas y productos esenciales para entrenar con constancia.</p>
+                                    <div class="iz-actions">
+                                        <a href="/shop" class="btn iz-btn iz-btn-primary">Ver planes</a>
+                                        <a href="/contactus" class="btn iz-btn iz-btn-ghost">Agendar visita</a>
+                                    </div>
+                                </div>
+                                <a href="/web/signup" class="iz-register_cta">Registrarse</a>
+                            </div>
+                        </section>
+
+                        <section class="iz-section iz-programs_section">
+                            <div class="container">
+                                <div class="iz-section_head">
+                                    <p class="iz-eyebrow">Programas</p>
+                                    <h2>Entrena con una ruta clara.</h2>
+                                </div>
+                                <div class="iz-program_grid">
+                                    <a href="/shop" class="iz-program_item">
+                                        <img src="/iz_website/static/src/img/chica_cuerdas.jpg" alt="Rutina de acondicionamiento"/>
+                                        <span>Acondicionamiento</span>
+                                        <p>Trabajo cardiovascular, resistencia y control del movimiento.</p>
+                                    </a>
+                                    <a href="/shop" class="iz-program_item">
+                                        <img src="/iz_website/static/src/img/dominadas.jpg" alt="Entrenamiento de fuerza"/>
+                                        <span>Fuerza</span>
+                                        <p>Rutinas para progresar con técnica y cargas controladas.</p>
+                                    </a>
+                                    <a href="/shop" class="iz-program_item">
+                                        <img src="/iz_website/static/src/img/mujer_ejercicio.jpg" alt="Rutina de hipertrofia"/>
+                                        <span>Hipertrofia</span>
+                                        <p>Volumen, técnica y progresión para desarrollo muscular.</p>
+                                    </a>
+                                </div>
+                            </div>
+                        </section>
+
+                        <section class="iz-content_band">
+                            <div class="container">
+                                <div class="row align-items-center g-5">
+                                    <div class="col-lg-6">
+                                        <div class="iz-image_panel">
+                                            <img src="/iz_website/static/src/img/instalaciones.jpg" alt="Area de entrenamiento Iron Zone"/>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-6">
+                                        <p class="iz-eyebrow">Entrenamiento</p>
+                                        <h2>Fuerza, energía y acompañamiento real.</h2>
+                                        <p class="iz-lead">
+                                            Un espacio preparado para entrenar con equipo completo, clases grupales y asesoramiento cuando lo necesites.
+                                        </p>
+                                        <div class="iz-training_list">
+                                            <div><span>01</span><p>Rutinas de fuerza y acondicionamiento.</p></div>
+                                            <div><span>02</span><p>Clases grupales para mantener disciplina.</p></div>
+                                            <div><span>03</span><p>Suplementos y accesorios disponibles en tienda.</p></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </section>
+
+                        <section class="iz-gallery_band">
+                            <div class="container">
+                                <div class="row align-items-end g-4">
+                                    <div class="col-lg-5">
+                                        <p class="iz-eyebrow">Espacio</p>
+                                        <h2>Equipo, ambiente y enfoque para cada objetivo.</h2>
+                                    </div>
+                                    <div class="col-lg-7">
+                                        <p class="iz-lead">
+                                            Combina sala de pesas, entrenamiento personalizado, clases y productos deportivos sin salir del mismo ecosistema de Iron Zone.
+                                        </p>
+                                    </div>
+                                </div>
+                                <div class="iz-gallery_grid">
+                                    <img src="/iz_website/static/src/img/m%C3%A1quinas.jpg" alt="Máquinas de gimnasio"/>
+                                    <img src="/iz_website/static/src/img/instalaciones.jpg" alt="Instalaciones del gimnasio"/>
+                                    <img src="/iz_website/static/src/img/banner_bueno.jpg" alt="Entrenamiento con barra"/>
+                                </div>
+                            </div>
+                        </section>
+
+                        <section class="iz-section iz-pricing_section">
+                            <div class="container">
+                                <div class="iz-section_head iz-plan_intro">
+                                    <p class="iz-eyebrow">Membresías</p>
+                                    <h2>Elige el ritmo que encaja contigo.</h2>
+                                    <p class="iz-lead">Dos alternativas simples para empezar o comprometerte todo el año.</p>
+                                </div>
+
+                                <div class="iz-pricing_grid">
+                                    <a t-att-href="monthly_plan.website_url or '/shop?search=Membres%C3%ADa%20Mensual'" class="iz-price_card">
+                                        <span class="iz-plan_name">Mensual</span>
+                                        <strong class="iz-price" t-out="monthly_plan.list_price if monthly_plan else 35.0" t-options="{'widget': 'monetary', 'display_currency': website.currency_id}"/>
+                                        <p>Para empezar sin compromiso largo.</p>
+                                        <ul>
+                                            <li>Acceso ilimitado por 1 mes</li>
+                                            <li>Uso de sala de pesas</li>
+                                            <li>Seguimiento inicial</li>
+                                        </ul>
+                                        <span class="iz-plan_cta">Seleccionar plan</span>
+                                    </a>
+                                    <a t-att-href="annual_plan.website_url or '/shop?search=Membres%C3%ADa%20Anual'" class="iz-price_card is-featured">
+                                        <span class="iz-plan_badge">Recomendado</span>
+                                        <span class="iz-plan_name">Anual</span>
+                                        <strong class="iz-price" t-out="annual_plan.list_price if annual_plan else 300.0" t-options="{'widget': 'monetary', 'display_currency': website.currency_id}"/>
+                                        <p>Para entrenar todo el año con prioridad.</p>
+                                        <ul>
+                                            <li>Acceso ilimitado por 12 meses</li>
+                                            <li>Beneficios en productos</li>
+                                            <li>Atencion preferente</li>
+                                        </ul>
+                                        <span class="iz-plan_cta">Seleccionar plan</span>
+                                    </a>
+                                </div>
+                            </div>
+                        </section>
+                    </div>
+                </t>
+            </t>
+        </field>
+    </record>
+
+    <record id="website.aboutus" model="ir.ui.view">
+        <field name="name">Nosotros</field>
+        <field name="arch" type="xml">
+            <t name="Nosotros" t-name="website.aboutus">
+                <t t-call="website.layout">
+                    <div id="wrap" class="iz-site">
+                        <section class="iz-page_header">
+                            <div class="container">
+                                <p class="iz-eyebrow">Nosotros</p>
+                                <h1>Un gimnasio para entrenar con disciplina y claridad.</h1>
+                            </div>
+                        </section>
+
+                        <section class="iz-section iz-section-tight">
+                            <div class="container">
+                                <div class="row g-5">
+                                    <div class="col-lg-7">
+                                        <h2>Entrenamiento, comunidad y seguimiento cercano.</h2>
+                                        <p class="iz-lead">
+                                            Iron Zone combina equipos, clases y planes de membresía para que cada socio pueda entrenar con una ruta clara desde el primer día.
+                                        </p>
+                                    </div>
+                                    <div class="col-lg-5">
+                                        <div class="iz-fact_list">
+                                            <div><span>Ambato</span><p>Espacio local con atención cercana.</p></div>
+                                            <div><span>Entrenadores</span><p>Acompañamiento para avanzar con técnica.</p></div>
+                                            <div><span>Planes</span><p>Membresías y clases según el objetivo.</p></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </section>
+
+                        <section class="iz-band iz-band-light">
+                            <div class="container">
+                                <div class="iz-values">
+                                    <div>
+                                        <h3>Entrenamiento</h3>
+                                        <p>Planes, clases y acompañamiento personal.</p>
+                                    </div>
+                                    <div>
+                                        <h3>Comunidad</h3>
+                                        <p>Un ambiente activo para mantener constancia.</p>
+                                    </div>
+                                    <div>
+                                        <h3>Productos</h3>
+                                        <p>Accesorios y suplementos para complementar la rutina.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </section>
+                    </div>
+                </t>
+            </t>
+        </field>
+    </record>
+
+    <record id="page_aboutus" model="website.page">
+        <field name="name">Nosotros</field>
+        <field name="url">/aboutus</field>
+        <field name="view_id" ref="website.aboutus"/>
+        <field name="website_published">True</field>
+    </record>
+</odoo>

@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="website.contactus" model="ir.ui.view">
+        <field name="name">Contacto</field>
+        <field name="arch" type="xml">
+            <t name="Contacto" t-name="website.contactus">
+                <t t-call="website.layout">
+                    <t t-set="contactus_form_values" t-value="{
+                        'email_to': res_company.email,
+                        'name': request.params.get('name', ''),
+                        'phone': request.params.get('phone', ''),
+                        'email_from': request.params.get('email_from', ''),
+                        'subject': request.params.get('subject', ''),
+                    }"/>
+                    <span class="hidden" data-for="contactus_form" t-att-data-values="contactus_form_values"/>
+                    <div id="wrap" class="iz-site">
+                        <section class="iz-page_header iz-contact_header">
+                            <div class="container">
+                                <p class="iz-eyebrow">Contacto</p>
+                                <h1>Estamos cerca para ayudarte.</h1>
+                                <p class="iz-lead">Resuelve dudas sobre membresías, visitas, clases y productos.</p>
+                            </div>
+                        </section>
+
+                        <section class="iz-section iz-section-tight iz-contact_body">
+                            <div class="container">
+                                <div class="row g-4 align-items-start">
+                                    <div class="col-lg-7">
+                                        <section class="s_website_form iz-contact_form" data-vcss="001" data-snippet="s_website_form">
+                                            <form id="contactus_form" action="/website/form/" method="post" enctype="multipart/form-data" class="o_mark_required" data-mark="*" data-model_name="mail.mail" data-success-mode="redirect" data-success-page="/contactus-thank-you" data-pre-fill="true">
+                                                <div class="row g-3">
+                                                    <div class="col-md-6 s_website_form_field s_website_form_custom s_website_form_required" data-type="char" data-name="Field">
+                                                        <label class="s_website_form_label" for="contact_name">
+                                                            <span class="s_website_form_label_content">Nombre</span>
+                                                            <span class="s_website_form_mark"> *</span>
+                                                        </label>
+                                                        <input id="contact_name" type="text" class="form-control s_website_form_input" name="name" required="" data-fill-with="name"/>
+                                                    </div>
+                                                    <div class="col-md-6 s_website_form_field s_website_form_custom" data-type="char" data-name="Field">
+                                                        <label class="s_website_form_label" for="contact_phone">
+                                                            <span class="s_website_form_label_content">Teléfono</span>
+                                                        </label>
+                                                        <input id="contact_phone" type="tel" class="form-control s_website_form_input" name="phone" data-fill-with="phone"/>
+                                                    </div>
+                                                    <div class="col-md-6 s_website_form_field s_website_form_required s_website_form_model_required" data-type="email" data-name="Field">
+                                                        <label class="s_website_form_label" for="contact_email">
+                                                            <span class="s_website_form_label_content">Correo</span>
+                                                            <span class="s_website_form_mark"> *</span>
+                                                        </label>
+                                                        <input id="contact_email" type="email" class="form-control s_website_form_input" name="email_from" required="" data-fill-with="email"/>
+                                                    </div>
+                                                    <div class="col-md-6 s_website_form_field s_website_form_required s_website_form_model_required" data-type="char" data-name="Field">
+                                                        <label class="s_website_form_label" for="contact_subject">
+                                                            <span class="s_website_form_label_content">Asunto</span>
+                                                            <span class="s_website_form_mark"> *</span>
+                                                        </label>
+                                                        <input id="contact_subject" type="text" class="form-control s_website_form_input" name="subject" required=""/>
+                                                    </div>
+                                                    <div class="col-12 s_website_form_field s_website_form_custom s_website_form_required" data-type="text" data-name="Field">
+                                                        <label class="s_website_form_label" for="contact_message">
+                                                            <span class="s_website_form_label_content">Mensaje</span>
+                                                            <span class="s_website_form_mark"> *</span>
+                                                        </label>
+                                                        <textarea id="contact_message" class="form-control s_website_form_input" name="description" required="" rows="6"/>
+                                                    </div>
+                                                    <div class="col-12 s_website_form_field s_website_form_dnone">
+                                                        <input type="hidden" class="form-control s_website_form_input" name="email_to"/>
+                                                    </div>
+                                                    <div class="col-12 s_website_form_submit text-end" data-name="Submit Button">
+                                                        <a href="#" role="button" class="btn iz-btn iz-btn-primary s_website_form_send">Enviar</a>
+                                                        <span id="s_website_form_result"/>
+                                                    </div>
+                                                </div>
+                                            </form>
+                                        </section>
+                                    </div>
+                                    <div class="col-lg-5">
+                                        <div class="iz-contact_meta">
+                                            <div>
+                                                <span>Dirección</span>
+                                                <p><span t-field="res_company.street"/><t t-if="res_company.city">, <span t-field="res_company.city"/></t></p>
+                                            </div>
+                                            <div>
+                                                <span>Teléfono</span>
+                                                <p t-field="res_company.phone"/>
+                                            </div>
+                                            <div>
+                                                <span>Correo</span>
+                                                <p t-field="res_company.email"/>
+                                            </div>
+                                            <div>
+                                                <span>Horario</span>
+                                                <p>Lunes a sábado</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </section>
+                    </div>
+                </t>
+            </t>
+        </field>
+    </record>
+</odoo>

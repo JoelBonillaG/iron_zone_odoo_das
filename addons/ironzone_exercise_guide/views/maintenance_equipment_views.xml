@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_maintenance_equipment_form_gym_machine" model="ir.ui.view">
+        <field name="name">maintenance.equipment.form.gym.machine</field>
+        <field name="model">maintenance.equipment</field>
+        <field name="inherit_id" ref="maintenance.hr_equipment_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//sheet" position="replace">
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_view_exercise_guides" type="object" class="oe_stat_button" icon="fa-book" invisible="not is_gym_machine">
+                            <field name="guide_count" widget="statinfo" string="Guias"/>
+                        </button>
+                    </div>
+                    <div class="oe_title">
+                        <label for="name"/>
+                        <h1>
+                            <field name="name" placeholder="Ej. Bicicleta de spinning"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group string="Datos de la maquina">
+                            <field name="is_gym_machine"/>
+                            <field name="gym_zone"/>
+                            <field name="muscle_group_ids" widget="many2many_tags"/>
+                            <field name="active"/>
+                        </group>
+                        <group string="Guias asociadas">
+                            <field name="category_id" string="Categoria de equipo"/>
+                            <field name="guide_count" readonly="1"/>
+                            <button name="action_view_exercise_guides" type="object" string="Ver guias" class="btn-secondary" invisible="not is_gym_machine"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Resumen">
+                            <group>
+                                <field name="gym_zone" string="Zona"/>
+                                <field name="muscle_group_ids" widget="many2many_tags" string="Grupos musculares"/>
+                                <field name="note" string="Descripcion operativa"/>
+                            </group>
+                        </page>
+                        <page string="Guias vinculadas">
+                            <field name="guide_ids" nolabel="1">
+                                <list>
+                                    <field name="name"/>
+                                    <field name="exercise_type"/>
+                                    <field name="difficulty"/>
+                                    <field name="primary_muscle_group_id"/>
+                                    <field name="state"/>
+                                    <field name="is_published"/>
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="view_maintenance_equipment_list_gym_machine" model="ir.ui.view">
+        <field name="name">maintenance.equipment.list.gym.machine</field>
+        <field name="model">maintenance.equipment</field>
+        <field name="arch" type="xml">
+            <list string="Inventario de maquinas">
+                <field name="name" string="Maquina"/>
+                <field name="gym_zone" string="Zona"/>
+                <field name="muscle_group_ids" widget="many2many_tags" string="Grupos musculares"/>
+                <field name="guide_count" string="Guias"/>
+                <field name="category_id" string="Categoria de equipo" optional="hide"/>
+                <field name="active" string="Activa"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_maintenance_equipment_search_gym_machine" model="ir.ui.view">
+        <field name="name">maintenance.equipment.search.gym.machine</field>
+        <field name="model">maintenance.equipment</field>
+        <field name="arch" type="xml">
+            <search string="Inventario de maquinas">
+                <field name="name"/>
+                <field name="category_id"/>
+                <field name="gym_zone"/>
+                <field name="muscle_group_ids"/>
+                <filter name="gym_machines" string="Solo maquinas de inventario" domain="[('is_gym_machine', '=', True)]"/>
+                <group expand="0" string="Agrupar por">
+                    <filter name="group_zone" string="Zona" context="{'group_by': 'gym_zone'}"/>
+                    <filter name="group_muscles" string="Grupos musculares" context="{'group_by': 'muscle_group_ids'}"/>
+                    <filter name="group_category" string="Categoria" context="{'group_by': 'category_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_ironzone_gym_machine" model="ir.actions.act_window">
+        <field name="name">Inventario de maquinas</field>
+        <field name="res_model">maintenance.equipment</field>
+        <field name="view_mode">list,form</field>
+        <field name="view_id" ref="view_maintenance_equipment_list_gym_machine"/>
+        <field name="domain">[('is_gym_machine', '=', True)]</field>
+        <field name="context">{'default_is_gym_machine': True, 'search_default_gym_machines': 1}</field>
+        <field name="search_view_id" ref="view_maintenance_equipment_search_gym_machine"/>
+    </record>
+
+    <record id="action_ironzone_gym_machine_view_list" model="ir.actions.act_window.view">
+        <field name="sequence" eval="1"/>
+        <field name="view_mode">list</field>
+        <field name="view_id" ref="view_maintenance_equipment_list_gym_machine"/>
+        <field name="act_window_id" ref="action_ironzone_gym_machine"/>
+    </record>
+
+    <record id="action_ironzone_gym_machine_view_form" model="ir.actions.act_window.view">
+        <field name="sequence" eval="2"/>
+        <field name="view_mode">form</field>
+        <field name="view_id" ref="view_maintenance_equipment_form_gym_machine"/>
+        <field name="act_window_id" ref="action_ironzone_gym_machine"/>
+    </record>
+</odoo>

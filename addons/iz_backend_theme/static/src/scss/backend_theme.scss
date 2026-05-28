@@ -1,0 +1,461 @@
+@font-face {
+    font-family: "Onest";
+    src: url("/iz_backend_theme/static/src/fonts/Onest-Regular.woff") format("woff");
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: "Onest";
+    src: url("/iz_backend_theme/static/src/fonts/Onest-Medium.woff") format("woff");
+    font-weight: 500;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: "Onest";
+    src: url("/iz_backend_theme/static/src/fonts/Onest-SemiBold.woff") format("woff");
+    font-weight: 600;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: "Onest";
+    src: url("/iz_backend_theme/static/src/fonts/Onest-Bold.woff") format("woff");
+    font-weight: 700;
+    font-style: normal;
+    font-display: swap;
+}
+
+:root {
+    --iz-bg: #070815;
+    --iz-surface: #111326;
+    --iz-surface-soft: rgba(255, 255, 255, 0.07);
+    --iz-border: rgba(255, 255, 255, 0.13);
+    --iz-text: #f7f4ff;
+    --iz-muted: #a8a6bd;
+    --iz-primary: #8b5cf6;
+    --iz-primary-2: #d946ef;
+    --iz-accent: #22d3ee;
+    --iz-success: #22c55e;
+    --iz-warning: #f59e0b;
+    --iz-radius: 8px;
+    --iz-shadow: 0 18px 60px rgba(0, 0, 0, 0.38);
+    --iz-page-text: #1f2130;
+    --iz-page-bg:
+        radial-gradient(circle at 12% 0%, rgba(34, 211, 238, 0.16), transparent 28%),
+        radial-gradient(circle at 74% 12%, rgba(139, 92, 246, 0.16), transparent 31%),
+        #f6f7fb;
+    --iz-navbar-bg:
+        radial-gradient(circle at 12% 0%, rgba(34, 211, 238, 0.12), transparent 26%),
+        radial-gradient(circle at 72% 0%, rgba(139, 92, 246, 0.13), transparent 28%),
+        linear-gradient(120deg, rgba(35, 39, 55, 0.98), rgba(30, 34, 48, 0.98) 52%, rgba(45, 38, 66, 0.97));
+    --iz-navbar-hover: rgba(255, 255, 255, 0.08);
+    --iz-navbar-active: #22d3ee;
+    --iz-launcher-bg:
+        linear-gradient(135deg, rgba(7, 25, 34, 0.96), rgba(8, 8, 26, 0.98) 54%, rgba(23, 12, 46, 0.98)),
+        var(--iz-bg);
+    --iz-launcher-overlay:
+        radial-gradient(circle at 16% 10%, rgba(34, 211, 238, 0.16), transparent 30%),
+        radial-gradient(circle at 70% 20%, rgba(139, 92, 246, 0.18), transparent 34%),
+        linear-gradient(100deg, rgba(255, 255, 255, 0.06), transparent 28%);
+    --iz-tile-bg: rgba(255, 255, 255, 0.055);
+    --iz-tile-hover: linear-gradient(145deg, rgba(139, 92, 246, 0.22), rgba(34, 211, 238, 0.12));
+    --iz-tile-hover-text: #ffffff;
+    --iz-control-bg: rgba(255, 255, 255, 0.82);
+    --iz-card-bg: #ffffff;
+    --iz-card-border: rgba(15, 23, 42, 0.08);
+    --iz-card-shadow: 0 8px 28px rgba(15, 23, 42, 0.08);
+}
+
+.o_web_client,
+.o_action_manager,
+.o_main_navbar,
+.o-dropdown--menu,
+.modal-content,
+.o_control_panel {
+    font-family: "Onest", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+.o_web_client {
+    color: var(--iz-page-text);
+    background: var(--iz-page-bg);
+    transition: background 180ms ease, color 180ms ease;
+}
+
+.o_main_navbar {
+    --NavBar-entry-color: rgba(255, 255, 255, 0.86);
+    --NavBar-entry-color--active: #fff;
+    --NavBar-entry-backgroundColor: transparent;
+    --NavBar-entry-backgroundColor--hover: transparent;
+    --NavBar-entry-backgroundColor--focus: transparent;
+    --NavBar-entry-backgroundColor--active: transparent;
+    --NavBar-entry-borderColor-active: transparent;
+    min-height: 46px;
+    border: 0 !important;
+    border-bottom: 0 !important;
+    box-shadow: none !important;
+    background: var(--iz-navbar-bg);
+    color: var(--iz-text);
+    transition: background 180ms ease, color 180ms ease;
+}
+
+.o_main_navbar::before,
+.o_main_navbar::after {
+    display: none !important;
+}
+
+.o_main_navbar .o_menu_brand,
+.o_main_navbar .o_nav_entry,
+.o_main_navbar .dropdown-toggle,
+.o_main_navbar .o-dropdown {
+    border-radius: var(--iz-radius);
+    color: var(--iz-text);
+    font-weight: 600;
+}
+
+.o_main_navbar .o_menu_sections {
+    background: transparent !important;
+}
+
+.o_main_navbar .o_menu_sections .o_nav_entry,
+.o_main_navbar .o_menu_sections .dropdown-toggle {
+    position: relative;
+    min-height: 46px;
+    border: 0 !important;
+    border-radius: 0;
+    color: rgba(255, 255, 255, 0.78);
+    background: transparent !important;
+    box-shadow: none !important;
+    transition: color 150ms ease, background 150ms ease;
+}
+
+.o_main_navbar .o_menu_sections .o_nav_entry::after,
+.o_main_navbar .o_menu_sections .dropdown-toggle::after {
+    content: "";
+    position: absolute;
+    left: 12px;
+    right: 12px;
+    bottom: 0;
+    height: 2px;
+    border-radius: 2px 2px 0 0;
+    background: transparent;
+    transform: scaleX(0.4);
+    opacity: 0;
+    transition: opacity 150ms ease, transform 150ms ease, background 150ms ease;
+}
+
+.o_main_navbar .o_menu_sections .o_nav_entry:hover,
+.o_main_navbar .o_menu_sections .dropdown-toggle:hover,
+.o_main_navbar .o_menu_sections .o_nav_entry:focus,
+.o_main_navbar .o_menu_sections .dropdown-toggle:focus {
+    color: #fff;
+    background: var(--iz-navbar-hover) !important;
+}
+
+.o_main_navbar .o_menu_sections .dropdown.show.dropdown-toggle,
+.o_main_navbar .o_menu_sections .dropdown-toggle.show,
+.o_main_navbar .o_menu_sections .o_nav_entry.show,
+.o_main_navbar .o_menu_sections .o_nav_entry:active,
+.o_main_navbar .o_menu_sections .dropdown-toggle:active {
+    color: #fff !important;
+    background: transparent !important;
+}
+
+.o_main_navbar .o_menu_sections .dropdown.show.dropdown-toggle::after,
+.o_main_navbar .o_menu_sections .dropdown-toggle.show::after,
+.o_main_navbar .o_menu_sections .o_nav_entry.show::after,
+.o_main_navbar .o_menu_sections .o_nav_entry:hover::after,
+.o_main_navbar .o_menu_sections .dropdown-toggle:hover::after {
+    opacity: 1;
+    transform: scaleX(1);
+    background: var(--iz-navbar-active);
+}
+
+.o_main_navbar .o_menu_brand:hover,
+.o_main_navbar .o_nav_entry:hover,
+.o_main_navbar .dropdown-toggle:hover,
+.o_main_navbar .o-dropdown:hover {
+    background: var(--iz-navbar-hover);
+}
+
+.o_iz_menu_brand {
+    gap: 9px;
+    min-height: 46px;
+    padding-inline: 12px 16px;
+    margin-right: 6px;
+    border-right: 1px solid rgba(255, 255, 255, 0.09);
+    border-radius: 0;
+}
+
+.o_iz_menu_brand_icon {
+    width: 21px;
+    height: 21px;
+    object-fit: contain;
+    filter: none;
+}
+
+.o_iz_menu_brand_initial {
+    width: 21px;
+    height: 21px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 6px;
+    color: #fff;
+    font-size: 12px;
+    font-weight: 700;
+    background: linear-gradient(135deg, var(--iz-primary), var(--iz-primary-2));
+}
+
+.o_iz_menu_brand_name {
+    line-height: 1;
+    font-size: 16px;
+    font-weight: 700;
+}
+
+.o_iz_app_launcher_button {
+    width: 42px;
+    height: 46px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 0;
+    border-radius: 0;
+    color: var(--iz-text);
+    background: transparent;
+    transition: transform 160ms ease, background 160ms ease, color 160ms ease;
+}
+
+.o_iz_app_launcher_button:hover,
+.o_iz_app_launcher_button.show {
+    color: #fff;
+    background: var(--iz-navbar-hover);
+    transform: none;
+}
+
+.o_iz_app_launcher_menu {
+    position: fixed !important;
+    inset: 46px 0 0 0 !important;
+    width: 100vw !important;
+    max-width: none !important;
+    min-width: 100vw !important;
+    margin: 0 !important;
+    padding: clamp(22px, 4vw, 48px) clamp(16px, 6vw, 96px) !important;
+    border: 0 !important;
+    border-top: 0 !important;
+    border-radius: 0 !important;
+    outline: 0 !important;
+    overflow: auto;
+    color: var(--iz-text);
+    background: var(--iz-launcher-bg);
+    box-shadow: none !important;
+    animation: izLauncherIn 220ms ease-out;
+    transition: background 180ms ease, color 180ms ease;
+}
+
+.o_iz_app_launcher_menu::before {
+    content: "";
+    position: fixed;
+    inset: 46px 0 0 0;
+    pointer-events: none;
+    background: var(--iz-launcher-overlay);
+}
+
+.o_iz_launcher_shell {
+    position: relative;
+    z-index: 1;
+    max-width: 880px;
+    margin: 0 auto;
+}
+
+.o_iz_launcher_header {
+    display: flex;
+    align-items: end;
+    justify-content: space-between;
+    gap: 18px;
+    margin-bottom: 20px;
+    color: var(--iz-text);
+}
+
+.o_iz_launcher_header strong {
+    font-size: clamp(24px, 3vw, 38px);
+    line-height: 1;
+    font-weight: 700;
+}
+
+.o_iz_launcher_eyebrow {
+    color: var(--iz-accent);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.o_iz_app_grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(112px, 1fr));
+    gap: 14px 18px;
+}
+
+.o_iz_app_tile.o-dropdown-item {
+    --tile-delay: 30ms;
+    min-height: 108px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 12px 9px;
+    border: 1px solid var(--iz-border);
+    border-radius: var(--iz-radius);
+    color: var(--iz-text);
+    text-align: center;
+    text-decoration: none;
+    background: var(--iz-tile-bg);
+    box-shadow: 0 10px 26px rgba(0, 0, 0, 0.18);
+    backdrop-filter: blur(16px);
+    transform: translateY(8px);
+    opacity: 0;
+    animation: izTileIn 260ms ease-out forwards;
+    animation-delay: calc(var(--tile-delay) * 1);
+    transition: transform 170ms ease, border-color 170ms ease, background 170ms ease, box-shadow 170ms ease;
+}
+
+.o_iz_app_tile.o-dropdown-item:nth-child(2n) { animation-delay: calc(var(--tile-delay) * 2); }
+.o_iz_app_tile.o-dropdown-item:nth-child(3n) { animation-delay: calc(var(--tile-delay) * 3); }
+.o_iz_app_tile.o-dropdown-item:nth-child(4n) { animation-delay: calc(var(--tile-delay) * 4); }
+.o_iz_app_tile.o-dropdown-item:nth-child(5n) { animation-delay: calc(var(--tile-delay) * 5); }
+
+.o_iz_app_tile.o-dropdown-item:hover,
+.o_iz_app_tile.o-dropdown-item.focus {
+    color: var(--iz-tile-hover-text);
+    border-color: rgba(34, 211, 238, 0.45);
+    background: var(--iz-tile-hover);
+    box-shadow: 0 18px 42px rgba(0, 0, 0, 0.3);
+    transform: translateY(-4px);
+}
+
+.o_iz_app_icon_frame {
+    width: 58px;
+    height: 58px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+}
+
+.o_iz_app_icon {
+    width: 50px;
+    height: 50px;
+    object-fit: contain;
+    filter: drop-shadow(0 10px 16px rgba(0, 0, 0, 0.28));
+}
+
+.o_iz_app_initial {
+    width: 44px;
+    height: 44px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--iz-radius);
+    color: #fff;
+    font-size: 21px;
+    font-weight: 700;
+    background: linear-gradient(135deg, var(--iz-primary), var(--iz-primary-2));
+}
+
+.o_iz_app_name {
+    max-width: 100%;
+    color: var(--iz-text);
+    font-size: 13.5px;
+    font-weight: 600;
+    line-height: 1.2;
+    overflow-wrap: anywhere;
+}
+
+.o_iz_app_tile.o-dropdown-item:hover .o_iz_app_name,
+.o_iz_app_tile.o-dropdown-item.focus .o_iz_app_name {
+    color: var(--iz-tile-hover-text);
+}
+
+.o_control_panel {
+    color: var(--iz-page-text);
+    border-bottom: 1px solid var(--iz-card-border);
+    background: var(--iz-control-bg);
+    backdrop-filter: blur(12px);
+}
+
+.btn-primary,
+.o_form_button_save {
+    border-color: #5146d8;
+    background: #5146d8;
+    box-shadow: none;
+}
+
+.btn-primary:hover,
+.o_form_button_save:hover {
+    border-color: #4438ca;
+    background: #4438ca;
+    filter: none;
+}
+
+.o_form_view .o_form_sheet_bg {
+    background: transparent;
+}
+
+.o_form_view .o_form_sheet,
+.o_kanban_renderer .o_kanban_record,
+.o_list_renderer,
+.o_graph_renderer,
+.o_pivot {
+    color: var(--iz-page-text);
+    border-color: var(--iz-card-border);
+    border-radius: var(--iz-radius);
+    background: var(--iz-card-bg);
+    box-shadow: var(--iz-card-shadow);
+}
+
+.o_action_manager,
+.o_content {
+    background: transparent;
+}
+
+@keyframes izLauncherIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes izTileIn {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@media (max-width: 768px) {
+    .o_iz_app_launcher_menu {
+        padding: 24px 16px !important;
+    }
+
+    .o_iz_launcher_header {
+        align-items: start;
+        flex-direction: column;
+    }
+
+    .o_iz_app_grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 14px;
+    }
+}

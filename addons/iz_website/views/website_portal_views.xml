@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!--
+        Extends the standard Odoo portal details form (/my/account)
+        to add IronZone-specific profile fields with edit rules.
+    -->
+    <template id="iz_portal_my_details" inherit_id="portal.portal_my_details_fields" name="IZ: Extra fields on portal details">
+        
+        <xpath expr="//input[@name='email']/parent::div" position="after">
+            <div class="clearfix" />
+            <div class="col-12 mt-3">
+                <h5 class="mb-3" style="color: #ff6a42; border-bottom: 1px solid #eee; padding-bottom: 10px;">Información Adicional Iron Zone</h5>
+            </div>
+                
+                <!-- ── Fecha de nacimiento (Solo lectura) ── -->
+                <div class="mb-3 col-xl-6">
+                    <label class="col-form-label" for="iz_birthdate">Fecha de Nacimiento</label>
+                    <input type="date" name="iz_birthdate" t-att-value="partner.iz_birthdate" class="form-control bg-light text-muted" style="pointer-events: none;" readonly="1" disabled="1" title="La fecha de nacimiento no puede ser modificada desde el portal."/>
+                    <small class="form-text text-muted">Para modificar tu fecha de nacimiento debes contactar a soporte.</small>
+                </div>
+
+                <!-- ── Género (Editable con restricciones) ── -->
+                <div t-attf-class="mb-3 col-xl-6 #{error.get('iz_gender') and 'o_has_error' or ''}">
+                    <label class="col-form-label" for="iz_gender">Género</label>
+                    <select name="iz_gender" t-attf-class="form-select #{error.get('iz_gender') and 'is-invalid' or ''}">
+                        <option value="">Selecciona...</option>
+                        <t t-foreach="iz_gender_choices or []" t-as="choice">
+                            <option t-att-value="choice[0]" t-att-selected="choice[0] == partner.iz_gender">
+                                <t t-esc="choice[1]" />
+                            </option>
+                        </t>
+                    </select>
+                    <small class="form-text text-muted">Nota: Solo puedes cambiar tu género una vez cada 30 días.</small>
+                </div>
+                
+                <!-- ── Objetivo fitness (Editable) ── -->
+                <div class="mb-3 col-xl-6">
+                    <label class="col-form-label" for="iz_fitness_goal">Objetivo Fitness</label>
+                    <select name="iz_fitness_goal" class="form-select">
+                        <option value="">Selecciona...</option>
+                        <t t-foreach="iz_fitness_goal_choices or []" t-as="choice">
+                            <option t-att-value="choice[0]" t-att-selected="choice[0] == partner.iz_fitness_goal">
+                                <t t-esc="choice[1]" />
+                            </option>
+                        </t>
+                    </select>
+                </div>
+
+                <!-- ── Nivel de experiencia (Editable) ── -->
+                <div class="mb-3 col-xl-6">
+                    <label class="col-form-label" for="iz_experience_level">Nivel de Experiencia</label>
+                    <select name="iz_experience_level" class="form-select">
+                        <option value="">Selecciona...</option>
+                        <t t-foreach="iz_experience_level_choices or []" t-as="choice">
+                            <option t-att-value="choice[0]" t-att-selected="choice[0] == partner.iz_experience_level">
+                                <t t-esc="choice[1]" />
+                            </option>
+                        </t>
+                    </select>
+                </div>
+        </xpath>
+
+    </template>
+</odoo>

@@ -1,0 +1,277 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template
+        id="portal_user_dropdown_subscriptions"
+        inherit_id="portal.user_dropdown"
+        name="Iron Zone User Dropdown Subscriptions"
+        priority="84"
+    >
+        <xpath expr="//a[@id='o_backend_user_dropdown_link']" position="before">
+            <a
+                groups="base.group_portal"
+                href="/my/subscriptions"
+                role="menuitem"
+                class="dropdown-item ps-3"
+                id="o_my_subscriptions_dropdown_link"
+            >
+                <i class="fa fa-fw fa-repeat me-1 small text-primary text-primary-emphasis"/>
+                Mis suscripciones
+            </a>
+        </xpath>
+    </template>
+
+    <template
+        id="portal_my_home_subscription"
+        inherit_id="portal.portal_my_home"
+        name="Iron Zone Portal Subscriptions Card"
+    >
+        <xpath expr="//div[@id='portal_common_category']" position="before">
+            <div id="portal_subscriptions_category" class="o_portal_category row g-2 mt-3">
+                <h3 class="o_portal_category_title col-12">Suscripciones Iron Zone</h3>
+                <div class="o_portal_index_card col-md-6 order-2">
+                    <a
+                        href="/my/subscriptions"
+                        title="Mis suscripciones"
+                        class="d-flex gap-2 gap-md-3 py-3 pe-2 px-md-3 h-100 rounded text-decoration-none bg-100"
+                    >
+                        <div class="o_portal_icon d-block align-self-start">
+                            <img src="/iz_subscription/static/img/icon.png" loading="lazy" alt=""/>
+                        </div>
+                        <div>
+                            <div class="mt-0 mb-1 fs-5 fw-normal lh-1">
+                                <span>Mis suscripciones</span>
+                            </div>
+                            <div class="opacity-75">
+                                Plan vigente, pagos y beneficios.
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </xpath>
+
+        <xpath expr="//div[@id='portal_common_category']" position="inside">
+            <h3 class="o_portal_category_title iz-account-settings-title col-12 order-0">
+                Configuracion de cuenta
+            </h3>
+        </xpath>
+    </template>
+
+    <template id="portal_my_subscriptions" name="Mis suscripciones">
+        <t t-call="portal.portal_layout">
+            <div class="container-fluid iz-subscriptions-page py-4">
+                <section class="iz-subscriptions-hero mb-4 p-4 p-lg-5 rounded text-white">
+                    <div class="row g-4 align-items-center">
+                        <div class="col-lg-7">
+                            <p class="text-uppercase text-warning small fw-semibold mb-2">Iron Zone</p>
+                            <h2 class="h2 mb-0">Centro de suscripciones</h2>
+                        </div>
+                        <div class="col-lg-5">
+                            <div class="row g-3 text-center">
+                                <div class="col-6">
+                                    <div class="iz-subscription-stat p-3 rounded border border-secondary">
+                                        <div class="h3 mb-0"><t t-esc="len(subscriptions)"/></div>
+                                        <small class="text-white-50">Suscripciones</small>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="iz-subscription-stat p-3 rounded border border-secondary">
+                                        <div class="h3 mb-0"><t t-esc="len(active_benefits)"/></div>
+                                        <small class="text-white-50">Beneficios activos</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <t t-if="best_plan">
+                    <section class="mb-4">
+                        <div class="row g-3">
+                            <div class="col-lg-4">
+                                <div class="iz-subscription-panel p-4 rounded border h-100">
+                                    <p class="text-uppercase text-muted small fw-semibold mb-2">Plan vigente</p>
+                                    <h3 class="h4 mb-2"><t t-esc="best_plan.name"/></h3>
+                                    <p class="mb-3 text-muted">
+                                        Este es el plan de mayor prioridad entre tus suscripciones activas y pagadas.
+                                    </p>
+                                    <dl class="row small mb-0">
+                                        <dt class="col-6 text-muted">Suscripcion</dt>
+                                        <dd class="col-6 text-end mb-2">
+                                            <t t-esc="active_subscription.name"/>
+                                        </dd>
+                                        <dt class="col-6 text-muted">Proxima factura</dt>
+                                        <dd class="col-6 text-end mb-2">
+                                            <t t-if="active_subscription.recurring_next_date">
+                                                <span t-field="active_subscription.recurring_next_date"/>
+                                            </t>
+                                            <t t-else="">Sin fecha</t>
+                                        </dd>
+                                        <dt class="col-6 text-muted">Total recurrente</dt>
+                                        <dd class="col-6 text-end mb-0">
+                                            $<t t-esc="'%.2f' % active_subscription.amount_total"/>
+                                        </dd>
+                                    </dl>
+                                </div>
+                            </div>
+                            <div class="col-lg-8">
+                                <div class="iz-subscription-panel p-4 rounded border h-100">
+                                    <div class="d-flex justify-content-between align-items-start gap-3 mb-3">
+                                        <div>
+                                            <p class="text-uppercase text-muted small fw-semibold mb-1">Beneficios activos</p>
+                                            <h3 class="h5 mb-0">Lo que puedes usar ahora</h3>
+                                        </div>
+                                        <span class="badge text-bg-success">Activo</span>
+                                    </div>
+
+                                    <t t-if="active_benefits">
+                                        <div class="row g-3">
+                                            <t t-foreach="active_benefits" t-as="benefit">
+                                                <div class="col-md-6">
+                                                    <div class="iz-subscription-benefit p-3 rounded border h-100">
+                                                        <div class="d-flex gap-3">
+                                                            <div class="text-warning">
+                                                                <i t-att-class="'fa fa-lg ' + scope_icons.get(benefit.benefit_scope, 'fa-star')"/>
+                                                            </div>
+                                                            <div>
+                                                                <h4 class="h6 mb-1"><t t-esc="benefit.name"/></h4>
+                                                                <p class="small text-muted mb-1">
+                                                                    <t t-esc="scope_labels.get(benefit.benefit_scope, benefit.benefit_scope)"/>
+                                                                    <t t-if="benefit.benefit_type == 'discount'">
+                                                                        - <t t-esc="int(benefit.discount_percent)"/>% de descuento
+                                                                    </t>
+                                                                    <t t-if="benefit.benefit_type == 'free'">
+                                                                        - incluido
+                                                                    </t>
+                                                                </p>
+                                                                <p t-if="benefit.description" class="small mb-0">
+                                                                    <t t-esc="benefit.description"/>
+                                                                </p>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </t>
+                                        </div>
+                                    </t>
+                                    <t t-else="">
+                                        <p class="text-muted mb-0">Este plan aun no tiene beneficios configurados.</p>
+                                    </t>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                </t>
+
+                <t t-if="not best_plan and subscriptions">
+                    <div class="iz-subscription-notice mb-5">
+                        <h3 class="h6 mb-1">Tus beneficios aun no estan activos</h3>
+                        <p class="mb-0">
+                            Para activar beneficios, una suscripcion debe estar en etapa Activa,
+                            vigente y con al menos una factura pagada.
+                        </p>
+                    </div>
+                </t>
+
+                <section>
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <div>
+                            <h3 class="h5 mb-1">Detalle de suscripciones</h3>
+                            <p class="text-muted mb-0 small">Estado comercial, pagos y plan asociado.</p>
+                        </div>
+                        <a href="/shop" class="btn btn-outline-primary btn-sm">
+                            Ver planes
+                        </a>
+                    </div>
+
+                    <t t-if="subscription_cards">
+                        <div class="row g-4">
+                            <t t-foreach="subscription_cards" t-as="card">
+                                <t t-set="sub" t-value="card['record']"/>
+                                <div class="col-xl-4 col-md-6">
+                                    <article class="iz-subscription-card p-4 rounded border h-100">
+                                        <div class="d-flex justify-content-between gap-3 mb-3">
+                                            <div>
+                                                <p class="text-muted small mb-1">
+                                                    <t t-esc="sub.code or sub.name"/>
+                                                </p>
+                                                <h4 class="h5 mb-0">
+                                                    <t t-esc="sub.subscription_plan_id.name or sub.template_id.name or 'Suscripcion'"/>
+                                                </h4>
+                                            </div>
+                                            <span t-attf-class="badge text-bg-#{card['status_color']} align-self-start">
+                                                <t t-esc="card['status_label']"/>
+                                            </span>
+                                        </div>
+
+                                        <div class="row g-3 small mb-3">
+                                            <div class="col-6">
+                                                <span class="text-muted d-block">Facturacion</span>
+                                                <strong><t t-esc="card['period_label']"/></strong>
+                                            </div>
+                                            <div class="col-6">
+                                                <span class="text-muted d-block">Total</span>
+                                                <strong>$<t t-esc="'%.2f' % sub.amount_total"/></strong>
+                                            </div>
+                                            <div class="col-6">
+                                                <span class="text-muted d-block">Inicio</span>
+                                                <strong t-field="sub.date_start"/>
+                                            </div>
+                                            <div class="col-6">
+                                                <span class="text-muted d-block">
+                                                    <t t-if="sub.date">Fin</t>
+                                                    <t t-else="">Renovacion</t>
+                                                </span>
+                                                <strong t-if="sub.date" t-field="sub.date"/>
+                                                <strong t-else="">Automatica</strong>
+                                            </div>
+                                        </div>
+
+                                        <t t-if="card['line_names']">
+                                            <div class="mb-3">
+                                                <span class="text-muted small d-block mb-1">Productos recurrentes</span>
+                                                <t t-foreach="card['line_names']" t-as="line_name">
+                                                    <span class="badge text-bg-light me-1 mb-1">
+                                                        <t t-esc="line_name"/>
+                                                    </span>
+                                                </t>
+                                            </div>
+                                        </t>
+
+                                        <div class="border-top pt-3">
+                                            <div class="d-flex justify-content-between small mb-2">
+                                                <span class="text-muted">Facturas pagadas</span>
+                                                <strong>
+                                                    <t t-esc="card['invoice_summary']"/>
+                                                </strong>
+                                            </div>
+                                            <div class="d-flex justify-content-between small mb-2">
+                                                <span class="text-muted">Beneficios</span>
+                                                <strong t-if="card['benefits_ready']" class="text-success">Activos</strong>
+                                                <strong t-else="" class="text-muted">Pendientes</strong>
+                                            </div>
+                                            <p class="small text-muted mb-0">
+                                                <t t-esc="card['status_message']"/>
+                                            </p>
+                                        </div>
+                                    </article>
+                                </div>
+                            </t>
+                        </div>
+                    </t>
+
+                    <t t-if="not subscription_cards">
+                        <div class="iz-subscription-panel text-center py-5 border rounded">
+                            <i class="fa fa-repeat fa-2x text-muted mb-3"/>
+                            <h3 class="h5">Aun no tienes suscripciones</h3>
+                            <p class="text-muted mb-3">
+                                Compra un plan de Iron Zone para activar beneficios en clases y otros servicios.
+                            </p>
+                            <a href="/shop" class="btn btn-primary">Ver planes disponibles</a>
+                        </div>
+                    </t>
+                </section>
+            </div>
+        </t>
+    </template>
+</odoo>
