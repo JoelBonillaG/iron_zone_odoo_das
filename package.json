@@ -1,0 +1,26 @@
+{
+  "name": "iron_zone_odoo_das",
+  "version": "1.0.0",
+  "description": "Gimnasio Iron Zone · Odoo 18 + PostgreSQL 15 en Docker.",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/JoelBonillaG/iron_zone_odoo_das.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/JoelBonillaG/iron_zone_odoo_das/issues"
+  },
+  "homepage": "https://github.com/JoelBonillaG/iron_zone_odoo_das#readme",
+  "devDependencies": {
+    "playwright": "^1.60.0"
+  }
+}
