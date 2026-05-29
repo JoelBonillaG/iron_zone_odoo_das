@@ -7,7 +7,9 @@
     "doc": "docs"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "stagehand --test **/*.test.js",
+    "test:watch": "stagehand --test **/*.test.js --watch",
+    "test:debug": "stagehand --test **/*.test.js --debug"
   },
   "repository": {
     "type": "git",
@@ -21,6 +23,8 @@
   },
   "homepage": "https://github.com/JoelBonillaG/iron_zone_odoo_das#readme",
   "devDependencies": {
+    "@stagehand/core": "^0.2.0",
+    "@stagehand/cli": "^0.2.0",
     "playwright": "^1.60.0"
   }
 }
