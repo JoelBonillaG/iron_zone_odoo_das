@@ -6,7 +6,7 @@ from config import DB, PASSWORD, connect
 
 IVA_RATE = 15.0
 PAYMENT_RATIO = 0.5
-TARGET_ORDER_COUNT = 10
+TARGET_ORDER_COUNT = 13
 ACT006_REF_PREFIX = "ACT006-SUBSCRIPTION"
 SUBSCRIPTION_PRODUCT_KEYWORDS = ["Suscripcion", "Plan Nutricion", "Plan Nutrición"]
 
@@ -125,25 +125,37 @@ def get_act006_sale_orders(models):
     return orders
 
 
+def get_target_refs():
+    return {f"{ACT006_REF_PREFIX}-{index + 1:02d}" for index in range(TARGET_ORDER_COUNT)}
+
+
+def get_default_pricelist_id(models):
+    pricelists = search_read(models, "product.pricelist", [], ["id"], limit=1)
+    if pricelists:
+        return pricelists[0]["id"]
+    return execute(models, "product.pricelist", "create", {"name": "Tarifa Publica"})
+
+
 def ensure_subscription_orders(models):
     existing_orders = get_act006_sale_orders(models)
     existing_refs = {order["client_order_ref"] for order in existing_orders}
+    target_refs = get_target_refs()
 
     customers = get_customers(models)
     subscription_products = get_subscription_products(models)
-    target_count = max(len(customers), len(existing_orders))
+    pricelist_id = get_default_pricelist_id(models)
 
-    if not target_count:
+    if not customers:
         print("No customer/member records found; skipping ACT006 subscription order creation.")
         return []
 
     created = 0
-    for index in range(len(customers)):
+    for index in range(TARGET_ORDER_COUNT):
         ref = f"{ACT006_REF_PREFIX}-{index + 1:02d}"
         if ref in existing_refs:
             continue
 
-        customer = customers[index]
+        customer = customers[index % len(customers)]
         product = subscription_products[index % len(subscription_products)]
         order_id = execute(
             models,
@@ -152,6 +164,7 @@ def ensure_subscription_orders(models):
             {
                 "partner_id": customer["id"],
                 "client_order_ref": ref,
+                "pricelist_id": pricelist_id,
                 "note": "ACT006: contrato de suscripcion / pago recurrente simulado.",
             },
         )
@@ -174,7 +187,11 @@ def ensure_subscription_orders(models):
         print("ACT006 subscription orders already exist.")
 
     orders = get_act006_sale_orders(models)
-    return orders[:target_count]
+    target_orders = [order for order in orders if order["client_order_ref"] in target_refs]
+    draft_target_ids = [order["id"] for order in target_orders if order["state"] in ("draft", "sent")]
+    if draft_target_ids:
+        execute(models, "sale.order", "write", draft_target_ids, {"pricelist_id": pricelist_id})
+    return target_orders
 
 
 def confirm_orders(models, orders):
@@ -293,7 +310,11 @@ def run():
     orders = ensure_subscription_orders(models)
     confirm_orders(models, orders)
 
-    refreshed_orders = get_act006_sale_orders(models)
+    target_refs = get_target_refs()
+    refreshed_orders = [
+        order for order in get_act006_sale_orders(models)
+        if order["client_order_ref"] in target_refs
+    ]
     invoice_ids = ensure_invoices(models, refreshed_orders)
     if not invoice_ids:
         raise RuntimeError("No invoices were generated.")

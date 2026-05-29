@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Event Form View Extension -->
+    <record id="view_event_form_inherit_group_class" model="ir.ui.view">
+        <field name="name">event.event.form.inherit.group.class</field>
+        <field name="model">event.event</field>
+        <field name="inherit_id" ref="event.view_event_form"/>
+        <field name="arch" type="xml">
+            <notebook position="inside">
+                <page string="Clase Grupal" name="clase_grupal">
+                    <group>
+                        <group string="Información de la Clase">
+                            <field name="trainer_id" options="{'no_create': True}"/>
+                            <field name="horario"/>
+                            <field name="sala_espacio"/>
+                            <field name="dificultad"/>
+                        </group>
+                        <group string="Capacidad">
+                            <field name="cupo_maximo"/>
+                            <field name="cupo_disponible" readonly="1"/>
+                        </group>
+                    </group>
+                    <group string="Socios Inscritos">
+                        <field name="inscritos_ids" widget="many2many_tags" readonly="1"/>
+                    </group>
+                </page>
+            </notebook>
+        </field>
+    </record>
+
+    <!-- Event Tree View Extension -->
+    <record id="view_event_tree_inherit_group_class" model="ir.ui.view">
+        <field name="name">event.event.tree.inherit.group.class</field>
+        <field name="model">event.event</field>
+        <field name="inherit_id" ref="event.view_event_tree"/>
+        <field name="arch" type="xml">
+            <field name="user_id" position="after">
+                <field name="trainer_id" optional="show"/>
+                <field name="horario" optional="show"/>
+                <field name="sala_espacio" optional="show"/>
+                <field name="dificultad" optional="show"/>
+                <field name="cupo_maximo" optional="hide"/>
+                <field name="cupo_disponible" optional="show"/>
+            </field>
+        </field>
+    </record>
+
+</odoo>

@@ -1,4 +1,4 @@
-from config import DB, PASSWORD, USERNAME, connect, create
+from config import DB, ENV_FILE_VALUES, PASSWORD, USERNAME, connect, create
 
 
 DEFAULT_PASSWORD = "admin123"
@@ -373,15 +373,25 @@ def ensure_iron_zone_groups(uid, models):
     return group_ids
 
 
+def get_admin_logins():
+    logins = ["admin@ironzone.com"]
+    env_login = (
+        ENV_FILE_VALUES.get("ODOO_USERNAME")
+        or ENV_FILE_VALUES.get("ODOO_USER")
+        or ENV_FILE_VALUES.get("USERNAME")
+    )
+    for login in (USERNAME, env_login):
+        if login and login not in logins:
+            logins.append(login)
+    return logins
+
+
 def assign_admin_group(uid, models, group_ids):
     admin_group_id = group_ids.get("admin")
     if not admin_group_id:
         return
-    admin_logins = ["admin@ironzone.com"]
-    if USERNAME and USERNAME not in admin_logins:
-        admin_logins.append(USERNAME)
 
-    for login in admin_logins:
+    for login in get_admin_logins():
         admin_user = search_one(
             uid,
             models,

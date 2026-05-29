@@ -1,7 +1,7 @@
 """
 04_sale_orders.py
 -----------------
-Seeds 10 sale orders (mix of draft and confirmed) for portal customers.
+Seeds 20 sale orders (mix of draft and confirmed) for portal customers.
 Confirmed orders automatically trigger subscription creation in draft stage.
 Depends on: 01_customers.py, 02_subscription_config.py, 03_products.py
 """
@@ -17,25 +17,41 @@ CUSTOMER_EMAILS = [
 
 IRON_ZONE_PRODUCTS = [
     "Suscripcion Mensual",
-    "Suscripcion Trimestral",
     "Suscripcion Anual",
-    "Plan Nutrición + Gym",
+    "Proteina Whey 2 lb",
+    "Barras de proteina",
+    "Camiseta IronZone",
+    "Shaker IronZone",
+    "Toalla deportiva",
+    "Guantes de entrenamiento",
+    "Bandas de resistencia",
+    "Straps de levantamiento",
 ]
 
 # (customer_index, product_index, confirm)
 # confirm=True  → order will be confirmed → subscription created in Borrador
 # confirm=False → stays as draft Presupuesto
 ORDERS = [
-    (0, 0, False),   # 01 Portal04 → Mensual       → Presupuesto
-    (1, 1, True),    # 02 Portal07 → Trimestral     → Confirmado (suscripcion)
-    (2, 2, False),   # 03 Portal08 → Anual          → Presupuesto
-    (0, 3, True),    # 04 Portal04 → Nutricion+Gym  → Confirmado (suscripcion)
-    (1, 0, False),   # 05 Portal07 → Mensual        → Presupuesto
-    (2, 1, True),    # 06 Portal08 → Trimestral     → Confirmado (suscripcion)
-    (0, 2, False),   # 07 Portal04 → Anual          → Presupuesto
-    (1, 3, True),    # 08 Portal07 → Nutricion+Gym  → Confirmado (suscripcion)
-    (2, 0, False),   # 09 Portal08 → Mensual        → Presupuesto
-    (0, 1, True),    # 10 Portal04 → Trimestral     → Confirmado (suscripcion)
+    (0, 0, False),   # 01 Portal04 -> Mensual -> Presupuesto
+    (1, 1, True),    # 02 Portal07 -> Anual -> Confirmado
+    (2, 2, False),   # 03 Portal08 -> Proteina -> Presupuesto
+    (0, 3, True),    # 04 Portal04 -> Barras -> Confirmado
+    (1, 4, False),   # 05 Portal07 -> Camiseta -> Presupuesto
+    (2, 5, True),    # 06 Portal08 -> Shaker -> Confirmado
+    (0, 6, False),   # 07 Portal04 -> Toalla -> Presupuesto
+    (1, 7, True),    # 08 Portal07 -> Guantes -> Confirmado
+    (2, 8, False),   # 09 Portal08 -> Bandas -> Presupuesto
+    (0, 9, True),    # 10 Portal04 -> Straps -> Confirmado
+    (1, 0, False),   # 11 Portal07 -> Mensual -> Presupuesto
+    (2, 1, True),    # 12 Portal08 -> Anual -> Confirmado
+    (0, 2, False),   # 13 Portal04 -> Proteina -> Presupuesto
+    (1, 3, True),    # 14 Portal07 -> Barras -> Confirmado
+    (2, 4, False),   # 15 Portal08 -> Camiseta -> Presupuesto
+    (0, 5, True),    # 16 Portal04 -> Shaker -> Confirmado
+    (1, 6, False),   # 17 Portal07 -> Toalla -> Presupuesto
+    (2, 7, True),    # 18 Portal08 -> Guantes -> Confirmado
+    (0, 8, False),   # 19 Portal04 -> Bandas -> Presupuesto
+    (1, 9, True),    # 20 Portal07 -> Straps -> Confirmado
 ]
 
 
