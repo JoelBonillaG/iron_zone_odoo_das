@@ -51,12 +51,53 @@ async function flujoGuiaEjerciciosRegistro() {
         await delay(5000);
         await tomarCaptura(page, "2_guia_ejercicios_lista");
 
-        // --- 3. Seleccionar una Guía ---
+        // --- 3. Aplicar Filtros de Búsqueda ---
+        console.log("Aplicando filtros de búsqueda...");
+        await page.evaluate(() => {
+            // Llenar el campo de búsqueda
+            const searchInput = document.querySelector('input[placeholder="Buscar guía"]') || document.querySelector('input[type="text"]');
+            if (searchInput) {
+                searchInput.value = "spinning";
+                searchInput.dispatchEvent(new Event('input', { bubbles: true }));
+            }
+            
+            // Intentar seleccionar una opción en los dropdowns si existen
+            const selects = document.querySelectorAll('select');
+            if (selects.length > 0 && selects[0].options.length > 1) {
+                // Seleccionar el primer dropdown disponible para forzar un filtro
+                selects[0].selectedIndex = 1;
+                selects[0].dispatchEvent(new Event('change', { bubbles: true }));
+            }
+        });
+        await delay(2000);
+        await tomarCaptura(page, "3_filtros_aplicados");
+
+        console.log("Haciendo clic en Buscar...");
+        await page.evaluate(() => {
+            // Buscar el botón naranja con lupa o cualquier botón de submit
+            const btns = Array.from(document.querySelectorAll('button'));
+            const searchBtn = btns.find(btn => btn.innerHTML.includes('fa-search') || btn.classList.contains('btn-primary')) || btns[0];
+            if (searchBtn) searchBtn.click();
+        });
+        
+        await page.waitForLoadState("load", { timeout: 60000 });
+        await delay(5000);
+        await tomarCaptura(page, "4_resultados_busqueda");
+
+        // --- 4. Seleccionar una Guía ---
         console.log("Seleccionando una guía de ejercicios...");
         const clickExit = await page.evaluate(() => {
-            const links = Array.from(document.querySelectorAll('a[href*="/exercise-guides/"]'));
-            if (links.length > 0) {
-                links[0].click();
+            // Buscar explícitamente el texto "Ver guía"
+            const verGuiaLinks = Array.from(document.querySelectorAll('a')).filter(a => a.innerText.toLowerCase().includes('ver guía'));
+            if (verGuiaLinks.length > 0) {
+                verGuiaLinks[0].click();
+                return true;
+            }
+            
+            // Fallback: hacer clic en cualquier enlace dentro de las tarjetas
+            const fallbackLinks = Array.from(document.querySelectorAll('.card a, article a, a[href*="/guide/"]'));
+            if (fallbackLinks.length > 0) {
+                fallbackLinks[0].click();
                 return true;
             }
             return false;
@@ -65,7 +106,7 @@ async function flujoGuiaEjerciciosRegistro() {
         if (clickExit) {
             await page.waitForLoadState("load", { timeout: 60000 });
             await delay(4000);
-            await tomarCaptura(page, "3_detalle_guia");
+            await tomarCaptura(page, "5_detalle_guia");
         } else {
             console.log("No se encontraron enlaces a guías específicas en la página principal.");
         }

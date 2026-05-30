@@ -54,34 +54,69 @@ async function flujoSuscripcionesRegistro() {
         // --- 3. Seleccionar Suscripción ---
         console.log("Seleccionando una suscripción...");
         await page.evaluate(() => {
-            const productLinks = Array.from(document.querySelectorAll('a[href*="/shop/"]'));
-            const subscriptionLink = productLinks.find(link => link.innerText.toLowerCase().includes('suscripcion') || link.innerText.toLowerCase().includes('mensual') || link.innerText.toLowerCase().includes('anual'));
+            // Buscar todos los enlaces que contengan "/shop/" pero NO "/category/" para asegurar que sea un producto
+            const productLinks = Array.from(document.querySelectorAll('a[href*="/shop/"]')).filter(a => !a.href.includes('/category/') && !a.href.endsWith('/shop'));
+            
+            // Preferimos el que tenga texto de suscripción
+            const subscriptionLink = productLinks.find(link => {
+                const text = link.innerText.toLowerCase();
+                return text.includes('suscripcion') || text.includes('mensual') || text.includes('anual');
+            });
+
             if (subscriptionLink) {
                 subscriptionLink.click();
             } else if (productLinks.length > 0) {
                 productLinks[0].click(); // Fallback
+            } else {
+                // Si no encontramos enlaces de productos, puede que estemos en la página principal, busquemos una categoría
+                const categoryLinks = Array.from(document.querySelectorAll('a[href*="/shop/category/"]'));
+                if (categoryLinks.length > 0) {
+                    categoryLinks[0].click();
+                }
             }
         });
 
         await page.waitForLoadState("load", { timeout: 60000 });
-        await delay(3000);
-        await tomarCaptura(page, "3_detalle_suscripcion");
+        await delay(4000);
+        await tomarCaptura(page, "3_detalle_o_categoria");
+
+        // Si terminamos en una categoría, necesitamos hacer clic de nuevo en un producto
+        const currentUrl = page.url();
+        if (currentUrl.includes('/category/')) {
+            console.log("Entramos a una categoría, buscando el producto...");
+            await page.evaluate(() => {
+                const prodLinks = Array.from(document.querySelectorAll('a[href*="/shop/"]')).filter(a => !a.href.includes('/category/'));
+                if (prodLinks.length > 0) prodLinks[0].click();
+            });
+            await page.waitForLoadState("load", { timeout: 60000 });
+            await delay(4000);
+            await tomarCaptura(page, "3b_detalle_producto");
+        }
 
         // --- 4. Añadir al Carrito ---
         console.log("Añadiendo al carrito...");
         await page.evaluate(() => {
-            const addBtn = document.querySelector('#add_to_cart') || document.querySelector('.js_check_product.a-submit');
+            // Intentamos buscar el botón de añadir al carrito
+            const addBtn = document.querySelector('#add_to_cart') || document.querySelector('.js_check_product.a-submit') || document.querySelector('a.a-submit');
             if (addBtn) addBtn.click();
         });
-        await delay(4000);
+        
+        // Esperamos un momento ya que puede abrir un modal o navegar
+        await delay(5000);
         await tomarCaptura(page, "4_carrito");
+
+        // Navegamos explícitamente al carrito para garantizar el flujo de checkout si no lo hizo automático
+        console.log("Asegurando navegación al carrito...");
+        await page.goto("https://iron-zone.stratiumhub.com/shop/cart", { waitUntil: "load", timeout: 60000 });
+        await delay(3000);
+        await tomarCaptura(page, "4b_carrito_url");
 
         // --- 5. Checkout (Procesar Pago) ---
         console.log("Procesando Checkout...");
         await page.evaluate(() => {
             const checkoutBtn = Array.from(document.querySelectorAll('a, button')).find(el => {
                 const text = el.textContent.trim().toLowerCase();
-                return text.includes('procesar') || text.includes('checkout') || text.includes('pagar');
+                return text.includes('procesar') || text.includes('checkout') || text.includes('pagar') || text.includes('proceder');
             });
             if (checkoutBtn) checkoutBtn.click();
         });
