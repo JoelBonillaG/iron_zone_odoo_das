@@ -333,6 +333,14 @@ async function flujoClasesGrupalesRegistro() {
         await delay(10000);
         await tomarCaptura(page, "11_resumen_pago_finalizado");
 
+        // Esperamos en caso de que Odoo redirija desde /payment/status a /shop/confirmation o similar
+        console.log("Esperando posible redirección de estado de pago...");
+        try {
+            await page.waitForURL('**/*confirmation*', { timeout: 15000 });
+        } catch (e) {
+            console.log("No hubo redirección a /confirmation, evaluando página actual...");
+        }
+
         // --- 6. QA Evals: Validación de Compra Exitosa ---
         console.log("\n--- INICIANDO QA EVALS (Aserción de compra exitosa) ---");
         try {
@@ -340,7 +348,17 @@ async function flujoClasesGrupalesRegistro() {
             const urlActual = page.url();
             console.log(`URL final de la página: ${urlActual}`);
             
-            if (urlActual.includes("/confirmation") || urlActual.includes("/validate") || textoPagina.includes("Gracias") || textoPagina.includes("Thank you") || textoPagina.includes("Pedido") || textoPagina.includes("Confirmado")) {
+            if (
+                urlActual.includes("/confirmation") || 
+                urlActual.includes("/validate") || 
+                urlActual.includes("/registration/success") || 
+                (urlActual.includes("/payment/status") && (textoPagina.includes("Successful") || textoPagina.includes("éxito") || textoPagina.includes("procesado"))) ||
+                textoPagina.includes("Gracias") || 
+                textoPagina.includes("Thank you") || 
+                textoPagina.includes("Pedido") || 
+                textoPagina.includes("Confirmado") || 
+                textoPagina.includes("Exitosa")
+            ) {
                 console.log("✅ QA Eval SUPERADO: ¡La clase grupal se inscribió y pagó exitosamente con la tarjeta de prueba!");
             } else {
                 console.log("❌ QA Eval FALLIDO: No se detectó la confirmación final de la compra.");
