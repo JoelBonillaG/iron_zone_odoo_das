@@ -27,7 +27,7 @@ async function flujoGuiaEjerciciosRegistro() {
     try {
         // --- 1. Navegar e Iniciar Sesión ---
         console.log("Navegando a la página de inicio de sesión del portal...");
-        await page.goto("https://iron-zone.stratiumhub.com/web/login", { waitUntil: "load", timeout: 60000 });
+        await page.goto("http://localhost:8069/web/login", { waitUntil: "load", timeout: 60000 });
         await delay(5000);
         await tomarCaptura(page, "0_pagina_login");
 
@@ -47,7 +47,7 @@ async function flujoGuiaEjerciciosRegistro() {
 
         // --- 2. Navegar a Guía de Ejercicios ---
         console.log("Navegando a la guía de ejercicios (/exercise-guides)...");
-        await page.goto("https://iron-zone.stratiumhub.com/exercise-guides", { waitUntil: "load", timeout: 60000 });
+        await page.goto("http://localhost:8069/exercise-guides", { waitUntil: "load", timeout: 60000 });
         await delay(5000);
         await tomarCaptura(page, "2_guia_ejercicios_lista");
 
@@ -61,13 +61,8 @@ async function flujoGuiaEjerciciosRegistro() {
                 searchInput.dispatchEvent(new Event('input', { bubbles: true }));
             }
             
-            // Intentar seleccionar una opción en los dropdowns si existen
-            const selects = document.querySelectorAll('select');
-            if (selects.length > 0 && selects[0].options.length > 1) {
-                // Seleccionar el primer dropdown disponible para forzar un filtro
-                selects[0].selectedIndex = 1;
-                selects[0].dispatchEvent(new Event('change', { bubbles: true }));
-            }
+            // Hemos removido el filtro del dropdown porque "spinning" entra en conflicto con "Individual" y devuelve 0 resultados.
+            // Con solo buscar "spinning" ya estamos aplicando un filtro.
         });
         await delay(2000);
         await tomarCaptura(page, "3_filtros_aplicados");

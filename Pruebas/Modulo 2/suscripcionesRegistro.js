@@ -27,7 +27,7 @@ async function flujoSuscripcionesRegistro() {
     try {
         // --- 1. Navegar e Iniciar Sesión ---
         console.log("Navegando a la página de inicio de sesión del portal...");
-        await page.goto("https://iron-zone.stratiumhub.com/web/login", { waitUntil: "load", timeout: 60000 });
+        await page.goto("http://localhost:8069/web/login", { waitUntil: "load", timeout: 60000 });
         await delay(5000);
         await tomarCaptura(page, "0_pagina_login");
 
@@ -47,7 +47,7 @@ async function flujoSuscripcionesRegistro() {
 
         // --- 2. Navegar a la Tienda (Suscripciones) ---
         console.log("Navegando a la tienda de suscripciones...");
-        await page.goto("https://iron-zone.stratiumhub.com/shop", { waitUntil: "load", timeout: 60000 });
+        await page.goto("http://localhost:8069/shop", { waitUntil: "load", timeout: 60000 });
         await delay(5000);
         await tomarCaptura(page, "2_tienda");
 
@@ -107,16 +107,24 @@ async function flujoSuscripcionesRegistro() {
 
         // Navegamos explícitamente al carrito para garantizar el flujo de checkout si no lo hizo automático
         console.log("Asegurando navegación al carrito...");
-        await page.goto("https://iron-zone.stratiumhub.com/shop/cart", { waitUntil: "load", timeout: 60000 });
+        await page.goto("http://localhost:8069/shop/cart", { waitUntil: "load", timeout: 60000 });
         await delay(3000);
         await tomarCaptura(page, "4b_carrito_url");
 
         // --- 5. Checkout (Procesar Pago) ---
         console.log("Procesando Checkout...");
         await page.evaluate(() => {
+            // En Odoo el botón de checkout suele ser un enlace a /shop/checkout
+            const checkoutLink = document.querySelector('a[href^="/shop/checkout"]');
+            if (checkoutLink) {
+                checkoutLink.click();
+                return;
+            }
+            
+            // Fallback por texto
             const checkoutBtn = Array.from(document.querySelectorAll('a, button')).find(el => {
                 const text = el.textContent.trim().toLowerCase();
-                return text.includes('procesar') || text.includes('checkout') || text.includes('pagar') || text.includes('proceder');
+                return text.includes('procesar') || text.includes('checkout') || text.includes('pagar') || text.includes('proceder') || text.includes('siguiente');
             });
             if (checkoutBtn) checkoutBtn.click();
         });
@@ -211,6 +219,14 @@ async function flujoSuscripcionesRegistro() {
         await delay(10000);
         await tomarCaptura(page, "8_resumen_pago_finalizado");
 
+        // Esperamos en caso de que Odoo redirija desde /payment/status a /shop/confirmation
+        console.log("Esperando posible redirección de estado de pago...");
+        try {
+            await page.waitForURL('**/*confirmation*', { timeout: 15000 });
+        } catch (e) {
+            console.log("No hubo redirección a /confirmation, evaluando página actual...");
+        }
+
         // --- 6. QA Evals: Validación de Compra Exitosa ---
         console.log("\n--- INICIANDO QA EVALS (Aserción de compra exitosa) ---");
         try {
@@ -219,7 +235,16 @@ async function flujoSuscripcionesRegistro() {
             console.log(`URL final de la página: ${urlActual}`);
             
             // Fix subscription purchase confirmation check by identifying correct final confirmation state
-            if (urlActual.includes("/confirmation") || urlActual.includes("/validate") || textoPagina.includes("Gracias") || textoPagina.includes("Thank you") || textoPagina.includes("Pedido") || textoPagina.includes("Confirmado") || textoPagina.includes("Exitosa")) {
+            if (
+                urlActual.includes("/confirmation") || 
+                urlActual.includes("/validate") || 
+                (urlActual.includes("/payment/status") && (textoPagina.includes("Successful") || textoPagina.includes("éxito") || textoPagina.includes("procesado"))) ||
+                textoPagina.includes("Gracias") || 
+                textoPagina.includes("Thank you") || 
+                textoPagina.includes("Pedido") || 
+                textoPagina.includes("Confirmado") || 
+                textoPagina.includes("Exitosa")
+            ) {
                 console.log("✅ QA Eval SUPERADO: ¡La suscripción se procesó y pagó exitosamente con la tarjeta de prueba!");
             } else {
                 console.log("❌ QA Eval FALLIDO: No se detectó la confirmación final de la compra de la suscripción.");
