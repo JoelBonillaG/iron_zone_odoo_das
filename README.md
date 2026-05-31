@@ -1,14 +1,91 @@
-# Iron Zone — Odoo 18
+# Iron Zone - Odoo 18
 
-Gimnasio Iron Zone · Odoo 18 + PostgreSQL 15 en Docker.
+Sistema academico para la gestion de un gimnasio y centro deportivo desarrollado sobre Odoo 18 y PostgreSQL 15 con Docker.
+
+## Tabla de contenidos
+
+- Descripcion general
+- Funcionalidades principales
+- Requisitos
+- Instalacion rapida
+- Configuracion inicial
+- Instalacion de modulos
+- Carga de datos de prueba
+- Credenciales de prueba
+- Como usar la aplicacion
+- Rutas principales
+- Estructura del repositorio
+- Modulos personalizados
+- Configuracion de pagos y correo
+- Documentacion del proyecto
+- Comandos utiles
+- Problemas comunes
+
+## Descripcion general
+
+Iron Zone integra procesos administrativos y operativos de un gimnasio:
+
+- Sitio web publico.
+- Tienda online.
+- Suscripciones y planes.
+- Eventos o clases.
+- Guias de ejercicios.
+- Inventario.
+- Ventas.
+- Facturacion.
+- Email marketing y correos transaccionales.
+- Localizacion ecuatoriana para facturacion y validaciones.
+
+El proyecto usa modulos nativos de Odoo y varios addons personalizados ubicados en `addons/`.
+
+## Funcionalidades principales
+
+### Sitio web
+
+- Pagina de inicio.
+- Pagina Nosotros.
+- Pagina Contacto.
+- Menu web personalizado.
+- Diseno visual oscuro para Iron Zone.
+
+### Tienda y suscripciones
+
+- Publicacion de planes y productos.
+- Suscripciones mensuales, trimestrales y anuales.
+- Integracion con ventas y pagos.
+- Beneficios asociados a planes.
+
+### Eventos y clases
+
+- Publicacion de clases o eventos deportivos.
+- Relacion con instructores o entrenadores.
+- Registro de usuarios cuando aplica.
+
+### Guias de ejercicios
+
+- Guias publicadas en el portal web.
+- Filtros por tipo, dificultad, grupo muscular y maquina.
+- Relacion con maquinas del gimnasio.
+- Imagen y video de referencia.
+- Permisos por rol: visitante, portal, entrenador y administrador.
+
+### Backend administrativo
+
+- Gestion de ventas.
+- Gestion de inventario.
+- Facturacion.
+- Usuarios y permisos.
+- Configuracion tecnica de modulos.
 
 ## Requisitos
 
-- Docker Desktop instalado y corriendo
-- Git
-- Python 3 instalado
+- Docker Desktop instalado y corriendo.
+- Git.
+- Python 3.
+- Bash disponible para ejecutar scripts.
+- Node.js opcional, solo si se desean automatizar capturas o tareas de documentacion.
 
-## Levantar el entorno
+## Instalacion rapida
 
 ```bash
 git clone <repo-url>
@@ -17,297 +94,373 @@ cp .env.example .env
 docker compose up -d
 ```
 
-Esperar ~30 segundos y abrir: http://localhost:8069
+Abrir:
 
-## Configuración inicial (una sola vez)
+```text
+http://localhost:8069
+```
 
-**Paso 1 — Crear la base de datos** en el wizard de `localhost:8069`:
+Esperar aproximadamente 30 segundos despues de levantar Docker.
 
-| Campo           | Valor                             |
-|-----------------|-----------------------------------|
-| Master Password | `admin123`                        |
-| Database Name   | `iron_zone`                       |
-| Email           | `admin@ironzone.com`              |
-| Password        | `admin123`                        |
-| Phone           | `032000000` (opcional)            |
-| Language        | Spanish (Latin America)           |
-| Country         | Ecuador                           |
-| Demo Data       | desactivado                       |
+## Configuracion inicial
 
----
-## Módulo implementado: Automatización
+Crear la base de datos desde el wizard de Odoo en `localhost:8069`.
 
-Se agregó una automatización para preparar Odoo más rápido:
+| Campo | Valor |
+| --- | --- |
+| Master Password | `admin123` |
+| Database Name | `iron_zone` |
+| Email | `admin@ironzone.com` |
+| Password | `admin123` |
+| Phone | `032000000` |
+| Language | Spanish |
+| Country | Ecuador |
+| Demo Data | Desactivado |
 
-- `scripts/install_apps.sh`: instala los módulos base en la base `iron_zone`.
-- `seeds/00_company_config.py`: configura la compañía (logo `seeds/IronZone.png` y moneda USD) antes de cargar datos.
-- `seeds/00_smtp_config.py`: configura el servidor SMTP saliente (Correo) en Odoo usando variables del `.env`.
+## Instalacion de modulos
 
-Orden de seeds recomendado:
-1. Company config (empresa)
-2. SMTP config (correo)
-3. Seeds (datos)
----
-
-**Paso 2 — Instalar aplicaciones base:**
-
-Este proyecto incluye un instalador por consola que ejecuta Odoo dentro del contenedor para **instalar los módulos base** en la BD (equivale a instalarlos manualmente desde Apps, pero automatizado).
-
-Desde la raíz del repo:
+Despues de crear la base de datos, ejecutar:
 
 ```bash
 bash scripts/install_apps.sh
 ```
 
-Qué hace:
-- Instala un conjunto de módulos base (ventas, inventario, facturación, website, etc.) en la base `iron_zone`.
-- Reinicia el contenedor de Odoo al finalizar.
+El script instala y actualiza modulos base y personalizados en la base `iron_zone`.
 
-Aplicaciones que deben quedar instaladas (Apps):
-- Ventas
-- Inventario
-- Facturación / Contabilidad
-- Sitio web
-- eCommerce (Website Sale)
-- Empleados (HR)
-- Email Marketing (Mass Mailing)
-- Citas (Appointments)
+Modulos principales instalados:
 
-Módulos técnicos que instala el script (Odoo modules):
-`website, website_sale, account, hr, mass_mailing, appointment, sale_management, stock`
+- `website`
+- `website_sale`
+- `website_sale_stock`
+- `account`
+- `account_payment`
+- `sale_management`
+- `stock`
+- `purchase`
+- `event`
+- `website_event`
+- `hr`
+- `mass_mailing`
+- `appointment`
+- `iz_website`
+- `iz_inventory`
+- `iz_backend_theme`
+- `iz_subscription`
+- `ironzone_exercise_guide`
+- `training_plans`
+- `l10n_ec_base`
+- `l10n_ec_edi`
+- `l10n_ec_sri`
+- `l10n_ec_withholding`
+- `l10n_ec_reports`
 
-> Si prefieres hacerlo manualmente, puedes instalar apps desde `localhost:8069/odoo/apps`, pero para que los seeds funcionen correctamente se recomienda usar el script.
+## Carga de datos de prueba
 
----
-
-**Paso 3 — Cargar datos de prueba:**
-
-Primero instala apps (Paso 2). Luego ejecuta los seeds:
+Ejecutar todos los seeds:
 
 ```bash
 bash seeds/run_seeds.sh
 ```
 
-Los seeds se ejecutan en este orden:
-
-1) `00_company_config.py` (configura compañía)
-
-2) `00_smtp_config.py` (configura SMTP saliente desde el `.env`)
-
-3) Seeds de datos (clientes, productos, ventas, ...)
-
-Si quieres probar solo el SMTP (recomendado para validar primero), ejecuta:
+Ejecutar un seed especifico:
 
 ```bash
-# 1) Empresa
-bash seeds/run_seeds.sh 00_company_config
-
-# 2) SMTP (carga .env automáticamente dentro del runner)
-bash seeds/run_seeds.sh 00_smtp_config
+bash seeds/run_seeds.sh 10_exercise_guides
 ```
 
-### Verificar SMTP en Odoo
+Orden general de seeds:
 
-1) Entra a Odoo y activa **Modo desarrollador**
+1. Configuracion de empresa.
+2. Configuracion SMTP.
+3. Clientes.
+4. Planes y suscripciones.
+5. Productos.
+6. Ventas.
+7. Facturacion.
+8. Empleados y entrenadores.
+9. Eventos.
+10. Email marketing.
+11. Guias de ejercicios.
 
-2) Ve a:
-`Ajustes → Técnico → Correo electrónico → Correo → Correo saliente`
+Los seeds usan XML-RPC para comunicarse con Odoo.
 
-3) Debe aparecer el servidor: **Iron Zone SMTP**
+## Credenciales de prueba
 
-4) Abre el registro y usa el botón **Probar conexión** para validar credenciales/conectividad.
+| Rol | Usuario | Contrasena |
+| --- | --- | --- |
+| Administrador | `admin` | `admin` |
+| Administrador alterno | `admin@ironzone.com` | `admin123` |
+| Entrenador | `carlos.mendez@ironzone.ec` | `admin123` |
+| Entrenador | `sofia.garcia@ironzone.ec` | `admin123` |
+| Cliente portal | `pruebasjos04@gmail.com` | `admin123` |
+| Cliente portal | `pruebasjos07@gmail.com` | `admin123` |
+| Cliente portal | `pruebasjos08@gmail.com` | `admin123` |
+| PostgreSQL | `odoo` | `odoo` |
 
----
+## Como usar la aplicacion
 
-## Credenciales
+### Usuario visitante
 
-| Servicio     | Campo           | Valor                              |
-|--------------|-----------------|------------------------------------|
-| Odoo wizard  | Master Password | `admin123`                         |
-| Odoo         | Email           | `admin@ironzone.com`               |
-| Odoo         | Password        | `admin123`                         |
-| PostgreSQL   | Usuario         | `odoo`                             |
-| PostgreSQL   | Password        | `odoo`                             |
-| PostgreSQL   | Base de datos   | `iron_zone`                        |
+1. Entrar a `http://localhost:8069`.
+2. Navegar por `Inicio`, `Tienda`, `Eventos`, `Nosotros`, `Guia de ejercicios` y `Contacto`.
+3. Consultar productos, planes, eventos y guias publicas.
+4. Usar el formulario de contacto si se requiere informacion adicional.
 
-## Configuración de Pagos (Stripe Sandbox)
+### Cliente portal
 
-El proyecto incluye la automatización completa para integrar Stripe como pasarela de pago en modo de pruebas.
+1. Ir a `Iniciar sesion`.
+2. Ingresar con un usuario portal, por ejemplo `pruebasjos04@gmail.com`.
+3. Entrar a `Mi cuenta`.
+4. Revisar pedidos, facturas, suscripciones y accesos disponibles.
+5. Consultar la tienda y las guias con sesion iniciada.
 
-1. Asegúrate de colocar tus credenciales de Stripe (Sandbox) en el archivo `.env`:
-   - `STRIPE_PUBLISHABLE_KEY`
-   - `STRIPE_SECRET_KEY`
+### Entrenador
 
-2. Para recibir notificaciones de pago (Webhooks), el archivo `docker-compose.yml` incluye un contenedor del **Stripe CLI** que se conecta automáticamente a tu cuenta y redirige los eventos a Odoo. 
+1. Iniciar sesion con un usuario entrenador.
+2. Acceder al backend de Odoo.
+3. Gestionar sus propias guias de ejercicios.
+4. Consultar el portal web para visualizar las guias como usuario final.
 
-   Para obtener tu secreto de webhook:
-   ```bash
-   # 1. Levanta los servicios (incluyendo Stripe CLI)
-   docker compose up -d
-   
-   # 2. Revisa los logs del contenedor para obtener el secreto (empieza con whsec_)
-   docker logs iron_zone_stripe
-   ```
-   Copia el valor obtenido y pégalo en la variable `STRIPE_WEBHOOK_SECRET` de tu archivo `.env`.
+### Administrador
 
-3. Ejecuta el seed de proveedores de pago para que Odoo recoja las credenciales:
-   ```bash
-   bash seeds/run_seeds.sh 00_payment_providers
-   ```
+1. Iniciar sesion con `admin / admin`.
+2. Acceder al backend.
+3. Administrar aplicaciones, ventas, inventario, facturacion, eventos, suscripciones y guias.
+4. Ejecutar scripts de instalacion o seeds cuando se requiera actualizar la base.
 
-## Archivos de configuración
+## Rutas principales
 
-El proyecto tiene dos archivos de configuración con propósitos distintos — no confundirlos:
+| Ruta | Descripcion |
+| --- | --- |
+| `/` | Inicio del sitio web |
+| `/shop` | Tienda online |
+| `/event` | Eventos y clases |
+| `/aboutus` | Pagina Nosotros |
+| `/contactus` | Contacto |
+| `/exercise-guides` | Catalogo de guias de ejercicios |
+| `/exercise-guides/<id>` | Detalle de una guia |
+| `/web/login` | Inicio de sesion |
+| `/my` | Portal de cliente |
+| `/odoo` | Backend de Odoo |
+| `/odoo/apps` | Aplicaciones instaladas |
 
-### `config/odoo.conf` — configuración del servidor Docker
-Controla cómo arranca Odoo dentro del contenedor. **No tocar.**
-```ini
-admin_passwd = admin123   # Master Password del wizard (paso 1)
-db_host = db              # nombre interno del contenedor PostgreSQL
-db_user = odoo            # usuario de PostgreSQL (definido en .env)
-```
+## Estructura del repositorio
 
-### `seeds/config.py` — configuración de los scripts de datos
-Contiene las credenciales que los scripts usan para conectarse a Odoo vía XML-RPC.
-**Deben coincidir exactamente con lo que pusiste en el wizard (paso 1).**
-```python
-USERNAME = "admin@ironzone.com"  # email del wizard
-PASSWORD = "admin123"            # password del wizard
-```
-> Si usaste credenciales diferentes en el wizard, edita `seeds/config.py` antes de correr los seeds.
-
-## Estructura
-
-```
+```text
 iron_zone_odoo_das/
-├── docker-compose.yml      # Servicios Odoo 18 + PostgreSQL 15
-├── .env.example            # Variables de entorno de ejemplo
-├── scripts/
-│   └── install_apps.sh      # Instala módulos base en Odoo (Docker)
-├── config/
-│   └── odoo.conf           # Configuración de Odoo
-├── addons/                 # Módulos personalizados
-└── seeds/
-    ├── 00_company_config.py # Configura compañía + logo
-    ├── 00_smtp_config.py    # Configura SMTP saliente (ir.mail_server)
-    ├── config.py           # Conexión XML-RPC compartida
-    ├── 01_customers.py     # 10 clientes
-    ├── 02_products.py      # 10 productos con imágenes y stock
-    ├── 03_sale_orders.py   # 10 pedidos de venta
-    ├── IronZone.png         # Logo y fallback de imágenes
-    ├── images/
-    │   └── products/       # Imágenes personalizadas de productos
-    └── run_seeds.sh        # Runner automatizado
-    ```
-
-    ### Tareas Completadas
-
-    - **ACT003 (Desarrollador Frontend):** Diseño CMS profesional en modo oscuro. Documentación en `docs/ACT003_Diseno_Web.md`.
-    
-    - **ACT004 (Especialista de Producto):** Catálogo con iconos SVG y gestión de stock. Documentación en `docs/ACT004_Inventario_Ecommerce.md`.
-    
-    ## Arquitectura Técnica: Roles, REST y Auditoría
-
-    Para cumplir con los requerimientos de ingeniería de software de 7mo semestre:
-
-    1.  **Gestión de Roles (RBAC):** Odoo utiliza Grupos de Seguridad (`res.groups`). Los permisos se definen por modelo (`ir.model.access`) y registros (`ir.rule`).
-    2.  **Interfaz RESTful / XML-RPC:** El sistema expone todos los recursos mediante el protocolo XML-RPC (o JSON-RPC), permitiendo operaciones CRUD completas que respetan la lógica de negocio y los permisos del usuario.
-    3.  **Auditoría y Trazabilidad:** Cada cambio en los recursos críticos (Productos, Pedidos) es auditado automáticamente por el "Chatter" de Odoo (`mail.message`), registrando quién, cuándo y qué se modificó.
-
-    ---
-    ## Guía de Navegación UI
-
-
-Con Odoo corriendo y la BD creada:
-
-Orden recomendado:
-
-```bash
-# 1) Instalar apps base
-bash scripts/install_apps.sh
-
-# 2) Cargar seeds (empresa → smtp → datos)
-bash seeds/run_seeds.sh
+  addons/
+    ironzone_exercise_guide/
+    iz_backend_theme/
+    iz_inventory/
+    iz_subscription/
+    iz_website/
+    l10n_ec_base/
+    l10n_ec_edi/
+    l10n_ec_reports/
+    l10n_ec_sri/
+    l10n_ec_withholding/
+    training_plans/
+  config/
+    odoo.conf
+  docs/
+  docs_notion/
+  scripts/
+    install_apps.sh
+    reset_local_db.ps1
+  seeds/
+    run_seeds.sh
+    config.py
+  docker-compose.yml
+  .env.example
+  README.md
+  CONTRIBUTING.md
+  CODE_OF_CONDUCT.md
+  SECURITY.md
+  CHANGELOG.md
 ```
 
-```bash
-# Todos los seeds en orden
-bash seeds/run_seeds.sh
+## Modulos personalizados
 
-# Solo uno específico
+| Modulo | Proposito |
+| --- | --- |
+| `iz_website` | Personalizacion del sitio web, plantillas, footer, paginas, correo y experiencia visual. |
+| `iz_backend_theme` | Ajustes visuales y grupos internos para el backend de Iron Zone. |
+| `iz_subscription` | Gestion de planes, beneficios y suscripciones. |
+| `iz_inventory` | Ajustes relacionados con inventario. |
+| `ironzone_exercise_guide` | Guias de ejercicios, maquinas, categorias, portal y permisos. |
+| `training_plans` | Planes de entrenamiento, si esta instalado y actualizado en la base. |
+| `l10n_ec_*` | Localizacion ecuatoriana, facturacion electronica, retenciones y reportes. |
+
+## Configuracion de pagos y correo
+
+### Stripe Sandbox
+
+Configurar variables en `.env` si se desea probar pagos:
+
+```text
+STRIPE_PUBLISHABLE_KEY=
+STRIPE_SECRET_KEY=
+STRIPE_WEBHOOK_SECRET=
+```
+
+Para ver el secreto de webhook generado por Stripe CLI:
+
+```bash
+docker logs iron_zone_stripe
+```
+
+Luego ejecutar:
+
+```bash
+bash seeds/run_seeds.sh 00_payment_providers
+```
+
+Si no existen credenciales de Stripe, el sistema mantiene ese proveedor deshabilitado o en modo seguro.
+
+### SMTP
+
+Configurar variables en `.env`:
+
+```text
+SMTP_HOST=
+SMTP_PORT=
+SMTP_USER=
+SMTP_PASSWORD=
+SMTP_FROM=
+SMTP_ENCRYPTION=
+```
+
+Ejecutar:
+
+```bash
 bash seeds/run_seeds.sh 00_smtp_config
-bash seeds/run_seeds.sh 01_customers
-bash seeds/run_seeds.sh 02_products
-bash seeds/run_seeds.sh 03_sale_orders
 ```
 
-> Los seeds usan XML-RPC — no requieren dependencias extra, solo Python 3.
----
+Verificacion en Odoo:
 
-## Guía de Navegación UI
-
-Para validar los datos cargados y cumplir con las entregas, utiliza las siguientes rutas en Odoo:
-
-### 1. Inventario y Catálogo (ACT004)
-*   **Catálogo Backend:** `Ventas` → `Productos` → `Productos`
-    *   *Ruta:* `/odoo/action-sale.product_template_action`
-*   **Tienda Online (Vista Cliente):** Menú principal → `Sitio Web` → `Tienda`
-    *   *Ruta:* `/shop`
-*   **Stock:** `Inventario` → `Productos` → `Productos` (Ver columna "A mano")
-
-### 2. Diseño Web y CMS (ACT003)
-*   **Inicio:** `/`
-*   **Nosotros:** `/aboutus`
-*   **Contacto:** `/contactus`
-*   **Editor de Páginas:** En cualquier página del sitio, botón **"Editar"** (arriba a la derecha).
-
-### 3. Ventas y Clientes
-*   **Clientes:** `Contactos` o `Ventas` → `Pedidos` → `Clientes`
-*   **Pedidos:** `Ventas` → `Pedidos` → `Pedidos`
-
-### Nota Técnica: Validaciones de Cédula y RUC (Ecuador)
-
-Debido a que el proyecto cuenta con la localización Ecuatoriana instalada (`l10n_ec`), **el sistema valida matemáticamente la autenticidad del documento de identidad**. Si intentas realizar una compra de prueba en la tienda online o registrar un nuevo cliente con una cédula inventada, el sistema arrojará un error y no te permitirá continuar (en la web se puede presentar como `400 Bad Request` en consola). 
-
-> Para tus pruebas, asegúrate de utilizar una cédula ecuatoriana matemáticamente válida (por ejemplo: `1804888764`). Para RUC, agrega `001` al final de una cédula válida.
-
----
-### Nota Técnica: Tipos de Productos (Odoo 18)
-
-En Odoo 18, el manejo de tipos de productos cambió ligeramente. Los seeds siguen esta convención:
-- **Almacenables (Storable):** `type="consu"` + `is_storable=True`.
-- **Consumibles:** `type="consu"` + `is_storable=False`.
-- **Servicios:** `type="service"`.
-
----
-
-
-## Acceder al contenedor de PostgreSQL
-
-```bash
-docker exec -it iron_zone_db psql -U odoo -d iron_zone
-
-# Comandos útiles dentro de psql
-\dt                                         -- listar tablas
-SELECT name FROM res_partner LIMIT 10;     -- ver clientes
-SELECT name FROM product_template LIMIT 10; -- ver productos
-\q                                          -- salir
+```text
+Ajustes -> Tecnico -> Correo electronico -> Correo saliente
 ```
 
-## Comandos útiles
+## Documentacion del proyecto
+
+Documentacion principal para Notion:
+
+```text
+docs_notion/
+```
+
+Resumen de entrega:
+
+```text
+docs/DOCUMENTACION_ENTREGA.md
+```
+
+Archivos complementarios del repositorio:
+
+- `README.md`
+- `CONTRIBUTING.md`
+- `CODE_OF_CONDUCT.md`
+- `SECURITY.md`
+- `CHANGELOG.md`
+
+## Comandos utiles
+
+Levantar contenedores:
 
 ```bash
-# Detener
+docker compose up -d
+```
+
+Detener contenedores:
+
+```bash
 docker compose down
+```
 
-# Ver logs de Odoo
-docker compose logs -f odoo
+Reiniciar Odoo:
 
-# Reiniciar Odoo
+```bash
 docker restart iron_zone_odoo
 ```
 
-## Notas
+Ver logs:
 
-- `.env` no se versiona. Copiar `.env.example` a `.env` antes de levantar.
-- Database Name en el wizard: `iron_zone`
+```bash
+docker compose logs -f odoo
+```
+
+Entrar a PostgreSQL:
+
+```bash
+docker exec -it iron_zone_db psql -U odoo -d iron_zone
+```
+
+Comandos utiles dentro de PostgreSQL:
+
+```sql
+\dt
+SELECT name FROM res_partner LIMIT 10;
+SELECT name FROM product_template LIMIT 10;
+\q
+```
+
+## Problemas comunes
+
+### Error de actualizacion concurrente
+
+Mensaje:
+
+```text
+could not serialize access due to concurrent update
+```
+
+Causa probable:
+
+- Dos procesos intentaron actualizar modulos al mismo tiempo.
+- Odoo estaba arrancando mientras se ejecutaba `install_apps.sh`.
+- Quedo un proceso previo de instalacion activo.
+
+Solucion:
+
+1. Evitar abrir otra actualizacion de modulos.
+2. Reiniciar Odoo.
+3. Esperar unos segundos.
+4. Ejecutar nuevamente `bash scripts/install_apps.sh`.
+
+### Menus duplicados en website
+
+Causa probable:
+
+- Dos modulos crearon el mismo `website.menu`.
+
+Solucion:
+
+- Mantener la configuracion del menu centralizada en `iz_website`.
+- Actualizar modulos con `bash scripts/install_apps.sh`.
+
+### Errores de cedula o RUC
+
+La localizacion ecuatoriana puede validar documentos. Para pruebas usar una cedula ecuatoriana valida, por ejemplo:
+
+```text
+1804888764
+```
+
+Para RUC, agregar `001` al final de una cedula valida.
+
+### Productos en Odoo 18
+
+En Odoo 18, los seeds siguen esta convencion:
+
+- Almacenable: `type="consu"` + `is_storable=True`.
+- Consumible: `type="consu"` + `is_storable=False`.
+- Servicio: `type="service"`.
+
+## Notas finales
+
+- `.env` no se versiona.
+- Usar `.env.example` como plantilla.
+- No subir credenciales reales.
+- Ejecutar seeds solo despues de instalar los modulos.
+- Mantener la documentacion actualizada cuando cambie el sistema.
