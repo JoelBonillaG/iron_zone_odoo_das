@@ -20,7 +20,7 @@ async function tomarCaptura(page, nombreFase) {
 
 async function flujoGuiaEjerciciosRegistro() {
     console.log("🚀 Inicializando Playwright Nativo para revisión de Guía de Ejercicios...");
-    
+
     const stagehand = new Stagehand({
         env: "LOCAL",
         model: "google/gemini-2.5-flash",
@@ -40,10 +40,10 @@ async function flujoGuiaEjerciciosRegistro() {
         await page.waitForSelector("#login", { state: "visible", timeout: 15000 });
         await page.locator("#login").fill("pruebasjos04@gmail.com");
         await delay(1000);
-        
+
         await page.locator("#password").fill("admin123");
         await delay(1000);
-        
+
         console.log("Haciendo clic en Iniciar Sesión...");
         await page.locator(".oe_login_form button[type='submit'], button.btn-primary").first().click();
         await page.waitForLoadState("load");
@@ -59,8 +59,8 @@ async function flujoGuiaEjerciciosRegistro() {
         // --- 3. Aplicar Filtros de Búsqueda ---
         console.log("Aplicando filtros de búsqueda...");
         await page.evaluate(() => {
-            const searchInput = document.querySelector('input[placeholder="Buscar guía"]') || 
-            document.querySelector('input[type="text"]');
+            const searchInput = document.querySelector('input[placeholder="Buscar guía"]') ||
+                document.querySelector('input[type="text"]');
             if (searchInput) {
                 searchInput.value = "spinning";
                 searchInput.dispatchEvent(new Event('input', { bubbles: true }));
@@ -75,7 +75,7 @@ async function flujoGuiaEjerciciosRegistro() {
             const searchBtn = btns.find(btn => btn.innerHTML.includes('fa-search') || btn.classList.contains('btn-primary')) || btns[0];
             if (searchBtn) searchBtn.click();
         });
-        
+
         await page.waitForLoadState("load");
         await delay(5000);
         await tomarCaptura(page, "4_resultados_busqueda");
@@ -88,7 +88,7 @@ async function flujoGuiaEjerciciosRegistro() {
                 verGuiaLinks[0].click();
                 return true;
             }
-            
+
             const fallbackLinks = Array.from(document.querySelectorAll('.card a, article a, a[href*="/guide/"]'));
             if (fallbackLinks.length > 0) {
                 fallbackLinks[0].click();
@@ -111,7 +111,7 @@ async function flujoGuiaEjerciciosRegistro() {
             const textoPagina = await page.evaluate(() => document.body.innerText);
             const urlActual = page.url();
             console.log(`URL final de la página: ${urlActual}`);
-            
+
             if (urlActual.includes("/exercise-guides")) {
                 console.log("✅ QA Eval SUPERADO: ¡El módulo de guía de ejercicios fue accedido correctamente!");
             } else {
