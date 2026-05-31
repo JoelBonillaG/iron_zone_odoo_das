@@ -1,4 +1,5 @@
-import { chromium } from "playwright";
+import "dotenv/config";
+import { Stagehand } from "@browserbasehq/stagehand";
 import fs from "fs";
 
 if (!fs.existsSync("evidencias")) {
@@ -20,9 +21,13 @@ async function tomarCaptura(page, nombreFase) {
 async function flujoGuiaEjerciciosRegistro() {
     console.log("🚀 Inicializando Playwright Nativo para revisión de Guía de Ejercicios...");
     
-    const browser = await chromium.launch({ headless: false });
-    const context = await browser.newContext();
-    const page = await context.newPage();
+    const stagehand = new Stagehand({
+        env: "LOCAL",
+        model: "google/gemini-2.5-flash",
+        timeout: 90000,
+    });
+    await stagehand.init();
+    const page = stagehand.context.pages()[0];
 
     try {
         // --- 1. Navegar e Iniciar Sesión ---
@@ -33,15 +38,15 @@ async function flujoGuiaEjerciciosRegistro() {
 
         console.log("Ingresando credenciales del cliente de prueba...");
         await page.waitForSelector("#login", { state: "visible", timeout: 15000 });
-        await page.fill("#login", "pruebasjos04@gmail.com");
+        await page.locator("#login").fill("pruebasjos04@gmail.com");
         await delay(1000);
         
-        await page.fill("#password", "admin123");
+        await page.locator("#password").fill("admin123");
         await delay(1000);
         
         console.log("Haciendo clic en Iniciar Sesión...");
-        await page.click(".oe_login_form button[type='submit'], button.btn-primary");
-        await page.waitForLoadState("load", { timeout: 60000 });
+        await page.locator(".oe_login_form button[type='submit'], button.btn-primary").first().click();
+        await page.waitForLoadState("load");
         await delay(3000);
         await tomarCaptura(page, "1_login_exitoso");
 
@@ -54,42 +59,36 @@ async function flujoGuiaEjerciciosRegistro() {
         // --- 3. Aplicar Filtros de Búsqueda ---
         console.log("Aplicando filtros de búsqueda...");
         await page.evaluate(() => {
-            // Llenar el campo de búsqueda
-            const searchInput = document.querySelector('input[placeholder="Buscar guía"]') || document.querySelector('input[type="text"]');
+            const searchInput = document.querySelector('input[placeholder="Buscar guía"]') || 
+            document.querySelector('input[type="text"]');
             if (searchInput) {
                 searchInput.value = "spinning";
                 searchInput.dispatchEvent(new Event('input', { bubbles: true }));
             }
-            
-            // Hemos removido el filtro del dropdown porque "spinning" entra en conflicto con "Individual" y devuelve 0 resultados.
-            // Con solo buscar "spinning" ya estamos aplicando un filtro.
         });
         await delay(2000);
         await tomarCaptura(page, "3_filtros_aplicados");
 
         console.log("Haciendo clic en Buscar...");
         await page.evaluate(() => {
-            // Buscar el botón naranja con lupa o cualquier botón de submit
             const btns = Array.from(document.querySelectorAll('button'));
             const searchBtn = btns.find(btn => btn.innerHTML.includes('fa-search') || btn.classList.contains('btn-primary')) || btns[0];
             if (searchBtn) searchBtn.click();
         });
         
-        await page.waitForLoadState("load", { timeout: 60000 });
+        await page.waitForLoadState("load");
         await delay(5000);
         await tomarCaptura(page, "4_resultados_busqueda");
 
         // --- 4. Seleccionar una Guía ---
         console.log("Seleccionando una guía de ejercicios...");
         const clickExit = await page.evaluate(() => {
-            // Buscar explícitamente el texto "Ver guía"
             const verGuiaLinks = Array.from(document.querySelectorAll('a')).filter(a => a.innerText.toLowerCase().includes('ver guía'));
             if (verGuiaLinks.length > 0) {
                 verGuiaLinks[0].click();
                 return true;
             }
             
-            // Fallback: hacer clic en cualquier enlace dentro de las tarjetas
             const fallbackLinks = Array.from(document.querySelectorAll('.card a, article a, a[href*="/guide/"]'));
             if (fallbackLinks.length > 0) {
                 fallbackLinks[0].click();
@@ -99,7 +98,7 @@ async function flujoGuiaEjerciciosRegistro() {
         });
 
         if (clickExit) {
-            await page.waitForLoadState("load", { timeout: 60000 });
+            await page.waitForLoadState("load");
             await delay(4000);
             await tomarCaptura(page, "5_detalle_guia");
         } else {
@@ -113,7 +112,6 @@ async function flujoGuiaEjerciciosRegistro() {
             const urlActual = page.url();
             console.log(`URL final de la página: ${urlActual}`);
             
-            // Verificamos que la URL contenga exercise-guides y que se haya renderizado contenido
             if (urlActual.includes("/exercise-guides")) {
                 console.log("✅ QA Eval SUPERADO: ¡El módulo de guía de ejercicios fue accedido correctamente!");
             } else {
@@ -129,7 +127,7 @@ async function flujoGuiaEjerciciosRegistro() {
         console.error("❌ Error durante la automatización de la guía de ejercicios:", error);
     } finally {
         console.log("Cerrando navegador...");
-        await browser.close();
+        await stagehand.close();
     }
 }
 

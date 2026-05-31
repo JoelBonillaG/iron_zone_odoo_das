@@ -1,4 +1,5 @@
-import { chromium } from "playwright";
+import "dotenv/config";
+import { Stagehand } from "@browserbasehq/stagehand";
 import fs from "fs";
 
 if (!fs.existsSync("evidencias")) {
@@ -20,9 +21,13 @@ async function tomarCaptura(page, nombreFase) {
 async function flujoGuiaEjerciciosRegistro() {
     console.log("🚀 Inicializando Playwright Nativo para revisión de Guía de Ejercicios...");
     
-    const browser = await chromium.launch({ headless: false });
-    const context = await browser.newContext();
-    const page = await context.newPage();
+    const stagehand = new Stagehand({
+        env: "LOCAL",
+        model: "google/gemini-2.5-flash",
+        timeout: 90000,
+    });
+    await stagehand.init();
+    const page = stagehand.context.pages()[0];
 
     try {
         // --- 1. Navegar e Iniciar Sesión ---
@@ -33,15 +38,15 @@ async function flujoGuiaEjerciciosRegistro() {
 
         console.log("Ingresando credenciales del cliente de prueba...");
         await page.waitForSelector("#login", { state: "visible", timeout: 15000 });
-        await page.fill("#login", "pruebasjos04@gmail.com");
+        await page.locator("#login").fill("pruebasjos04@gmail.com");
         await delay(1000);
         
-        await page.fill("#password", "admin123");
+        await page.locator("#password").fill("admin123");
         await delay(1000);
         
         console.log("Haciendo clic en Iniciar Sesión...");
-        await page.click(".oe_login_form button[type='submit'], button.btn-primary");
-        await page.waitForLoadState("load", { timeout: 60000 });
+        await page.locator(".oe_login_form button[type='submit'], button.btn-primary").first().click();
+        await page.waitForLoadState("load");
         await delay(3000);
         await tomarCaptura(page, "1_login_exitoso");
 
@@ -75,7 +80,7 @@ async function flujoGuiaEjerciciosRegistro() {
             if (searchBtn) searchBtn.click();
         });
         
-        await page.waitForLoadState("load", { timeout: 60000 });
+        await page.waitForLoadState("load");
         await delay(5000);
         await tomarCaptura(page, "4_resultados_busqueda");
 
@@ -99,7 +104,7 @@ async function flujoGuiaEjerciciosRegistro() {
         });
 
         if (clickExit) {
-            await page.waitForLoadState("load", { timeout: 60000 });
+            await page.waitForLoadState("load");
             await delay(4000);
             await tomarCaptura(page, "5_detalle_guia");
         } else {
@@ -129,7 +134,7 @@ async function flujoGuiaEjerciciosRegistro() {
         console.error("❌ Error durante la automatización de la guía de ejercicios:", error);
     } finally {
         console.log("Cerrando navegador...");
-        await browser.close();
+        await stagehand.close();
     }
 }
 

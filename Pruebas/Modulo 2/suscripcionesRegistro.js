@@ -1,4 +1,5 @@
-import { chromium } from "playwright";
+import "dotenv/config";
+import { Stagehand } from "@browserbasehq/stagehand";
 import fs from "fs";
 
 if (!fs.existsSync("evidencias")) {
@@ -20,9 +21,13 @@ async function tomarCaptura(page, nombreFase) {
 async function flujoSuscripcionesRegistro() {
     console.log("🚀 Inicializando Playwright Nativo para registro de suscripciones (E2E Pago)...");
     
-    const browser = await chromium.launch({ headless: false });
-    const context = await browser.newContext();
-    const page = await context.newPage();
+    const stagehand = new Stagehand({
+        env: "LOCAL",
+        model: "google/gemini-2.5-flash",
+        timeout: 90000,
+    });
+    await stagehand.init();
+    const page = stagehand.context.pages()[0];
 
     try {
         // --- 1. Navegar e Iniciar Sesión ---
@@ -33,15 +38,15 @@ async function flujoSuscripcionesRegistro() {
 
         console.log("Ingresando credenciales del cliente de prueba...");
         await page.waitForSelector("#login", { state: "visible", timeout: 15000 });
-        await page.fill("#login", "pruebasjos04@gmail.com");
+        await page.locator("#login").fill("pruebasjos04@gmail.com");
         await delay(1000);
         
-        await page.fill("#password", "admin123");
+        await page.locator("#password").fill("admin123");
         await delay(1000);
         
         console.log("Haciendo clic en Iniciar Sesión...");
-        await page.click(".oe_login_form button[type='submit'], button.btn-primary");
-        await page.waitForLoadState("load", { timeout: 60000 });
+        await page.locator(".oe_login_form button[type='submit'], button.btn-primary").first().click();
+        await page.waitForLoadState("load");
         await delay(3000);
         await tomarCaptura(page, "1_login_exitoso");
 
@@ -54,10 +59,9 @@ async function flujoSuscripcionesRegistro() {
         // --- 3. Seleccionar Suscripción ---
         console.log("Seleccionando una suscripción...");
         await page.evaluate(() => {
-            // Buscar todos los enlaces que contengan "/shop/" pero NO "/category/" para asegurar que sea un producto
-            const productLinks = Array.from(document.querySelectorAll('a[href*="/shop/"]')).filter(a => !a.href.includes('/category/') && !a.href.endsWith('/shop'));
+            const productLinks = Array.from(document.querySelectorAll('a[href*="/shop/"]')).filter(a => 
+                !a.href.includes('/category/') && !a.href.endsWith('/shop'));
             
-            // Preferimos el que tenga texto de suscripción
             const subscriptionLink = productLinks.find(link => {
                 const text = link.innerText.toLowerCase();
                 return text.includes('suscripcion') || text.includes('mensual') || text.includes('anual');
@@ -66,9 +70,8 @@ async function flujoSuscripcionesRegistro() {
             if (subscriptionLink) {
                 subscriptionLink.click();
             } else if (productLinks.length > 0) {
-                productLinks[0].click(); // Fallback
+                productLinks[0].click(); 
             } else {
-                // Si no encontramos enlaces de productos, puede que estemos en la página principal, busquemos una categoría
                 const categoryLinks = Array.from(document.querySelectorAll('a[href*="/shop/category/"]'));
                 if (categoryLinks.length > 0) {
                     categoryLinks[0].click();
@@ -76,11 +79,10 @@ async function flujoSuscripcionesRegistro() {
             }
         });
 
-        await page.waitForLoadState("load", { timeout: 60000 });
+        await page.waitForLoadState("load");
         await delay(4000);
         await tomarCaptura(page, "3_detalle_o_categoria");
 
-        // Si terminamos en una categoría, necesitamos hacer clic de nuevo en un producto
         const currentUrl = page.url();
         if (currentUrl.includes('/category/')) {
             console.log("Entramos a una categoría, buscando el producto...");
@@ -88,7 +90,7 @@ async function flujoSuscripcionesRegistro() {
                 const prodLinks = Array.from(document.querySelectorAll('a[href*="/shop/"]')).filter(a => !a.href.includes('/category/'));
                 if (prodLinks.length > 0) prodLinks[0].click();
             });
-            await page.waitForLoadState("load", { timeout: 60000 });
+            await page.waitForLoadState("load");
             await delay(4000);
             await tomarCaptura(page, "3b_detalle_producto");
         }
@@ -96,16 +98,14 @@ async function flujoSuscripcionesRegistro() {
         // --- 4. Añadir al Carrito ---
         console.log("Añadiendo al carrito...");
         await page.evaluate(() => {
-            // Intentamos buscar el botón de añadir al carrito
-            const addBtn = document.querySelector('#add_to_cart') || document.querySelector('.js_check_product.a-submit') || document.querySelector('a.a-submit');
+            const addBtn = document.querySelector('#add_to_cart') || document.querySelector('.js_check_product.a-submit')
+             || document.querySelector('a.a-submit');
             if (addBtn) addBtn.click();
         });
         
-        // Esperamos un momento ya que puede abrir un modal o navegar
         await delay(5000);
         await tomarCaptura(page, "4_carrito");
 
-        // Navegamos explícitamente al carrito para garantizar el flujo de checkout si no lo hizo automático
         console.log("Asegurando navegación al carrito...");
         await page.goto("http://localhost:8069/shop/cart", { waitUntil: "load", timeout: 60000 });
         await delay(3000);
@@ -114,21 +114,20 @@ async function flujoSuscripcionesRegistro() {
         // --- 5. Checkout (Procesar Pago) ---
         console.log("Procesando Checkout...");
         await page.evaluate(() => {
-            // En Odoo el botón de checkout suele ser un enlace a /shop/checkout
             const checkoutLink = document.querySelector('a[href^="/shop/checkout"]');
             if (checkoutLink) {
                 checkoutLink.click();
                 return;
             }
             
-            // Fallback por texto
             const checkoutBtn = Array.from(document.querySelectorAll('a, button')).find(el => {
                 const text = el.textContent.trim().toLowerCase();
-                return text.includes('procesar') || text.includes('checkout') || text.includes('pagar') || text.includes('proceder') || text.includes('siguiente');
+                return text.includes('procesar') || text.includes('checkout') || text.includes('pagar') 
+                || text.includes('proceder') || text.includes('siguiente');
             });
             if (checkoutBtn) checkoutBtn.click();
         });
-        await page.waitForLoadState("load", { timeout: 60000 });
+        await page.waitForLoadState("load");
         await delay(5000);
         await tomarCaptura(page, "5_checkout_datos");
 
@@ -140,7 +139,7 @@ async function flujoSuscripcionesRegistro() {
             });
             if (btnNext) btnNext.click();
         });
-        await page.waitForLoadState("load", { timeout: 60000 });
+        await page.waitForLoadState("load");
         await delay(6000);
         await tomarCaptura(page, "6_checkout_metodos_pago");
 
@@ -172,8 +171,9 @@ async function flujoSuscripcionesRegistro() {
                         const autocomplete = await input.getAttribute('autocomplete') || '';
                         const type = await input.getAttribute('type') || '';
                         
-                        // Llenar número de tarjeta
-                        if (name === 'cardnumber' || autocomplete === 'cc-number' || placeholder.includes('1234') || placeholder.toLowerCase().includes('card') || placeholder.toLowerCase().includes('tarjeta') || (name === '' && placeholder === '' && type === 'tel' && i === 0)) {
+                        if (name === 'cardnumber' || autocomplete === 'cc-number' || placeholder.includes('1234') ||
+                         placeholder.toLowerCase().includes('card') || placeholder.toLowerCase().includes('tarjeta') ||
+                          (name === '' && placeholder === '' && type === 'tel' && i === 0)) {
                             await input.focus();
                             await input.click();
                             await input.fill("4242424242424242");
@@ -182,8 +182,8 @@ async function flujoSuscripcionesRegistro() {
                             if (!val || val.length < 10) await input.pressSequentially("4242424242424242", { delay: 50 });
                         }
                         
-                        // Llenar fecha de vencimiento
-                        if (name === 'exp-date' || autocomplete === 'cc-exp' || placeholder.includes('MM') || placeholder.includes('YY') || placeholder.includes('AA')) {
+                        if (name === 'exp-date' || autocomplete === 'cc-exp' || placeholder.includes('MM') ||
+                         placeholder.includes('YY') || placeholder.includes('AA')) {
                             await input.focus();
                             await input.click();
                             await input.fill("0230");
@@ -192,8 +192,8 @@ async function flujoSuscripcionesRegistro() {
                             if (!val || val.length < 2) await input.pressSequentially("0230", { delay: 50 });
                         }
                         
-                        // Llenar CVC
-                        if (name === 'cvc' || autocomplete === 'cc-csc' || placeholder.toLowerCase().includes('cvc') || placeholder.toLowerCase().includes('cvv') || (type === 'tel' && (placeholder === 'CVC' || name === 'cvc'))) {
+                        if (name === 'cvc' || autocomplete === 'cc-csc' || placeholder.toLowerCase().includes('cvc')
+                             || placeholder.toLowerCase().includes('cvv') || (type === 'tel' && (placeholder === 'CVC' || name === 'cvc'))) {
                             await input.focus();
                             await input.click();
                             await input.fill("000");
@@ -212,17 +212,22 @@ async function flujoSuscripcionesRegistro() {
 
         console.log("Haciendo clic en Pagar Ahora...");
         await page.evaluate(() => {
-            const btnPay = document.querySelector('button[name="o_payment_submit_button"]') || document.querySelector('#o_payment_submit_button') || document.querySelector('button.btn-primary');
+            const btnPay = document.querySelector('button[name="o_payment_submit_button"]') || document.querySelector('#o_payment_submit_button') 
+            || document.querySelector('button.btn-primary');
             if (btnPay) btnPay.click();
         });
-        await page.waitForLoadState("load", { timeout: 60000 });
+        await page.waitForLoadState("load");
         await delay(10000);
         await tomarCaptura(page, "8_resumen_pago_finalizado");
 
         // Esperamos en caso de que Odoo redirija desde /payment/status a /shop/confirmation
         console.log("Esperando posible redirección de estado de pago...");
         try {
-            await page.waitForURL('**/*confirmation*', { timeout: 15000 });
+            if (typeof page.waitForURL === 'function') {
+                await page.waitForURL('**/*confirmation*', { timeout: 15000 });
+            } else {
+                await delay(10000);
+            }
         } catch (e) {
             console.log("No hubo redirección a /confirmation, evaluando página actual...");
         }
@@ -234,11 +239,11 @@ async function flujoSuscripcionesRegistro() {
             const urlActual = page.url();
             console.log(`URL final de la página: ${urlActual}`);
             
-            // Fix subscription purchase confirmation check by identifying correct final confirmation state
             if (
                 urlActual.includes("/confirmation") || 
                 urlActual.includes("/validate") || 
-                (urlActual.includes("/payment/status") && (textoPagina.includes("Successful") || textoPagina.includes("éxito") || textoPagina.includes("procesado"))) ||
+                (urlActual.includes("/payment/status") && (textoPagina.includes("Successful") || textoPagina.includes("éxito")
+                 || textoPagina.includes("procesado"))) ||
                 textoPagina.includes("Gracias") || 
                 textoPagina.includes("Thank you") || 
                 textoPagina.includes("Pedido") || 
@@ -259,7 +264,7 @@ async function flujoSuscripcionesRegistro() {
         console.error("❌ Error durante la automatización de registro de suscripciones:", error);
     } finally {
         console.log("Cerrando navegador...");
-        await browser.close();
+        await stagehand.close();
     }
 }
 

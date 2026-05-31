@@ -1,4 +1,5 @@
-import { chromium } from "playwright";
+import "dotenv/config";
+import { Stagehand } from "@browserbasehq/stagehand";
 import fs from "fs";
 
 if (!fs.existsSync("evidencias")) {
@@ -20,9 +21,13 @@ async function tomarCaptura(page, nombreFase) {
 async function flujoSuscripcionesRegistro() {
     console.log("🚀 Inicializando Playwright Nativo para registro de suscripciones (E2E Pago)...");
     
-    const browser = await chromium.launch({ headless: false });
-    const context = await browser.newContext();
-    const page = await context.newPage();
+    const stagehand = new Stagehand({
+        env: "LOCAL",
+        model: "google/gemini-2.5-flash",
+        timeout: 90000,
+    });
+    await stagehand.init();
+    const page = stagehand.context.pages()[0];
 
     try {
         // --- 1. Navegar e Iniciar Sesión ---
@@ -33,15 +38,15 @@ async function flujoSuscripcionesRegistro() {
 
         console.log("Ingresando credenciales del cliente de prueba...");
         await page.waitForSelector("#login", { state: "visible", timeout: 15000 });
-        await page.fill("#login", "pruebasjos04@gmail.com");
+        await page.locator("#login").fill("pruebasjos04@gmail.com");
         await delay(1000);
         
-        await page.fill("#password", "admin123");
+        await page.locator("#password").fill("admin123");
         await delay(1000);
         
         console.log("Haciendo clic en Iniciar Sesión...");
-        await page.click(".oe_login_form button[type='submit'], button.btn-primary");
-        await page.waitForLoadState("load", { timeout: 60000 });
+        await page.locator(".oe_login_form button[type='submit'], button.btn-primary").first().click();
+        await page.waitForLoadState("load");
         await delay(3000);
         await tomarCaptura(page, "1_login_exitoso");
 
@@ -76,7 +81,7 @@ async function flujoSuscripcionesRegistro() {
             }
         });
 
-        await page.waitForLoadState("load", { timeout: 60000 });
+        await page.waitForLoadState("load");
         await delay(4000);
         await tomarCaptura(page, "3_detalle_o_categoria");
 
@@ -88,7 +93,7 @@ async function flujoSuscripcionesRegistro() {
                 const prodLinks = Array.from(document.querySelectorAll('a[href*="/shop/"]')).filter(a => !a.href.includes('/category/'));
                 if (prodLinks.length > 0) prodLinks[0].click();
             });
-            await page.waitForLoadState("load", { timeout: 60000 });
+            await page.waitForLoadState("load");
             await delay(4000);
             await tomarCaptura(page, "3b_detalle_producto");
         }
@@ -128,7 +133,7 @@ async function flujoSuscripcionesRegistro() {
             });
             if (checkoutBtn) checkoutBtn.click();
         });
-        await page.waitForLoadState("load", { timeout: 60000 });
+        await page.waitForLoadState("load");
         await delay(5000);
         await tomarCaptura(page, "5_checkout_datos");
 
@@ -140,7 +145,7 @@ async function flujoSuscripcionesRegistro() {
             });
             if (btnNext) btnNext.click();
         });
-        await page.waitForLoadState("load", { timeout: 60000 });
+        await page.waitForLoadState("load");
         await delay(6000);
         await tomarCaptura(page, "6_checkout_metodos_pago");
 
@@ -215,14 +220,18 @@ async function flujoSuscripcionesRegistro() {
             const btnPay = document.querySelector('button[name="o_payment_submit_button"]') || document.querySelector('#o_payment_submit_button') || document.querySelector('button.btn-primary');
             if (btnPay) btnPay.click();
         });
-        await page.waitForLoadState("load", { timeout: 60000 });
+        await page.waitForLoadState("load");
         await delay(10000);
         await tomarCaptura(page, "8_resumen_pago_finalizado");
 
         // Esperamos en caso de que Odoo redirija desde /payment/status a /shop/confirmation
         console.log("Esperando posible redirección de estado de pago...");
         try {
-            await page.waitForURL('**/*confirmation*', { timeout: 15000 });
+            if (typeof page.waitForURL === 'function') {
+                await page.waitForURL('**/*confirmation*', { timeout: 15000 });
+            } else {
+                await delay(10000);
+            }
         } catch (e) {
             console.log("No hubo redirección a /confirmation, evaluando página actual...");
         }
@@ -259,7 +268,7 @@ async function flujoSuscripcionesRegistro() {
         console.error("❌ Error durante la automatización de registro de suscripciones:", error);
     } finally {
         console.log("Cerrando navegador...");
-        await browser.close();
+        await stagehand.close();
     }
 }
 
