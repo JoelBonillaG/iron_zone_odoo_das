@@ -9,3 +9,13 @@ __pycache__/
 # OS
 .DS_Store
 Thumbs.db
+
+# Pruebas - Node.js dependencies
+Pruebas/**/node_modules/
+
+# Pruebas - Archivos generados / datos extraídos
+Pruebas/**/*_extraida.json
+Pruebas/**/*_extract*.json
+
+# Pruebas - Variables de entorno locales
+Pruebas/**/.env
