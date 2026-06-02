@@ -43,6 +43,11 @@ docs_notion/
 - `SECURITY.md`
 - `CHANGELOG.md`
 - `docs/DOCUMENTACION_ENTREGA.md`
+- `docs/E4_DESPLIEGUE_CLOUD_GITHUB_ACTIONS.md`
+
+## Entregable E4: despliegue en la nube y GitHub Actions
+
+El entregable E4 se documenta en `docs/E4_DESPLIEGUE_CLOUD_GITHUB_ACTIONS.md`. Este documento describe formalmente la validacion automatizada configurada sobre las ramas `develop` y `main`, asi como la arquitectura de despliegue del sistema en un VPS con Docker Compose, Odoo 18 y PostgreSQL 15. La documentacion explica el rol de GitHub Actions dentro del flujo staging-produccion, el uso de llaves SSH para despliegue, la relacion entre el repositorio y el servidor, y las verificaciones posteriores al despliegue.
 
 ## Nota sobre Swagger o Scalar
 
