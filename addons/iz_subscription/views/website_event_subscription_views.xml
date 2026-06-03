@@ -16,6 +16,13 @@
                 </div>
             </div>
         </xpath>
+        <xpath expr="//input[hasclass('js_quantity')]" position="attributes">
+            <attribute name="t-att-max">1 if (line.subscription_benefit_id and line.subscription_discount_percent == 100) else None</attribute>
+            <attribute name="t-att-readonly">'1' if (line.subscription_benefit_id and line.subscription_discount_percent == 100) else None</attribute>
+        </xpath>
+        <xpath expr="//a[hasclass('js_add_cart_json')]//i[hasclass('fa-plus')]/.." position="attributes">
+            <attribute name="t-att-style">'display: none !important;' if (line.subscription_benefit_id and line.subscription_discount_percent == 100) else ''</attribute>
+        </xpath>
     </template>
 
     <template id="checkout_summary_subscription_benefit" inherit_id="website_sale.checkout_layout" name="Subscription benefit in checkout summary">
