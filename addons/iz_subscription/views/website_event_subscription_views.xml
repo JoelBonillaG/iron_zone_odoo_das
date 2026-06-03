@@ -45,13 +45,15 @@
 
     <template id="hide_register_button_layout" inherit_id="website_event.layout" name="Hide Register Button in Layout if Registered">
         <xpath expr="//*[contains(@data-bs-target, '#modal_ticket_registration')]" position="attributes">
-            <attribute name="t-att-style">'display: none !important;' if (request.env.user and request.env.user.partner_id in event.inscritos_ids) else ''</attribute>
+            <attribute name="t-attf-class">{{ 'd-none' if (request.env.user and request.env.user.partner_id.id in event.inscritos_ids.ids) else '' }}</attribute>
+            <attribute name="t-att-style">'display: none !important;' if (request.env.user and request.env.user.partner_id.id in event.inscritos_ids.ids) else ''</attribute>
         </xpath>
     </template>
 
     <template id="hide_register_button_sidebar" inherit_id="website_event.event_description_full" name="Hide Register Button in Sidebar if Registered">
         <xpath expr="//*[contains(@data-bs-target, '#modal_ticket_registration')]" position="attributes">
-            <attribute name="t-att-style">'display: none !important;' if (request.env.user and request.env.user.partner_id in event.inscritos_ids) else ''</attribute>
+            <attribute name="t-attf-class">{{ 'd-none' if (request.env.user and request.env.user.partner_id.id in event.inscritos_ids.ids) else '' }}</attribute>
+            <attribute name="t-att-style">'display: none !important;' if (request.env.user and request.env.user.partner_id.id in event.inscritos_ids.ids) else ''</attribute>
         </xpath>
     </template>
 
