@@ -46,21 +46,26 @@
         <xpath expr="//span[@t-out='ticket.price']" position="replace">
             <t t-set="subscription_benefit" t-value="request.env.user.partner_id._get_current_subscription_benefits('events')[:1] if not website.is_public_user() else False"/>
             <t t-set="subscription_final_price" t-value="subscription_benefit.apply_to_amount(ticket.price) if subscription_benefit else ticket.price"/>
-            <span t-out="subscription_final_price" t-options="{'widget': 'monetary', 'display_currency': website.currency_id}"/>
+            <t t-if="subscription_benefit and subscription_benefit.discount_percent == 100">
+                <span class="text-success fw-bold">Incluido en tu plan</span>
+            </t>
+            <t t-else="">
+                <span t-out="subscription_final_price" t-options="{'widget': 'monetary', 'display_currency': website.currency_id}"/>
+            </t>
         </xpath>
     </template>
 
     <template id="hide_register_button_layout" inherit_id="website_event.layout" name="Hide Register Button in Layout if Registered">
         <xpath expr="//*[contains(@data-bs-target, '#modal_ticket_registration')]" position="attributes">
-            <attribute name="t-attf-class">{{ 'd-none' if (request.env.user and request.env.user.partner_id.id in event.inscritos_ids.ids) else '' }}</attribute>
-            <attribute name="t-att-style">'display: none !important;' if (request.env.user and request.env.user.partner_id.id in event.inscritos_ids.ids) else ''</attribute>
+            <attribute name="t-attf-class">{{ 'd-none' if (request.env.user and request.env.user.partner_id.id in event.inscritos_ids.ids) or ('/registration/success' in request.httprequest.path) or ('registration_ids' in request.params) else '' }}</attribute>
+            <attribute name="t-att-style">'display: none !important;' if (request.env.user and request.env.user.partner_id.id in event.inscritos_ids.ids) or ('/registration/success' in request.httprequest.path) or ('registration_ids' in request.params) else ''</attribute>
         </xpath>
     </template>
 
     <template id="hide_register_button_sidebar" inherit_id="website_event.event_description_full" name="Hide Register Button in Sidebar if Registered">
         <xpath expr="//*[contains(@data-bs-target, '#modal_ticket_registration')]" position="attributes">
-            <attribute name="t-attf-class">{{ 'd-none' if (request.env.user and request.env.user.partner_id.id in event.inscritos_ids.ids) else '' }}</attribute>
-            <attribute name="t-att-style">'display: none !important;' if (request.env.user and request.env.user.partner_id.id in event.inscritos_ids.ids) else ''</attribute>
+            <attribute name="t-attf-class">{{ 'd-none' if (request.env.user and request.env.user.partner_id.id in event.inscritos_ids.ids) or ('/registration/success' in request.httprequest.path) or ('registration_ids' in request.params) else '' }}</attribute>
+            <attribute name="t-att-style">'display: none !important;' if (request.env.user and request.env.user.partner_id.id in event.inscritos_ids.ids) or ('/registration/success' in request.httprequest.path) or ('registration_ids' in request.params) else ''</attribute>
         </xpath>
     </template>
 
@@ -74,11 +79,16 @@
                 <div t-if="subscription_benefit" class="o_wevent_sidebar_block iz-ticket-subscription-benefit border-bottom pb-3 mb-4 d-none d-lg-flex">
                     <span>Beneficio por suscripcion</span>
                     <strong t-field="subscription_benefit.name"/>
-                    <div class="iz-ticket-final-price">
-                        <span>Precio final</span>
-                        <strong t-out="subscription_final_price" t-options="{'widget': 'monetary', 'display_currency': website.currency_id}"/>
-                    </div>
-                    <span t-if="subscription_discount" t-esc="str(int(subscription_discount)) + '% aplicado'"/>
+                    <t t-if="subscription_discount == 100">
+                        <div class="text-success fw-bold mt-1">Incluido sin costo</div>
+                    </t>
+                    <t t-else="">
+                        <div class="iz-ticket-final-price">
+                            <span>Precio final</span>
+                            <strong t-out="subscription_final_price" t-options="{'widget': 'monetary', 'display_currency': website.currency_id}"/>
+                        </div>
+                        <span t-if="subscription_discount" t-esc="str(int(subscription_discount)) + '% aplicado'"/>
+                    </t>
                 </div>
             </t>
         </xpath>
@@ -91,13 +101,25 @@
                 <div t-if="subscription_benefit" class="o_wevent_sidebar_block iz-ticket-subscription-benefit border-bottom pb-3 mb-4 d-lg-none mt-3">
                     <span>Beneficio por suscripcion</span>
                     <strong t-field="subscription_benefit.name"/>
-                    <div class="iz-ticket-final-price">
-                        <span>Precio final</span>
-                        <strong t-out="subscription_final_price" t-options="{'widget': 'monetary', 'display_currency': website.currency_id}"/>
-                    </div>
-                    <span t-if="subscription_discount" t-esc="str(int(subscription_discount)) + '% aplicado'"/>
+                    <t t-if="subscription_discount == 100">
+                        <div class="text-success fw-bold mt-1">Incluido sin costo</div>
+                    </t>
+                    <t t-else="">
+                        <div class="iz-ticket-final-price">
+                            <span>Precio final</span>
+                            <strong t-out="subscription_final_price" t-options="{'widget': 'monetary', 'display_currency': website.currency_id}"/>
+                        </div>
+                        <span t-if="subscription_discount" t-esc="str(int(subscription_discount)) + '% aplicado'"/>
+                    </t>
                 </div>
             </t>
+        </xpath>
+    </template>
+
+    <template id="disable_closed_event_link" inherit_id="website_event.events_list" name="Disable link for closed events">
+        <xpath expr="//div[@t-as='event']/a" position="attributes">
+            <attribute name="t-att-href">('/event/%s/%s' % (slug(event), 'register' if not event.menu_id else '')).rstrip('/') if event.event_registrations_open else False</attribute>
+            <attribute name="t-att-style">'pointer-events: none; opacity: 0.7;' if not event.event_registrations_open else ''</attribute>
         </xpath>
     </template>
 
