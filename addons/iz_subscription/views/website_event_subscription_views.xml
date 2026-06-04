@@ -16,6 +16,13 @@
                 </div>
             </div>
         </xpath>
+        <xpath expr="//input[hasclass('js_quantity')]" position="attributes">
+            <attribute name="t-att-max">1 if (line.subscription_benefit_id and line.subscription_discount_percent == 100) else None</attribute>
+            <attribute name="t-att-readonly">'1' if (line.subscription_benefit_id and line.subscription_discount_percent == 100) else None</attribute>
+        </xpath>
+        <xpath expr="//a[hasclass('js_add_cart_json')]//i[hasclass('fa-plus')]/.." position="attributes">
+            <attribute name="t-att-style">'display: none !important;' if (line.subscription_benefit_id and line.subscription_discount_percent == 100) else ''</attribute>
+        </xpath>
     </template>
 
     <template id="checkout_summary_subscription_benefit" inherit_id="website_sale.checkout_layout" name="Subscription benefit in checkout summary">
@@ -36,11 +43,24 @@
     </template>
 
     <template id="modal_ticket_subscription_benefit" inherit_id="website_event_sale.modal_ticket_registration" name="Subscription benefit in event ticket modal">
-        <xpath expr="//div[hasclass('o_wevent_registration_multi_select')]" position="after">
-            <t t-if="False"/>
+        <xpath expr="//span[@t-out='ticket.price']" position="replace">
+            <t t-set="subscription_benefit" t-value="request.env.user.partner_id._get_current_subscription_benefits('events')[:1] if not website.is_public_user() else False"/>
+            <t t-set="subscription_final_price" t-value="subscription_benefit.apply_to_amount(ticket.price) if subscription_benefit else ticket.price"/>
+            <span t-out="subscription_final_price" t-options="{'widget': 'monetary', 'display_currency': website.currency_id}"/>
         </xpath>
-        <xpath expr="//div[hasclass('o_wevent_registration_single_select')]" position="after">
-            <t t-if="False"/>
+    </template>
+
+    <template id="hide_register_button_layout" inherit_id="website_event.layout" name="Hide Register Button in Layout if Registered">
+        <xpath expr="//*[contains(@data-bs-target, '#modal_ticket_registration')]" position="attributes">
+            <attribute name="t-attf-class">{{ 'd-none' if (request.env.user and request.env.user.partner_id.id in event.inscritos_ids.ids) else '' }}</attribute>
+            <attribute name="t-att-style">'display: none !important;' if (request.env.user and request.env.user.partner_id.id in event.inscritos_ids.ids) else ''</attribute>
+        </xpath>
+    </template>
+
+    <template id="hide_register_button_sidebar" inherit_id="website_event.event_description_full" name="Hide Register Button in Sidebar if Registered">
+        <xpath expr="//*[contains(@data-bs-target, '#modal_ticket_registration')]" position="attributes">
+            <attribute name="t-attf-class">{{ 'd-none' if (request.env.user and request.env.user.partner_id.id in event.inscritos_ids.ids) else '' }}</attribute>
+            <attribute name="t-att-style">'display: none !important;' if (request.env.user and request.env.user.partner_id.id in event.inscritos_ids.ids) else ''</attribute>
         </xpath>
     </template>
 
