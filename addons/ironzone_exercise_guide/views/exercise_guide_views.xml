@@ -179,6 +179,10 @@
                                     <field name="primary_muscle_group_id"/>
                                     <field name="equipment_id" invisible="exercise_type != 'machine'" required="exercise_type == 'machine'"/>
                                 </group>
+                                <group string="Acceso en portal">
+                                    <field name="requires_subscription" string="Guia premium / solo socios"/>
+                                    <field name="allowed_plan_ids" widget="many2many_tags" invisible="not requires_subscription"/>
+                                </group>
                             </group>
                             <div class="small text-muted">Consejo</div>
                             <div>Usa esta pantalla para dejar solo la información que también verá el usuario en el portal.</div>
@@ -223,8 +227,6 @@
                                     <field name="event_ids" widget="many2many_tags" invisible="exercise_type != 'group'"/>
                                 </group>
                                 <group>
-                                    <field name="requires_subscription"/>
-                                    <field name="allowed_plan_ids" widget="many2many_tags" invisible="not requires_subscription"/>
                                     <field name="company_id" groups="base.group_multi_company"/>
                                 </group>
                             </group>
