@@ -47,19 +47,35 @@
             <t t-set="all_benefits" t-value="request.env.user.partner_id._get_current_subscription_benefits('events') if not website.is_public_user() else False"/>
             <t t-set="subscription_benefit" t-value="all_benefits.filtered(lambda b: b.plan_id in event.subscription_plan_ids)[:1] if all_benefits and event.subscription_plan_ids else False"/>
             <t t-set="subscription_final_price" t-value="subscription_benefit.apply_to_amount(ticket.price) if subscription_benefit else ticket.price"/>
-            <t t-if="subscription_benefit and subscription_benefit.discount_percent == 100">
+            <t t-set="is_free_benefit" t-value="subscription_benefit and (subscription_benefit.benefit_type == 'free' or subscription_benefit.discount_percent == 100)"/>
+            <t t-if="is_free_benefit">
                 <span class="text-success fw-bold">Incluido en tu plan</span>
             </t>
-            <t t-else="">
+            <t t-elif="subscription_benefit">
                 <span t-out="subscription_final_price" t-options="{'widget': 'monetary', 'display_currency': website.currency_id}"/>
+                <small class="text-muted ms-1">(descuento de plan)</small>
+            </t>
+            <t t-else="">
+                <span t-out="ticket.price" t-options="{'widget': 'monetary', 'display_currency': website.currency_id}"/>
             </t>
         </xpath>
     </template>
 
-    <template id="hide_register_button" inherit_id="website_event.registration_template" name="Hide Register Button if Registered">
-        <xpath expr="//*[contains(@data-bs-target, '#modal_ticket_registration')]" position="attributes">
-            <attribute name="t-attf-class">{{ 'd-none' if (request.env.user and request.env.user.partner_id.id in event.inscritos_ids.ids) or ('/registration/success' in request.httprequest.path) or ('registration_ids' in request.params) else '' }}</attribute>
-            <attribute name="t-att-style">'display: none !important;' if (request.env.user and request.env.user.partner_id.id in event.inscritos_ids.ids) or ('/registration/success' in request.httprequest.path) or ('registration_ids' in request.params) else ''</attribute>
+    <template id="hide_register_button" inherit_id="website_event.registration_template" name="Hide or Replace Register Button if Registered">
+        <xpath expr="//*[contains(@data-bs-target, '#modal_ticket_registration')]" position="replace">
+            <t t-set="already_registered" t-value="not request.env.user._is_public() and request.env.user.partner_id.id in event.inscritos_ids.ids"/>
+            <t t-if="already_registered">
+                <div class="alert alert-success d-flex align-items-center gap-2 py-2 px-3 rounded-3" role="alert">
+                    <i class="fa fa-check-circle fa-lg"/>
+                    <span class="fw-semibold">Ya estás inscrito en esta clase</span>
+                </div>
+            </t>
+            <t t-else="">
+                <button type="button" data-bs-toggle="modal" data-bs-target="#modal_ticket_registration"
+                    t-attf-class="btn btn-primary #{cta_additional_classes or ''}">
+                    Inscribirse
+                </button>
+            </t>
         </xpath>
     </template>
 

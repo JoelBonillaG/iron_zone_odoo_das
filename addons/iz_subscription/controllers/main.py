@@ -14,12 +14,17 @@ class IzWebsiteSale(WebsiteSale):
                 [('product_id', '=', int(product_id))], limit=1
             )
             if ticket:
+                # Block if user is already registered to this event
+                event = ticket.event_id
+                if event and user.partner_id.id in event.inscritos_ids.ids:
+                    return request.redirect('/shop/cart')
+
                 partner = user.partner_id
                 benefits = partner._get_current_subscription_benefits("events")
                 # Filter benefits by what this specific event allows
-                if ticket.event_id and ticket.event_id.subscription_plan_ids:
+                if event and event.subscription_plan_ids:
                     benefits = benefits.filtered(
-                        lambda b: b.plan_id in ticket.event_id.subscription_plan_ids
+                        lambda b: b.plan_id in event.subscription_plan_ids
                     )
                 else:
                     benefits = request.env['iz.subscription.benefit']
