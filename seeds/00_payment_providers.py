@@ -10,8 +10,8 @@ BANK_CONTACT_EMAIL = "contacto@ironzone.ec"
 PAYMENT_PROVIDERS = {
     "demo": {
         "name": "Pago directo",
-        "state": "test",
-        "is_published": True,
+        "state": "disabled",
+        "is_published": False,
         "sequence": 1,
         "allow_tokenization": False,
         "allow_express_checkout": False,
@@ -38,7 +38,7 @@ PAYMENT_PROVIDERS = {
 }
 
 PAYMENT_METHODS = {
-    "demo": {"active": True, "sequence": 1, "sri_payment_code": "19"},
+    "demo": {"active": False, "sequence": 1, "sri_payment_code": "19"},
     "wire_transfer": {"active": True, "sequence": 2, "sri_payment_code": "20"},
     "card": {"active": True, "sequence": 3, "sri_payment_code": "19"},
 }
