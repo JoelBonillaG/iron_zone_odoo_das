@@ -68,7 +68,7 @@
             <t t-if="not website.is_public_user()">
                 <t t-set="all_benefits" t-value="request.env.user.partner_id._get_current_subscription_benefits('events')"/>
                 <t t-set="subscription_benefit" t-value="all_benefits.filtered(lambda b: b.plan_id in event.subscription_plan_ids)[:1] if event.subscription_plan_ids else False"/>
-                <t t-set="subscription_discount" t-value="100 if subscription_benefit.benefit_type == 'free' else subscription_benefit.discount_percent"/>
+                <t t-set="subscription_discount" t-value="100 if subscription_benefit and subscription_benefit.benefit_type == 'free' else (subscription_benefit.discount_percent if subscription_benefit else 0)"/>
                 <t t-set="ticket_price" t-value="event.event_ticket_ids[0].price if event.event_ticket_ids else 0.0"/>
                 <t t-set="subscription_final_price" t-value="subscription_benefit.apply_to_amount(ticket_price) if subscription_benefit else ticket_price"/>
                 <div t-if="subscription_benefit" class="o_wevent_sidebar_block iz-ticket-subscription-benefit border-bottom pb-3 mb-4 d-none d-lg-flex">
@@ -91,7 +91,7 @@
             <t t-if="not website.is_public_user()">
                 <t t-set="all_benefits" t-value="request.env.user.partner_id._get_current_subscription_benefits('events')"/>
                 <t t-set="subscription_benefit" t-value="all_benefits.filtered(lambda b: b.plan_id in event.subscription_plan_ids)[:1] if event.subscription_plan_ids else False"/>
-                <t t-set="subscription_discount" t-value="100 if subscription_benefit.benefit_type == 'free' else subscription_benefit.discount_percent"/>
+                <t t-set="subscription_discount" t-value="100 if subscription_benefit and subscription_benefit.benefit_type == 'free' else (subscription_benefit.discount_percent if subscription_benefit else 0)"/>
                 <t t-set="ticket_price" t-value="event.event_ticket_ids[0].price if event.event_ticket_ids else 0.0"/>
                 <t t-set="subscription_final_price" t-value="subscription_benefit.apply_to_amount(ticket_price) if subscription_benefit else ticket_price"/>
                 <div t-if="subscription_benefit" class="o_wevent_sidebar_block iz-ticket-subscription-benefit border-bottom pb-3 mb-4 d-lg-none mt-3">

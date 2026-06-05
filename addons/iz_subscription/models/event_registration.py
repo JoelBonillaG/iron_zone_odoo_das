@@ -63,7 +63,17 @@ class EventRegistration(models.Model):
         if not plan:
             return values
 
-        benefit = self.partner_id._get_current_subscription_benefits("events")[:1]
+        # Get event from the ticket (if any) to check allowed plans
+        ticket = self.event_ticket_id if "event_ticket_id" in self._fields else False
+        event = ticket.event_id if ticket else (self.event_id if "event_id" in self._fields else False)
+
+        all_benefits = self.partner_id._get_current_subscription_benefits("events")
+        if event and event.subscription_plan_ids:
+            all_benefits = all_benefits.filtered(lambda b: b.plan_id in event.subscription_plan_ids)
+        else:
+            all_benefits = self.env["iz.subscription.benefit"]
+
+        benefit = all_benefits[:1]
         if not benefit:
             return values
 
