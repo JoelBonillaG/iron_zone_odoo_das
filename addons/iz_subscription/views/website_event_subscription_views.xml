@@ -44,7 +44,8 @@
 
     <template id="modal_ticket_subscription_benefit" inherit_id="website_event_sale.modal_ticket_registration" name="Subscription benefit in event ticket modal">
         <xpath expr="//span[@t-out='ticket.price']" position="replace">
-            <t t-set="subscription_benefit" t-value="request.env.user.partner_id._get_current_subscription_benefits('events')[:1] if not website.is_public_user() else False"/>
+            <t t-set="all_benefits" t-value="request.env.user.partner_id._get_current_subscription_benefits('events') if not website.is_public_user() else False"/>
+            <t t-set="subscription_benefit" t-value="all_benefits.filtered(lambda b: b.plan_id in event.subscription_plan_ids)[:1] if all_benefits and event.subscription_plan_ids else False"/>
             <t t-set="subscription_final_price" t-value="subscription_benefit.apply_to_amount(ticket.price) if subscription_benefit else ticket.price"/>
             <t t-if="subscription_benefit and subscription_benefit.discount_percent == 100">
                 <span class="text-success fw-bold">Incluido en tu plan</span>
@@ -72,7 +73,8 @@
     <template id="event_sidebar_subscription_benefit" inherit_id="website_event.event_description_full" name="Subscription benefit in event sidebar" priority="40">
         <xpath expr="//aside[@id='o_wevent_event_main_sidebar']/div[hasclass('d-none', 'd-lg-block', 'border-bottom', 'pb-2', 'mb-3')]" position="before">
             <t t-if="not website.is_public_user()">
-                <t t-set="subscription_benefit" t-value="request.env.user.partner_id._get_current_subscription_benefits('events')[:1]"/>
+                <t t-set="all_benefits" t-value="request.env.user.partner_id._get_current_subscription_benefits('events')"/>
+                <t t-set="subscription_benefit" t-value="all_benefits.filtered(lambda b: b.plan_id in event.subscription_plan_ids)[:1] if event.subscription_plan_ids else False"/>
                 <t t-set="subscription_discount" t-value="100 if subscription_benefit.benefit_type == 'free' else subscription_benefit.discount_percent"/>
                 <t t-set="ticket_price" t-value="event.event_ticket_ids[0].price if event.event_ticket_ids else 0.0"/>
                 <t t-set="subscription_final_price" t-value="subscription_benefit.apply_to_amount(ticket_price) if subscription_benefit else ticket_price"/>
@@ -94,7 +96,8 @@
         </xpath>
         <xpath expr="//header[hasclass('d-lg-none', 'mt-4', 'mb-2', 'py-3', 'border-top')]" position="after">
             <t t-if="not website.is_public_user()">
-                <t t-set="subscription_benefit" t-value="request.env.user.partner_id._get_current_subscription_benefits('events')[:1]"/>
+                <t t-set="all_benefits" t-value="request.env.user.partner_id._get_current_subscription_benefits('events')"/>
+                <t t-set="subscription_benefit" t-value="all_benefits.filtered(lambda b: b.plan_id in event.subscription_plan_ids)[:1] if event.subscription_plan_ids else False"/>
                 <t t-set="subscription_discount" t-value="100 if subscription_benefit.benefit_type == 'free' else subscription_benefit.discount_percent"/>
                 <t t-set="ticket_price" t-value="event.event_ticket_ids[0].price if event.event_ticket_ids else 0.0"/>
                 <t t-set="subscription_final_price" t-value="subscription_benefit.apply_to_amount(ticket_price) if subscription_benefit else ticket_price"/>

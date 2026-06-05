@@ -13,6 +13,13 @@ class IzWebsiteSale(WebsiteSale):
             if getattr(product, 'detailed_type', '') == 'event' or getattr(product, 'event_ticket_ids', False):
                 partner = user.partner_id
                 benefits = partner._get_current_subscription_benefits("events")
+                
+                ticket = request.env['event.event.ticket'].sudo().search([('product_id', '=', int(product_id))], limit=1)
+                if ticket and ticket.event_id and ticket.event_id.subscription_plan_ids:
+                    benefits = benefits.filtered(lambda b: b.plan_id in ticket.event_id.subscription_plan_ids)
+                else:
+                    benefits = request.env['iz.subscription.benefit']
+                
                 if benefits and any(b.benefit_type == 'free' or b.discount_percent == 100 for b in benefits):
                     _add_qty = float(add_qty or 0)
                     _set_qty = float(set_qty or 0)

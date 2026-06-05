@@ -21,7 +21,8 @@
                             <field name="cupo_disponible" readonly="1"/>
                         </group>
                     </group>
-                    <group string="Socios Inscritos">
+                    <group string="Suscripciones y Socios">
+                        <field name="subscription_plan_ids" widget="many2many_tags"/>
                         <field name="inscritos_ids" widget="many2many_tags" readonly="1"/>
                     </group>
                 </page>

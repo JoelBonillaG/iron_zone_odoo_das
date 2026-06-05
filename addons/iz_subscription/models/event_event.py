@@ -48,6 +48,11 @@ class EventEvent(models.Model):
         compute="_compute_inscritos",
         store=True,
     )
+    subscription_plan_ids = fields.Many2many(
+        comodel_name="iz.subscription.plan",
+        string="Planes Permitidos",
+        help="Planes de suscripción que otorgan beneficios o descuentos para este evento. Si está vacío, ningún plan otorga beneficios.",
+    )
 
     @api.depends("date_begin")
     def _compute_horario(self):
