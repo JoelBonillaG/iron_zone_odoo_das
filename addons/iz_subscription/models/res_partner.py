@@ -77,3 +77,14 @@ class Partner(models.Model):
                 lambda benefit: benefit.benefit_scope == benefit_scope
             )
         return benefits
+
+    def _has_previous_event_registration(self):
+        """Returns True if this partner has at least one non-cancelled event registration.
+        Used to implement the 'first event free' business rule."""
+        self.ensure_one()
+        return bool(
+            self.env["event.registration"].sudo().search_count([
+                ("partner_id", "=", self.id),
+                ("state", "!=", "cancel"),
+            ])
+        )

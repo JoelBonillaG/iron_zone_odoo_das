@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 
+    <!-- Cart line: show subscription benefit tag -->
     <template id="cart_line_subscription_benefit" inherit_id="website_sale.cart_lines" name="Subscription benefit in cart">
         <xpath expr="//t[@t-call='website_sale.cart_line_description_following_lines']" position="after">
             <div t-if="line.subscription_benefit_id" class="iz-cart-subscription-benefit mt-2">
@@ -25,6 +26,7 @@
         </xpath>
     </template>
 
+    <!-- Checkout summary: show subscription benefit tag -->
     <template id="checkout_summary_subscription_benefit" inherit_id="website_sale.checkout_layout" name="Subscription benefit in checkout summary">
         <xpath expr="//td[@name='website_sale_cart_summary_product_name']/h6" position="after">
             <div t-if="line.subscription_benefit_id" class="iz-cart-subscription-benefit mt-2">
@@ -42,13 +44,24 @@
         </xpath>
     </template>
 
+    <!--
+        Modal ticket price display.
+        Priority: first-event free > subscription benefit > regular price.
+    -->
     <template id="modal_ticket_subscription_benefit" inherit_id="website_event_sale.modal_ticket_registration" name="Subscription benefit in event ticket modal">
         <xpath expr="//span[@t-out='ticket.price']" position="replace">
+            <!-- First-event check (highest priority) -->
+            <t t-set="is_first_time_user" t-value="not website.is_public_user() and not request.env.user.partner_id._has_previous_event_registration()"/>
+            <!-- Subscription benefit check -->
             <t t-set="all_benefits" t-value="request.env.user.partner_id._get_current_subscription_benefits('events') if not website.is_public_user() else False"/>
             <t t-set="subscription_benefit" t-value="all_benefits.filtered(lambda b: b.plan_id in event.subscription_plan_ids)[:1] if all_benefits and event.subscription_plan_ids else False"/>
             <t t-set="subscription_final_price" t-value="subscription_benefit.apply_to_amount(ticket.price) if subscription_benefit else ticket.price"/>
             <t t-set="is_free_benefit" t-value="subscription_benefit and (subscription_benefit.benefit_type == 'free' or subscription_benefit.discount_percent == 100)"/>
-            <t t-if="is_free_benefit">
+
+            <t t-if="is_first_time_user">
+                <span class="text-success fw-bold">Gratis — Primer evento</span>
+            </t>
+            <t t-elif="is_free_benefit">
                 <span class="text-success fw-bold">Incluido en tu plan</span>
             </t>
             <t t-elif="subscription_benefit">
@@ -61,16 +74,35 @@
         </xpath>
     </template>
 
-    <template id="hide_register_button" inherit_id="website_event.registration_template" name="Hide or Replace Register Button if Registered">
+    <!--
+        Register button.
+        Priority: already registered > first-event / free-event (direct POST) > modal.
+    -->
+    <template id="hide_register_button" inherit_id="website_event.registration_template" name="Hide or Replace Register Button based on status">
         <xpath expr="//*[contains(@data-bs-target, '#modal_ticket_registration')]" position="replace">
             <t t-set="already_registered" t-value="not request.env.user._is_public() and request.env.user.partner_id.id in event.inscritos_ids.ids"/>
+            <!-- Free event: all defined tickets cost $0 -->
+            <t t-set="is_free_event" t-value="event.event_ticket_ids and not event.event_ticket_ids.filtered(lambda t: t.price &gt; 0)"/>
+            <!-- First-time: user has never registered for any event -->
+            <t t-set="is_first_time_user" t-value="not request.env.user._is_public() and not request.env.user.partner_id._has_previous_event_registration()"/>
+
             <t t-if="already_registered">
                 <div class="alert alert-success d-flex align-items-center gap-2 py-2 px-3 rounded-3" role="alert">
                     <i class="fa fa-check-circle fa-lg"/>
                     <span class="fw-semibold">Ya estás inscrito en esta clase</span>
                 </div>
             </t>
+            <t t-elif="is_first_time_user or is_free_event">
+                <!-- Bypass modal and cart entirely: POST directly to free-register -->
+                <form method="post" t-att-action="'/event/%s/free-register' % event.id" style="display:inline;">
+                    <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                    <button type="submit" t-attf-class="btn btn-primary #{cta_additional_classes or ''}">
+                        Inscribirse
+                    </button>
+                </form>
+            </t>
             <t t-else="">
+                <!-- Regular paid flow: open the ticket modal -->
                 <button type="button" data-bs-toggle="modal" data-bs-target="#modal_ticket_registration"
                     t-attf-class="btn btn-primary #{cta_additional_classes or ''}">
                     Inscribirse
@@ -79,55 +111,91 @@
         </xpath>
     </template>
 
+    <!--
+        Event sidebar: show pricing badge.
+        Priority: first-event free > subscription discount > nothing extra.
+        Rendered twice (desktop and mobile).
+    -->
     <template id="event_sidebar_subscription_benefit" inherit_id="website_event.event_description_full" name="Subscription benefit in event sidebar" priority="40">
+
+        <!-- Desktop sidebar -->
         <xpath expr="//aside[@id='o_wevent_event_main_sidebar']/div[hasclass('d-none', 'd-lg-block', 'border-bottom', 'pb-2', 'mb-3')]" position="before">
             <t t-if="not website.is_public_user()">
+                <t t-set="is_first_time_user" t-value="not request.env.user.partner_id._has_previous_event_registration()"/>
                 <t t-set="all_benefits" t-value="request.env.user.partner_id._get_current_subscription_benefits('events')"/>
                 <t t-set="subscription_benefit" t-value="all_benefits.filtered(lambda b: b.plan_id in event.subscription_plan_ids)[:1] if event.subscription_plan_ids else False"/>
                 <t t-set="subscription_discount" t-value="100 if subscription_benefit and subscription_benefit.benefit_type == 'free' else (subscription_benefit.discount_percent if subscription_benefit else 0)"/>
                 <t t-set="ticket_price" t-value="event.event_ticket_ids[0].price if event.event_ticket_ids else 0.0"/>
                 <t t-set="subscription_final_price" t-value="subscription_benefit.apply_to_amount(ticket_price) if subscription_benefit else ticket_price"/>
-                <div t-if="subscription_benefit" class="o_wevent_sidebar_block iz-ticket-subscription-benefit border-bottom pb-3 mb-4 d-none d-lg-flex">
-                    <span>Beneficio por suscripcion</span>
-                    <strong t-field="subscription_benefit.name"/>
-                    <t t-if="subscription_discount == 100">
-                        <div class="text-success fw-bold mt-1">Incluido sin costo</div>
-                    </t>
-                    <t t-else="">
-                        <div class="iz-ticket-final-price">
-                            <span>Precio final</span>
-                            <strong t-out="subscription_final_price" t-options="{'widget': 'monetary', 'display_currency': website.currency_id}"/>
+
+                <t t-if="is_first_time_user">
+                    <div class="o_wevent_sidebar_block iz-ticket-subscription-benefit border-bottom pb-3 mb-4 d-none d-lg-flex">
+                        <span>Tu primer evento</span>
+                        <div class="text-success fw-bold mt-1">
+                            <i class="fa fa-gift me-1"/>¡Gratis!
                         </div>
-                        <span t-if="subscription_discount" t-esc="str(int(subscription_discount)) + '% aplicado'"/>
-                    </t>
-                </div>
+                        <small class="text-muted">El primer evento siempre es sin costo.</small>
+                    </div>
+                </t>
+                <t t-elif="subscription_benefit">
+                    <div class="o_wevent_sidebar_block iz-ticket-subscription-benefit border-bottom pb-3 mb-4 d-none d-lg-flex">
+                        <span>Beneficio por suscripcion</span>
+                        <strong t-field="subscription_benefit.name"/>
+                        <t t-if="subscription_discount == 100">
+                            <div class="text-success fw-bold mt-1">Incluido sin costo</div>
+                        </t>
+                        <t t-else="">
+                            <div class="iz-ticket-final-price">
+                                <span>Precio final</span>
+                                <strong t-out="subscription_final_price" t-options="{'widget': 'monetary', 'display_currency': website.currency_id}"/>
+                            </div>
+                            <span t-if="subscription_discount" t-esc="str(int(subscription_discount)) + '% aplicado'"/>
+                        </t>
+                    </div>
+                </t>
             </t>
         </xpath>
+
+        <!-- Mobile sidebar -->
         <xpath expr="//header[hasclass('d-lg-none', 'mt-4', 'mb-2', 'py-3', 'border-top')]" position="after">
             <t t-if="not website.is_public_user()">
+                <t t-set="is_first_time_user" t-value="not request.env.user.partner_id._has_previous_event_registration()"/>
                 <t t-set="all_benefits" t-value="request.env.user.partner_id._get_current_subscription_benefits('events')"/>
                 <t t-set="subscription_benefit" t-value="all_benefits.filtered(lambda b: b.plan_id in event.subscription_plan_ids)[:1] if event.subscription_plan_ids else False"/>
                 <t t-set="subscription_discount" t-value="100 if subscription_benefit and subscription_benefit.benefit_type == 'free' else (subscription_benefit.discount_percent if subscription_benefit else 0)"/>
                 <t t-set="ticket_price" t-value="event.event_ticket_ids[0].price if event.event_ticket_ids else 0.0"/>
                 <t t-set="subscription_final_price" t-value="subscription_benefit.apply_to_amount(ticket_price) if subscription_benefit else ticket_price"/>
-                <div t-if="subscription_benefit" class="o_wevent_sidebar_block iz-ticket-subscription-benefit border-bottom pb-3 mb-4 d-lg-none mt-3">
-                    <span>Beneficio por suscripcion</span>
-                    <strong t-field="subscription_benefit.name"/>
-                    <t t-if="subscription_discount == 100">
-                        <div class="text-success fw-bold mt-1">Incluido sin costo</div>
-                    </t>
-                    <t t-else="">
-                        <div class="iz-ticket-final-price">
-                            <span>Precio final</span>
-                            <strong t-out="subscription_final_price" t-options="{'widget': 'monetary', 'display_currency': website.currency_id}"/>
+
+                <t t-if="is_first_time_user">
+                    <div class="o_wevent_sidebar_block iz-ticket-subscription-benefit border-bottom pb-3 mb-4 d-lg-none mt-3">
+                        <span>Tu primer evento</span>
+                        <div class="text-success fw-bold mt-1">
+                            <i class="fa fa-gift me-1"/>¡Gratis!
                         </div>
-                        <span t-if="subscription_discount" t-esc="str(int(subscription_discount)) + '% aplicado'"/>
-                    </t>
-                </div>
+                        <small class="text-muted">El primer evento siempre es sin costo.</small>
+                    </div>
+                </t>
+                <t t-elif="subscription_benefit">
+                    <div class="o_wevent_sidebar_block iz-ticket-subscription-benefit border-bottom pb-3 mb-4 d-lg-none mt-3">
+                        <span>Beneficio por suscripcion</span>
+                        <strong t-field="subscription_benefit.name"/>
+                        <t t-if="subscription_discount == 100">
+                            <div class="text-success fw-bold mt-1">Incluido sin costo</div>
+                        </t>
+                        <t t-else="">
+                            <div class="iz-ticket-final-price">
+                                <span>Precio final</span>
+                                <strong t-out="subscription_final_price" t-options="{'widget': 'monetary', 'display_currency': website.currency_id}"/>
+                            </div>
+                            <span t-if="subscription_discount" t-esc="str(int(subscription_discount)) + '% aplicado'"/>
+                        </t>
+                    </div>
+                </t>
             </t>
         </xpath>
     </template>
 
+    <!-- Disable link for events with closed registrations -->
     <template id="disable_closed_event_link" inherit_id="website_event.events_list" name="Disable link for closed events">
         <xpath expr="//div[@t-as='event']/a" position="attributes">
             <attribute name="t-att-href">('/event/%s/%s' % (slug(event), 'register' if not event.menu_id else '')).rstrip('/') if event.event_registrations_open else False</attribute>

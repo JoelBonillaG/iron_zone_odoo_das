@@ -363,7 +363,7 @@ def ensure_event_login_required(uid, models):
     arch = '''
     <xpath expr="//button[@data-bs-target='#modal_ticket_registration']" position="replace">
         <t t-if="request.env.user._is_public()">
-            <a t-attf-href="/web/login?redirect=/event/#{slug(event)}" t-attf-class="btn btn-primary {{cta_additional_classes}}">Register</a>
+            <a t-attf-href="/web/login?redirect=/event/#{slug(event)}" t-attf-class="btn btn-primary {{cta_additional_classes}}">Registrarse</a>
         </t>
         <t t-else="">
             <button type="button" data-bs-toggle="modal" data-bs-target="#modal_ticket_registration" t-attf-class="btn btn-primary {{cta_additional_classes}}">Register</button>

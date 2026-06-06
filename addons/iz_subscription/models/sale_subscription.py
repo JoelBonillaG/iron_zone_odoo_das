@@ -58,13 +58,13 @@ class SaleSubscription(models.Model):
     pricelist_id = fields.Many2one(
         comodel_name="product.pricelist", required=True, string="Lista de precios"
     )
-    recurring_next_date = fields.Date(string="Proxima factura", default=date.today())
+    recurring_next_date = fields.Date(string="Proxima factura", default=fields.Date.today)
     user_id = fields.Many2one(
         comodel_name="res.users",
         string="Responsable comercial",
         default=lambda self: self.env.user.id,
     )
-    date_start = fields.Date(string="Fecha de inicio", default=date.today())
+    date_start = fields.Date(string="Fecha de inicio", default=fields.Date.today)
     date = fields.Date(
         string="Fecha de fin",
         compute="_compute_rule_boundary",
@@ -575,8 +575,11 @@ class SaleSubscription(models.Model):
                     if record.stage_id.type == "in_progress":
                         record.in_progress = True
                         today = date.today()
-                        record.date_start = today
-                        record.calculate_recurring_next_date(today)
+                        # Only reset date_start if it hasn't been set to a future date
+                        # (a future date_start means the subscription was scheduled to start later)
+                        if not record.date_start or record.date_start > today:
+                            record.date_start = today
+                        record.calculate_recurring_next_date(record.date_start)
                     elif record.stage_id.type == "post":
                         record.close_reason_id = values.get("close_reason_id", False)
                         record.in_progress = False

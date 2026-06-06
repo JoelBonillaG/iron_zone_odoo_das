@@ -43,8 +43,10 @@ class IzSubscriptionBenefit(models.Model):
         for record in self:
             if record.discount_percent < 0 or record.discount_percent > 100:
                 raise ValidationError("El descuento debe estar entre 0 y 100.")
-            if record.benefit_type == "free" and record.discount_percent not in (0, 100):
-                raise ValidationError("Un beneficio gratis debe tener 0% o 100% de descuento.")
+            if record.benefit_type == "free" and record.discount_percent != 100:
+                raise ValidationError(
+                    "Un beneficio de acceso gratis debe tener 100% de descuento."
+                )
 
     @api.constrains("active", "plan_id", "benefit_scope")
     def _check_single_active_benefit_per_scope(self):

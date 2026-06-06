@@ -1,6 +1,7 @@
 from odoo import http
 from odoo.http import request
 from odoo.addons.website_sale.controllers.main import WebsiteSale
+from odoo.addons.website_event.controllers.main import WebsiteEventController
 
 
 class IzWebsiteSale(WebsiteSale):
@@ -54,17 +55,74 @@ class IzWebsiteSale(WebsiteSale):
     def checkout(self, **post):
         order = request.website.sale_get_order()
         if order and order.amount_total == 0.0:
-            # Detect free event lines backed by a 100% subscription benefit
-            has_free_sub_event = any(
-                "event_ticket_id" in line._fields
-                and line.event_ticket_id
-                and line.subscription_discount_percent == 100
-                for line in order.order_line
+            # Only auto-confirm if ALL lines in the order are event ticket lines
+            # (avoids silently confirming a mixed cart with non-event $0 products)
+            event_lines = order.order_line.filtered(
+                lambda l: "event_ticket_id" in l._fields and l.event_ticket_id
             )
-
-            if has_free_sub_event:
-                # Auto-confirm the order; Odoo creates event.registration on confirm
+            non_event_lines = order.order_line - event_lines
+            if event_lines and not non_event_lines:
                 order.sudo().action_confirm()
                 return request.redirect('/shop/confirmation')
 
         return super().checkout(**post)
+
+
+class IzWebsiteEvent(WebsiteEventController):
+
+    @http.route('/event/<int:event_id>/free-register', type='http', auth='user', methods=['POST'], website=True, csrf=True)
+    def free_event_register(self, event_id, **kw):
+        """Direct registration — bypasses cart and payment.
+        Applies when: (a) event is free (all tickets $0), or (b) it's the user's first event ever."""
+        user = request.env.user
+        if user._is_public():
+            return request.redirect('/web/login')
+
+        event = request.env['event.event'].sudo().browse(event_id)
+        if not event.exists():
+            return request.redirect('/event')
+
+        # Determine eligibility
+        paid_tickets = event.event_ticket_ids.filtered(lambda t: t.price > 0)
+        is_free_event = event.event_ticket_ids and not paid_tickets
+        is_first_time = not user.partner_id._has_previous_event_registration()
+
+        if not is_free_event and not is_first_time:
+            # Neither condition — send to regular modal flow
+            return request.redirect('/event/%s/register' % event_id)
+
+        # Block if already registered
+        if user.partner_id.id in event.inscritos_ids.ids:
+            return request.redirect('/event/%s/register' % event_id)
+
+        # Block if no seats available
+        if event.seats_limited and event.seats_available <= 0:
+            return request.redirect('/event/%s/register' % event_id)
+
+        ticket = event.event_ticket_ids[:1] if event.event_ticket_ids else False
+
+        reg_vals = {
+            'event_id': event.id,
+            'partner_id': user.partner_id.id,
+            'name': user.partner_id.name,
+            'email': user.partner_id.email or '',
+            'phone': user.partner_id.phone or '',
+            'state': 'open',
+        }
+        if ticket:
+            reg_vals['event_ticket_id'] = ticket.id
+
+        registration = request.env['event.registration'].sudo().create(reg_vals)
+
+        iCal_url = '/event/%d/ics' % event.id
+        google_url = ''
+        if hasattr(event, '_get_google_url'):
+            google_url = event._get_google_url()
+
+        return request.render('website_event.registration_complete', {
+            'event': event,
+            'attendees': registration,
+            'iCal_url': iCal_url,
+            'google_url': google_url,
+        })
+
