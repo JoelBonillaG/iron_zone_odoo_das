@@ -198,6 +198,36 @@
         </xpath>
     </template>
 
+    <!--
+        Attendee modal submit button override.
+        For annual-plan subscribers (100% discount / free benefit):
+          - show price as $0 in the ticket modal button
+          - replace "Ir al pago" with "Finalizar compra"
+    -->
+    <template id="attendee_modal_subscription_button" inherit_id="website_event_sale.registration_attendee_details" name="Subscription: Finalizar compra button">
+        <xpath expr="//div[hasclass('modal-footer')]//button[hasclass('btn-primary')]" position="replace">
+            <t t-if="availability_check">
+                <t t-set="has_paying_ticket" t-value="any(ticket.get('price', 0) &gt; 0 for ticket in tickets)"/>
+                <!-- Check if logged-in user has a 100%-free subscription benefit -->
+                <t t-set="_iz_all_benefits" t-value="request.env.user.partner_id._get_current_subscription_benefits('events') if not website.is_public_user() else False"/>
+                <t t-set="_iz_benefit" t-value="(_iz_all_benefits[:1]) if _iz_all_benefits else False"/>
+                <t t-set="_iz_is_free_sub" t-value="_iz_benefit and (_iz_benefit.benefit_type == 'free' or _iz_benefit.discount_percent == 100)"/>
+
+                <button t-if="website.account_on_checkout == 'mandatory' and website.is_public_user() and has_paying_ticket" class="btn btn-primary" type="submit">
+                    <span>Iniciar sesión</span>
+                    <span class="fa fa-sign-in"/>
+                </button>
+                <button t-elif="_iz_is_free_sub" type="submit" class="btn btn-primary">
+                    <span>Finalizar compra</span>
+                </button>
+                <button t-else="" type="submit" class="btn btn-primary">
+                    <span t-if="has_paying_ticket">Ir al pago</span>
+                    <span t-else="">Confirmar inscripción</span>
+                </button>
+            </t>
+        </xpath>
+    </template>
+
     <!-- Disable link for events with closed registrations -->
     <template id="disable_closed_event_link" inherit_id="website_event.events_list" name="Disable link for closed events">
         <xpath expr="//div[@t-as='event']/a" position="attributes">
