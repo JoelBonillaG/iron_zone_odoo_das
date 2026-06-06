@@ -44,10 +44,10 @@ class SaleOrderLine(models.Model):
         if not plan:
             return plan, subscription, self.env["iz.subscription.benefit"]
         benefits = partner._get_current_subscription_benefits("events")
+        # If the event restricts to specific plans, filter — otherwise apply to all events
         if ticket.event_id and ticket.event_id.subscription_plan_ids:
             benefits = benefits.filtered(lambda b: b.plan_id in ticket.event_id.subscription_plan_ids)
-        else:
-            benefits = self.env["iz.subscription.benefit"]
+        # (no else: if subscription_plan_ids is empty, all benefits apply)
         benefit = benefits[:1]
         return plan, subscription, benefit
 

@@ -47,14 +47,16 @@
     <!--
         Modal ticket price display.
         Priority: first-event free > subscription benefit > regular price.
+        If event.subscription_plan_ids is set, only matching plans apply.
+        If empty, the user's benefit applies to all events.
     -->
     <template id="modal_ticket_subscription_benefit" inherit_id="website_event_sale.modal_ticket_registration" name="Subscription benefit in event ticket modal">
         <xpath expr="//span[@t-out='ticket.price']" position="replace">
             <!-- First-event check (highest priority) -->
             <t t-set="is_first_time_user" t-value="not website.is_public_user() and not request.env.user.partner_id._has_previous_event_registration()"/>
-            <!-- Subscription benefit check -->
+            <!-- Subscription benefit: apply to all events unless event restricts to specific plans -->
             <t t-set="all_benefits" t-value="request.env.user.partner_id._get_current_subscription_benefits('events') if not website.is_public_user() else False"/>
-            <t t-set="subscription_benefit" t-value="all_benefits.filtered(lambda b: b.plan_id in event.subscription_plan_ids)[:1] if all_benefits and event.subscription_plan_ids else False"/>
+            <t t-set="subscription_benefit" t-value="(all_benefits.filtered(lambda b: b.plan_id in event.subscription_plan_ids)[:1] if event.subscription_plan_ids else all_benefits[:1]) if all_benefits else False"/>
             <t t-set="subscription_final_price" t-value="subscription_benefit.apply_to_amount(ticket.price) if subscription_benefit else ticket.price"/>
             <t t-set="is_free_benefit" t-value="subscription_benefit and (subscription_benefit.benefit_type == 'free' or subscription_benefit.discount_percent == 100)"/>
 
@@ -102,7 +104,7 @@
                 </form>
             </t>
             <t t-else="">
-                <!-- Regular paid flow: open the ticket modal -->
+                <!-- Regular paid/discounted flow: open the ticket modal -->
                 <button type="button" data-bs-toggle="modal" data-bs-target="#modal_ticket_registration"
                     t-attf-class="btn btn-primary #{cta_additional_classes or ''}">
                     Inscribirse
@@ -114,7 +116,7 @@
     <!--
         Event sidebar: show pricing badge.
         Priority: first-event free > subscription discount > nothing extra.
-        Rendered twice (desktop and mobile).
+        If event.subscription_plan_ids is empty, benefit applies to all events.
     -->
     <template id="event_sidebar_subscription_benefit" inherit_id="website_event.event_description_full" name="Subscription benefit in event sidebar" priority="40">
 
@@ -123,7 +125,8 @@
             <t t-if="not website.is_public_user()">
                 <t t-set="is_first_time_user" t-value="not request.env.user.partner_id._has_previous_event_registration()"/>
                 <t t-set="all_benefits" t-value="request.env.user.partner_id._get_current_subscription_benefits('events')"/>
-                <t t-set="subscription_benefit" t-value="all_benefits.filtered(lambda b: b.plan_id in event.subscription_plan_ids)[:1] if event.subscription_plan_ids else False"/>
+                <!-- If event restricts plans, filter; otherwise apply to all events -->
+                <t t-set="subscription_benefit" t-value="(all_benefits.filtered(lambda b: b.plan_id in event.subscription_plan_ids)[:1] if event.subscription_plan_ids else all_benefits[:1]) if all_benefits else False"/>
                 <t t-set="subscription_discount" t-value="100 if subscription_benefit and subscription_benefit.benefit_type == 'free' else (subscription_benefit.discount_percent if subscription_benefit else 0)"/>
                 <t t-set="ticket_price" t-value="event.event_ticket_ids[0].price if event.event_ticket_ids else 0.0"/>
                 <t t-set="subscription_final_price" t-value="subscription_benefit.apply_to_amount(ticket_price) if subscription_benefit else ticket_price"/>
@@ -161,7 +164,7 @@
             <t t-if="not website.is_public_user()">
                 <t t-set="is_first_time_user" t-value="not request.env.user.partner_id._has_previous_event_registration()"/>
                 <t t-set="all_benefits" t-value="request.env.user.partner_id._get_current_subscription_benefits('events')"/>
-                <t t-set="subscription_benefit" t-value="all_benefits.filtered(lambda b: b.plan_id in event.subscription_plan_ids)[:1] if event.subscription_plan_ids else False"/>
+                <t t-set="subscription_benefit" t-value="(all_benefits.filtered(lambda b: b.plan_id in event.subscription_plan_ids)[:1] if event.subscription_plan_ids else all_benefits[:1]) if all_benefits else False"/>
                 <t t-set="subscription_discount" t-value="100 if subscription_benefit and subscription_benefit.benefit_type == 'free' else (subscription_benefit.discount_percent if subscription_benefit else 0)"/>
                 <t t-set="ticket_price" t-value="event.event_ticket_ids[0].price if event.event_ticket_ids else 0.0"/>
                 <t t-set="subscription_final_price" t-value="subscription_benefit.apply_to_amount(ticket_price) if subscription_benefit else ticket_price"/>

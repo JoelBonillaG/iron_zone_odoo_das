@@ -70,8 +70,7 @@ class EventRegistration(models.Model):
         all_benefits = self.partner_id._get_current_subscription_benefits("events")
         if event and event.subscription_plan_ids:
             all_benefits = all_benefits.filtered(lambda b: b.plan_id in event.subscription_plan_ids)
-        else:
-            all_benefits = self.env["iz.subscription.benefit"]
+        # (no else: if no plan restriction, benefit applies to all events)
 
         benefit = all_benefits[:1]
         if not benefit:

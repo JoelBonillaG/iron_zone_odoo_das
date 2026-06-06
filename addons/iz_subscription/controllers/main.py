@@ -7,7 +7,12 @@ from odoo.addons.website_event.controllers.main import WebsiteEventController
 class IzWebsiteSale(WebsiteSale):
 
     @http.route(['/shop/cart/update'], type='http', auth="public", methods=['POST'], website=True, csrf=False)
-    def cart_update(self, product_id, add_qty=1, set_qty=0, **kw):
+    def cart_update(
+        self, product_id, add_qty=1, set_qty=0,
+        product_custom_attribute_values=None,
+        no_variant_attribute_value_ids=None,
+        **kw
+    ):
         user = request.env.user
         if user and not user._is_public():
             # Detect if the product is tied to an event ticket
@@ -22,13 +27,12 @@ class IzWebsiteSale(WebsiteSale):
 
                 partner = user.partner_id
                 benefits = partner._get_current_subscription_benefits("events")
-                # Filter benefits by what this specific event allows
+                # Only filter by plan if the event explicitly restricts to specific plans
                 if event and event.subscription_plan_ids:
                     benefits = benefits.filtered(
                         lambda b: b.plan_id in event.subscription_plan_ids
                     )
-                else:
-                    benefits = request.env['iz.subscription.benefit']
+                # (no else: if no restriction, benefit applies to all events)
 
                 # Restrict qty to 1 if user has any active benefit for this event
                 if benefits:
@@ -49,14 +53,23 @@ class IzWebsiteSale(WebsiteSale):
                     elif _add_qty > 0 and current_qty + _add_qty > 1:
                         add_qty = max(1 - current_qty, 0)
 
-        return super().cart_update(product_id, add_qty=add_qty, set_qty=set_qty, **kw)
+        return super().cart_update(
+            product_id,
+            add_qty=add_qty,
+            set_qty=set_qty,
+            product_custom_attribute_values=product_custom_attribute_values,
+            no_variant_attribute_value_ids=no_variant_attribute_value_ids,
+            **kw
+        )
 
-    @http.route(['/shop/checkout'], type='http', auth="public", website=True, sitemap=False)
-    def checkout(self, **post):
+    @http.route(
+        '/shop/checkout', type='http', methods=['GET'], auth='public', website=True, sitemap=False
+    )
+    def shop_checkout(self, try_skip_step=None, **query_params):
+        """Override to auto-confirm $0 event-only orders, bypassing the checkout page."""
         order = request.website.sale_get_order()
         if order and order.amount_total == 0.0:
-            # Only auto-confirm if ALL lines in the order are event ticket lines
-            # (avoids silently confirming a mixed cart with non-event $0 products)
+            # Only auto-confirm if ALL lines are event ticket lines (no mixed carts)
             event_lines = order.order_line.filtered(
                 lambda l: "event_ticket_id" in l._fields and l.event_ticket_id
             )
@@ -65,7 +78,7 @@ class IzWebsiteSale(WebsiteSale):
                 order.sudo().action_confirm()
                 return request.redirect('/shop/confirmation')
 
-        return super().checkout(**post)
+        return super().shop_checkout(try_skip_step=try_skip_step, **query_params)
 
 
 class IzWebsiteEvent(WebsiteEventController):
