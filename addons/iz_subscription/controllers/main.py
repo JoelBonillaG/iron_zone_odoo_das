@@ -86,7 +86,11 @@ class IzWebsiteEvent(WebsiteEventController):
     @http.route('/event/<int:event_id>/free-register', type='http', auth='user', methods=['POST'], website=True, csrf=True)
     def free_event_register(self, event_id, **kw):
         """Direct registration — bypasses cart and payment.
-        Applies when: (a) event is free (all tickets $0), or (b) it's the user's first event ever."""
+        Applies when:
+          (a) event is free (all tickets $0),
+          (b) it's the user's first event ever, or
+          (c) the user has an active subscription benefit covering this event.
+        """
         user = request.env.user
         if user._is_public():
             return request.redirect('/web/login')
@@ -100,8 +104,14 @@ class IzWebsiteEvent(WebsiteEventController):
         is_free_event = event.event_ticket_ids and not paid_tickets
         is_first_time = not user.partner_id._has_previous_event_registration()
 
-        if not is_free_event and not is_first_time:
-            # Neither condition — send to regular modal flow
+        # Check subscription benefit
+        all_benefits = user.partner_id._get_current_subscription_benefits('events')
+        if event.subscription_plan_ids:
+            all_benefits = all_benefits.filtered(lambda b: b.plan_id in event.subscription_plan_ids)
+        has_subscription_benefit = bool(all_benefits[:1])
+
+        if not is_free_event and not is_first_time and not has_subscription_benefit:
+            # No eligibility — send to regular modal flow
             return request.redirect('/event/%s/register' % event_id)
 
         # Block if already registered

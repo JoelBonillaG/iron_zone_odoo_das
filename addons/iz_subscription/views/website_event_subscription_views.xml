@@ -78,15 +78,19 @@
 
     <!--
         Register button.
-        Priority: already registered > first-event / free-event (direct POST) > modal.
+        Priority: already registered > first-event / free-event / subscriber (direct POST) > modal.
+        Uses priority=50 to run after all base overrides and avoid XPath conflicts.
     -->
-    <template id="hide_register_button" inherit_id="website_event.registration_template" name="Hide or Replace Register Button based on status">
-        <xpath expr="//*[contains(@data-bs-target, '#modal_ticket_registration')]" position="replace">
+    <template id="hide_register_button" inherit_id="website_event.registration_template" name="Hide or Replace Register Button based on status" priority="50">
+        <xpath expr="//button[contains(@data-bs-target,'modal_ticket_registration')]" position="replace">
             <t t-set="already_registered" t-value="not request.env.user._is_public() and request.env.user.partner_id.id in event.inscritos_ids.ids"/>
             <!-- Free event: all defined tickets cost $0 -->
             <t t-set="is_free_event" t-value="event.event_ticket_ids and not event.event_ticket_ids.filtered(lambda t: t.price &gt; 0)"/>
             <!-- First-time: user has never registered for any event -->
             <t t-set="is_first_time_user" t-value="not request.env.user._is_public() and not request.env.user.partner_id._has_previous_event_registration()"/>
+            <!-- Subscription benefit: subscriber with event access (skip modal entirely) -->
+            <t t-set="_sub_all_benefits" t-value="request.env.user.partner_id._get_current_subscription_benefits('events') if not request.env.user._is_public() else False"/>
+            <t t-set="has_subscription_benefit" t-value="((_sub_all_benefits.filtered(lambda b: b.plan_id in event.subscription_plan_ids)[:1] if event.subscription_plan_ids else _sub_all_benefits[:1]) if _sub_all_benefits else False)"/>
 
             <t t-if="already_registered">
                 <div class="alert alert-success d-flex align-items-center gap-2 py-2 px-3 rounded-3" role="alert">
@@ -94,8 +98,8 @@
                     <span class="fw-semibold">Ya estás inscrito en esta clase</span>
                 </div>
             </t>
-            <t t-elif="is_first_time_user or is_free_event">
-                <!-- Bypass modal and cart entirely: POST directly to free-register -->
+            <t t-elif="is_first_time_user or is_free_event or has_subscription_benefit">
+                <!-- Bypass modal and cart entirely: POST directly to free-register for free/first/subscriber -->
                 <form method="post" t-att-action="'/event/%s/free-register' % event.id" style="display:inline;">
                     <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
                     <button type="submit" t-attf-class="btn btn-primary #{cta_additional_classes or ''}">
@@ -104,7 +108,7 @@
                 </form>
             </t>
             <t t-else="">
-                <!-- Regular paid/discounted flow: open the ticket modal -->
+                <!-- Regular paid flow: open the ticket modal (non-subscriber, non-first-time) -->
                 <button type="button" data-bs-toggle="modal" data-bs-target="#modal_ticket_registration"
                     t-attf-class="btn btn-primary #{cta_additional_classes or ''}">
                     Inscribirse
