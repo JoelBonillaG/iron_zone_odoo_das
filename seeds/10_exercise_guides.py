@@ -14,7 +14,6 @@ import base64
 import os
 import urllib.parse
 import urllib.request
-from datetime import date, timedelta
 
 from config import DB, PASSWORD, connect, create
 
@@ -741,51 +740,6 @@ def ensure_guides(uid, models, categories, machines, employees, events, plans):
         print(f"  {action} guide: {guide['name']}")
 
 
-def ensure_demo_active_subscription(uid, models):
-    if not model_exists(uid, models, "sale.subscription"):
-        return
-
-    active_stage = search_one(uid, models, "sale.subscription.stage", [("type", "=", "in_progress")], ["id", "name"])
-    if not active_stage:
-        print("  No active subscription stage found; skipping demo subscription activation.")
-        return
-
-    today = date.today()
-    subscriptions = search_read(
-        uid,
-        models,
-        "sale.subscription",
-        [("active", "=", True)],
-        ["id", "name", "stage_type", "stage_id", "date", "invoice_ids", "sale_order_ids", "subscription_plan_id"],
-        order="id asc",
-    )
-
-    for sub in subscriptions:
-        invoice_ids = list(sub.get("invoice_ids") or [])
-        sale_order_ids = list(sub.get("sale_order_ids") or [])
-        if sale_order_ids:
-            orders = search_read(uid, models, "sale.order", [("id", "in", sale_order_ids)], ["invoice_ids"])
-            for order in orders:
-                invoice_ids.extend(order.get("invoice_ids") or [])
-        if not invoice_ids:
-            continue
-        invoices = search_read(uid, models, "account.move", [("id", "in", list(set(invoice_ids)))], ["payment_state"])
-        if not any(invoice["payment_state"] == "paid" for invoice in invoices):
-            continue
-
-        values = {
-            "stage_id": active_stage["id"],
-            "date_start": today.isoformat(),
-            "date": (today + timedelta(days=90)).isoformat(),
-            "active": True,
-        }
-        models.execute_kw(DB, uid, PASSWORD, "sale.subscription", "write", [[sub["id"]], values])
-        print(f"  Demo active subscription ready: {sub['name']}")
-        return
-
-    print("  No paid subscription found to activate for guide demo.")
-
-
 def run():
     uid, models = connect()
     if not model_exists(uid, models, "ironzone.exercise.guide"):
@@ -803,7 +757,6 @@ def run():
     machines = ensure_machines(uid, models, categories)
     ensure_guide_benefits(uid, models, plans)
     ensure_guides(uid, models, categories, machines, employees, events, plans)
-    ensure_demo_active_subscription(uid, models)
     print("Done: exercise guide demo data synced.")
 
 

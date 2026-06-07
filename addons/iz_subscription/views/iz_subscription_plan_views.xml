@@ -95,7 +95,12 @@
                             <field name="plan_id" string="Plan" />
                             <field name="benefit_scope" string="Modulo donde aplica" />
                             <field name="benefit_type" string="Beneficio" />
-                            <field name="discount_percent" string="Descuento (%)" />
+                            <field
+                                name="discount_percent"
+                                string="Descuento (%)"
+                                invisible="benefit_type != 'discount'"
+                                required="benefit_type == 'discount'"
+                            />
                             <field name="active" string="Activo" />
                         </group>
                         <group>

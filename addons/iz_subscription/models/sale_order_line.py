@@ -86,6 +86,49 @@ class SaleOrderLine(models.Model):
             line.subscription_discount_percent = discount
 
 
+    def _is_subscription_product_line(self):
+        """True for plain shop products eligible for the 'products' benefit.
+        Excludes the subscription plan itself and event tickets (those use the
+        events benefit), so a line never gets two subscription discounts."""
+        self.ensure_one()
+        if not self.product_id:
+            return False
+        if self.product_id.product_tmpl_id.subscribable:
+            return False
+        if "event_ticket_id" in self._fields and self.event_ticket_id:
+            return False
+        return True
+
+    def _apply_subscription_product_benefit(self):
+        """Apply the active 'products' benefit (a discount) to plain product lines."""
+        for line in self:
+            if not line._is_subscription_product_line():
+                continue
+            partner = line.order_id.partner_id
+            benefit = (
+                partner._get_current_subscription_benefits("products")[:1]
+                if partner
+                else self.env["iz.subscription.benefit"]
+            )
+            # Only discounts apply to products (no "free" giveaway of the shop)
+            if not benefit or benefit.benefit_type != "discount":
+                # Reset only a discount we set ourselves from a products benefit
+                if (
+                    line.subscription_benefit_id
+                    and line.subscription_benefit_id.benefit_scope == "products"
+                ):
+                    line.discount = 0.0
+                    line.subscription_benefit_id = False
+                    line.subscription_plan_id = False
+                    line.subscription_discount_percent = 0.0
+                continue
+            plan, _subscription = partner._get_current_subscription_plan()
+            discount = min(max(benefit.discount_percent, 0.0), 100.0)
+            line.discount = discount
+            line.subscription_benefit_id = benefit
+            line.subscription_plan_id = plan
+            line.subscription_discount_percent = discount
+
     def get_subscription_line_values(self):
         return {
             "product_id": self.product_id.id,

@@ -12,7 +12,11 @@ class SubscriptionPortalController(CustomerPortal):
         if "subscription_count" in counters:
             partner = request.env.user.partner_id
             values["subscription_count"] = request.env["sale.subscription"].sudo().search_count(
-                [("partner_id", "=", partner.id), ("active", "=", True)]
+                [
+                    ("partner_id", "=", partner.id),
+                    ("active", "=", True),
+                    ("stage_type", "=", "in_progress"),
+                ]
             )
         return values
 
@@ -104,11 +108,13 @@ class SubscriptionPortalController(CustomerPortal):
     def portal_my_subscriptions(self, **kwargs):
         partner = request.env.user.partner_id
 
-        # Fetch all active subscriptions for this partner
+        # Only show subscriptions that are currently active (in progress). Drafts,
+        # scheduled and closed subscriptions are intentionally hidden from the portal.
         subscriptions = request.env["sale.subscription"].sudo().search(
             [
                 ("partner_id", "=", partner.id),
                 ("active", "=", True),
+                ("stage_type", "=", "in_progress"),
             ],
             order="id desc",
         )
@@ -129,16 +135,48 @@ class SubscriptionPortalController(CustomerPortal):
         if best_plan:
             active_benefits = best_plan.benefit_ids.filtered(lambda b: b.active)
 
+        # All of the partner's subscriptions (current + closed) for billing history
+        all_subscriptions = request.env["sale.subscription"].sudo().search(
+            [("partner_id", "=", partner.id)],
+            order="id desc",
+        )
+
+        # Billing history: posted customer invoices linked to those subscriptions
+        invoices = (
+            all_subscriptions.invoice_ids
+            | all_subscriptions.sale_order_id.invoice_ids
+            | all_subscriptions.sale_order_ids.invoice_ids
+        ).filtered(
+            lambda inv: inv.move_type == "out_invoice" and inv.state == "posted"
+        ).sorted(
+            key=lambda inv: (inv.invoice_date or inv.date or fields.Date.today()),
+            reverse=True,
+        )
+        billing_rows = [
+            {
+                "date": (invoice.invoice_date or invoice.date).strftime("%d/%m/%Y")
+                if (invoice.invoice_date or invoice.date)
+                else "-",
+                "name": invoice.name,
+                "amount": invoice.amount_total,
+                "currency": invoice.currency_id.symbol or "$",
+                "paid": invoice.payment_state in ("paid", "in_payment"),
+                "status_label": "Pagada"
+                if invoice.payment_state in ("paid", "in_payment")
+                else "Pendiente",
+                "url": invoice.get_portal_url(),
+            }
+            for invoice in invoices
+        ]
+
         # Map scope values to human-readable labels and icons
         scope_labels = {
             "events": "Clases y Eventos",
             "products": "Productos de la tienda",
-            "general": "General",
         }
         scope_icons = {
             "events": "fa-calendar",
             "products": "fa-shopping-bag",
-            "general": "fa-star",
         }
         benefit_type_labels = {
             "discount": "Descuento",
@@ -151,9 +189,34 @@ class SubscriptionPortalController(CustomerPortal):
             "best_plan": best_plan,
             "active_subscription": active_subscription,
             "active_benefits": active_benefits,
+            "billing_rows": billing_rows,
             "scope_labels": scope_labels,
             "scope_icons": scope_icons,
             "benefit_type_labels": benefit_type_labels,
             "page_name": "subscriptions",
         }
         return request.render("iz_subscription.portal_my_subscriptions", values)
+
+    @http.route(
+        "/my/subscriptions/cancel",
+        type="http",
+        auth="user",
+        website=True,
+        methods=["POST"],
+    )
+    def portal_cancel_subscription(self, **kwargs):
+        """Let the customer cancel their own active subscription (stops renewal)."""
+        partner = request.env.user.partner_id
+        subscriptions = request.env["sale.subscription"].sudo().search(
+            [
+                ("partner_id", "=", partner.id),
+                ("active", "=", True),
+                ("stage_type", "=", "in_progress"),
+            ]
+        )
+        reason = request.env["sale.subscription.close.reason"].sudo().search(
+            [("name", "ilike", "Cancelacion solicitada")], limit=1
+        )
+        for subscription in subscriptions:
+            subscription.cancel_renewal(reason.id if reason else False)
+        return request.redirect("/my/subscriptions")
