@@ -165,13 +165,32 @@ class IzWebsiteEvent(WebsiteEventSaleController):
         ])
         has_womens_promo = is_womens_promo and is_female and womens_promo_used == 0
 
-        # Check subscription benefit
+        # Women's Day Promo Check
+        womens_promo_events = ['yoga avanzado', 'pilates avanzado']
+        event_name_lower = (event.name or '').lower()
+        is_womens_promo = any(kw in event_name_lower for kw in womens_promo_events)
+        is_female = user.partner_id.iz_gender == 'female'
+        womens_promo_used = request.env['event.registration'].sudo().search_count([
+            ('partner_id', '=', user.partner_id.id),
+            ('state', '!=', 'cancel'),
+            '|',
+            ('event_id.name', 'ilike', 'Yoga Avanzado'),
+            ('event_id.name', 'ilike', 'Pilates Avanzado')
+        ])
+        has_womens_promo = is_womens_promo and is_female and womens_promo_used == 0
+
+        # Check subscription benefit. Only a "free" (100%) benefit makes the event
+        # free → direct registration. A partial discount (e.g. 30%) must still go
+        # through the paid flow so the customer pays the reduced price.
         all_benefits = user.partner_id._get_current_subscription_benefits('events')
         if event.subscription_plan_ids:
             all_benefits = all_benefits.filtered(lambda b: b.plan_id in event.subscription_plan_ids)
-        has_subscription_benefit = bool(all_benefits[:1])
+        has_free_benefit = bool(
+            all_benefits.filtered(lambda b: b.benefit_type == "free")[:1]
+        )
 
-        if not is_free_event and not is_first_time and not has_subscription_benefit and not has_womens_promo:
+        if not is_free_event and not is_first_time and not has_free_benefit and not has_womens_promo:
+            # Paid event with at most a partial discount — go to the paid flow
             # No eligibility — send to regular modal flow
             return request.redirect('/event/%s/register' % event_id)
 

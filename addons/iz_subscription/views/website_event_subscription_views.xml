@@ -4,7 +4,7 @@
     <!-- Cart line: show subscription benefit tag -->
     <template id="cart_line_subscription_benefit" inherit_id="website_sale.cart_lines" name="Subscription benefit in cart">
         <xpath expr="//t[@t-call='website_sale.cart_line_description_following_lines']" position="after">
-            <div t-if="line.subscription_benefit_id" class="iz-cart-subscription-benefit mt-2">
+            <div t-if="line.subscription_benefit_id and line.event_ticket_id" class="iz-cart-subscription-benefit mt-2">
                 <div class="iz-subscription-benefit-title">
                     <i class="fa fa-check-circle me-1" role="img"/>
                     <span>Beneficio por suscripcion</span>
@@ -29,7 +29,7 @@
     <!-- Checkout summary: show subscription benefit tag -->
     <template id="checkout_summary_subscription_benefit" inherit_id="website_sale.checkout_layout" name="Subscription benefit in checkout summary">
         <xpath expr="//td[@name='website_sale_cart_summary_product_name']/h6" position="after">
-            <div t-if="line.subscription_benefit_id" class="iz-cart-subscription-benefit mt-2">
+            <div t-if="line.subscription_benefit_id and line.event_ticket_id" class="iz-cart-subscription-benefit mt-2">
                 <div class="iz-subscription-benefit-title">
                     <i class="fa fa-check-circle me-1" role="img"/>
                     <span>Beneficio por suscripcion</span>
@@ -102,11 +102,11 @@
             <t t-set="is_free_event" t-value="event.event_ticket_ids and not event.event_ticket_ids.filtered(lambda t: t.price > 0)"/>
             <!-- First-time: user has never registered for any event -->
             <t t-set="is_first_time_user" t-value="not request.env.user._is_public() and not request.env.user.partner_id._has_previous_event_registration()"/>
-            <!-- Subscription benefit: subscriber with event access (skip modal entirely) -->
+            <!-- Subscription benefit: only a FREE (100%) benefit skips the modal.
+                 A partial discount must use the paid flow (modal/cart). -->
             <t t-set="_sub_all_benefits" t-value="request.env.user.partner_id._get_current_subscription_benefits('events') if not request.env.user._is_public() else False"/>
             <t t-set="has_subscription_benefit" t-value="((_sub_all_benefits.filtered(lambda b: b.plan_id in event.subscription_plan_ids)[:1] if event.subscription_plan_ids else _sub_all_benefits[:1]) if _sub_all_benefits else False)"/>
-
-            <!-- Women's Day Promo Check -->
+             <!-- Women's Day Promo Check -->
             <t t-set="womens_promo_events" t-value="['yoga avanzado', 'pilates avanzado']"/>
             <t t-set="is_womens_promo" t-value="any(kw in (event.name or '').lower() for kw in womens_promo_events)"/>
             <t t-set="is_female" t-value="request.env.user.partner_id.iz_gender == 'female'"/>
@@ -117,14 +117,13 @@
                 ('event_id.name', 'ilike', 'Yoga Avanzado'),
                 ('event_id.name', 'ilike', 'Pilates Avanzado')
             ])"/>
-
             <t t-if="already_registered">
                 <div class="alert alert-success d-flex align-items-center gap-2 py-2 px-3 rounded-3" role="alert">
                     <i class="fa fa-check-circle fa-lg"/>
                     <span class="fw-semibold">Ya estás inscrito en esta clase</span>
                 </div>
             </t>
-            <t t-elif="is_first_time_user or is_free_event or has_subscription_benefit or (is_womens_promo and is_female and womens_promo_used == 0)">
+            <t t-elif="is_first_time_user or is_free_event or has_free_benefit or (is_womens_promo and is_female and womens_promo_used == 0)">
                 <!-- Bypass modal and cart entirely: POST directly to free-register for free/first/subscriber -->
                 <form method="post" t-att-action="'/event/%s/free-register' % event.id" style="display:inline;">
                     <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>

@@ -3,11 +3,13 @@
     <record id="product_template_form_view" model="ir.ui.view">
         <field name="name">product.template.sub.form</field>
         <field name="model">product.template</field>
-        <field name="priority" eval="8" />
+        <!-- High priority so fields added by sale/purchase/account/website exist when this applies -->
+        <field name="priority" eval="90" />
         <field name="inherit_id" ref="product.product_template_form_view" />
         <field name="arch" type="xml">
-            <xpath expr="//page[@name='sales']" position="inside">
-                <group string="Suscripcion y beneficios">
+            <!-- Subscription & benefits FIRST: most relevant for this module -->
+            <xpath expr="//page[@name='general_information']/group" position="before">
+                <group string="Suscripcion y beneficios" name="iz_subscription_group">
                     <field name="subscribable" string="Es producto de suscripcion recurrente" />
                     <field
                         name="subscription_template_id"
@@ -22,6 +24,104 @@
                     />
                 </group>
             </xpath>
+
+            <!-- Lock product type to Servicio for subscription products -->
+            <xpath expr="//field[@name='type']" position="attributes">
+                <attribute name="readonly">subscribable</attribute>
+            </xpath>
+
+            <!-- Hide redundant fields when the product is a recurring subscription -->
+            <xpath expr="//field[@name='standard_price']" position="attributes">
+                <attribute name="invisible">subscribable</attribute>
+            </xpath>
+            <xpath expr="//field[@name='service_tracking']" position="attributes">
+                <attribute name="invisible">subscribable</attribute>
+            </xpath>
+            <xpath expr="//field[@name='invoice_policy']" position="attributes">
+                <attribute name="invisible">subscribable</attribute>
+            </xpath>
+            <xpath expr="//field[@name='supplier_taxes_id']" position="attributes">
+                <attribute name="invisible">subscribable</attribute>
+            </xpath>
+            <xpath expr="//field[@name='purchase_ok']" position="attributes">
+                <attribute name="invisible">subscribable</attribute>
+            </xpath>
+            <xpath expr="//field[@name='description_sale']" position="attributes">
+                <attribute name="invisible">subscribable</attribute>
+            </xpath>
+            <xpath expr="//field[@name='optional_product_ids']" position="attributes">
+                <attribute name="invisible">subscribable</attribute>
+            </xpath>
+            <xpath expr="//field[@name='accessory_product_ids']" position="attributes">
+                <attribute name="invisible">subscribable</attribute>
+            </xpath>
+            <xpath expr="//field[@name='alternative_product_ids']" position="attributes">
+                <attribute name="invisible">subscribable</attribute>
+            </xpath>
+            <xpath expr="//field[@name='product_tag_ids']" position="attributes">
+                <attribute name="invisible">subscribable</attribute>
+            </xpath>
+            <xpath expr="//field[@name='public_categ_ids']" position="attributes">
+                <attribute name="invisible">subscribable</attribute>
+            </xpath>
+
+            <!-- Hide the whole Purchase tab: a subscription is never bought from a vendor -->
+            <xpath expr="//page[@name='purchase']" position="attributes">
+                <attribute name="invisible">subscribable</attribute>
+            </xpath>
+        </field>
+    </record>
+
+    <!--
+        Dedicated, primary form view used ONLY by the "Productos de suscripcion" action.
+        Everything lives in a single "Informacion general" tab. The standard product
+        form (used elsewhere) is not affected.
+    -->
+    <record id="product_template_form_view_subscription" model="ir.ui.view">
+        <field name="name">product.template.subscription.only.form</field>
+        <field name="model">product.template</field>
+        <field name="mode">primary</field>
+        <field name="priority" eval="100" />
+        <field name="inherit_id" ref="product.product_template_form_view" />
+        <field name="arch" type="xml">
+            <!-- The recurring flag and sales flag are forced by the action (defaults True);
+                 no need to show them on the frontend -->
+            <xpath expr="//field[@name='subscribable']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            <xpath expr="//field[@name='sale_ok']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            <!-- A subscription is never purchased: hide the Compras checkbox -->
+            <xpath expr="//field[@name='purchase_ok']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            <!-- A subscription/plan has no purchase cost -->
+            <xpath expr="//field[@name='standard_price']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+
+            <!-- Only "publicado" is brought into the main tab; e-commerce media/description
+                 are intentionally hidden (removed with the Ventas tab below) -->
+            <xpath expr="//page[@name='general_information']/group" position="after">
+                <group string="Comercio electronico (tienda /shop)" name="iz_ecommerce_group" />
+            </xpath>
+            <xpath expr="//group[@name='iz_ecommerce_group']" position="inside">
+                <xpath expr="//field[@name='is_published']" position="move" />
+            </xpath>
+            <!-- Plain toggle so the admin can publish/unpublish directly from here
+                 (the default website_redirect_button only links to the site) -->
+            <xpath expr="//field[@name='is_published']" position="attributes">
+                <attribute name="widget">boolean_toggle</attribute>
+                <attribute name="invisible">0</attribute>
+            </xpath>
+
+            <!-- Drop the entire Ventas tab (cross-sell, quotation desc, media, stock, etc.) -->
+            <xpath expr="//page[@name='sales']" position="replace" />
+            <!-- Drop the Purchase tab entirely -->
+            <xpath expr="//page[@name='purchase']" position="replace" />
+            <!-- Drop the Inventory tab: not relevant for a service subscription -->
+            <xpath expr="//page[@name='inventory']" position="replace" />
         </field>
     </record>
 </odoo>

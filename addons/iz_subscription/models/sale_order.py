@@ -198,7 +198,10 @@ class SaleOrder(models.Model):
                     ("event_id", "=", event.id),
                     ("partner_id", "=", partner.id),
                     ("state", "!=", "cancel"),
-                    ("sale_order_id", "!=", self.id),
+                    # Exclude this order's own (draft) registrations, otherwise the
+                    # post-payment confirmation would see the cart's own ticket and
+                    # wrongly abort, leaving a paid-but-unconfirmed order.
+                    ("sale_order_line_id.order_id", "!=", self.id),
                 ]
             )
         )
@@ -250,7 +253,8 @@ class SaleOrder(models.Model):
             product, current_line, kwargs.get("event_ticket_id")
         )
         if not ticket:
-            return add_qty, set_qty, ""
+            return add_qty, set_qty, ""
+
         # Promo validations for Women's and Men's Day are handled by sale_order_line.py
         # which applies the 100% discount if eligible. We do not block adding to cart here
         # so they can still purchase the class at full price.
@@ -372,4 +376,9 @@ class SaleOrder(models.Model):
         )
         if event_lines:
             event_lines._apply_subscription_event_benefit()
+        product_lines = self.order_line.filtered(
+            lambda line: line._is_subscription_product_line()
+        )
+        if product_lines:
+            product_lines._apply_subscription_product_benefit()
         return order_line

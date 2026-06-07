@@ -46,6 +46,28 @@
                                     <field name="discount_percent" string="Descuento (%)" />
                                     <field name="active" string="Activo" />
                                 </list>
+                                <!-- Inline form: no Plan field, Odoo links it to this plan on save -->
+                                <form string="Beneficio">
+                                    <div class="oe_title">
+                                        <h1><field name="name" placeholder="Ej. 20% en clases" /></h1>
+                                    </div>
+                                    <group>
+                                        <group>
+                                            <field name="benefit_scope" string="Modulo donde aplica" />
+                                            <field name="benefit_type" string="Beneficio" />
+                                            <field
+                                                name="discount_percent"
+                                                string="Descuento (%)"
+                                                invisible="benefit_type != 'discount'"
+                                                required="benefit_type == 'discount'"
+                                            />
+                                            <field name="active" string="Activo" />
+                                        </group>
+                                        <group>
+                                            <field name="description" string="Descripcion" />
+                                        </group>
+                                    </group>
+                                </form>
                             </field>
                         </page>
                         <page string="Productos que dan este plan">
@@ -95,7 +117,12 @@
                             <field name="plan_id" string="Plan" />
                             <field name="benefit_scope" string="Modulo donde aplica" />
                             <field name="benefit_type" string="Beneficio" />
-                            <field name="discount_percent" string="Descuento (%)" />
+                            <field
+                                name="discount_percent"
+                                string="Descuento (%)"
+                                invisible="benefit_type != 'discount'"
+                                required="benefit_type == 'discount'"
+                            />
                             <field name="active" string="Activo" />
                         </group>
                         <group>

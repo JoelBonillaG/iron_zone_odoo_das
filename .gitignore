@@ -19,3 +19,5 @@ Pruebas/**/*_extract*.json
 
 # Pruebas - Variables de entorno locales
 Pruebas/**/.env
+
+node_modules/
