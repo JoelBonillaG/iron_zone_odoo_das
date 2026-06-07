@@ -50,6 +50,7 @@ class ResPartner(models.Model):
     # Campo fantasma necesario para que Odoo valide vistas antiguas en la DB durante actualizaciones
     iz_last_birthday_year = fields.Integer(string="Último año de cumpleaños")
     iz_welcome_sent = fields.Boolean(string="Welcome Sent")
+    iz_seasonal_promo_used = fields.Boolean(string="Descuento estacional usado")
     iz_onboarding_day1_sent = fields.Boolean(string="Onboarding Day 1 Sent")
     iz_onboarding_day23_sent = fields.Boolean(string="Onboarding Day 2-3 Sent")
     
