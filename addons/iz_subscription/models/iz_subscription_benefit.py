@@ -20,7 +20,6 @@ class IzSubscriptionBenefit(models.Model):
         selection=[
             ("events", "Eventos y clases"),
             ("products", "Productos"),
-            ("general", "General"),
         ],
         string="Aplica a",
         required=True,
@@ -38,15 +37,17 @@ class IzSubscriptionBenefit(models.Model):
     discount_percent = fields.Float(string="Descuento (%)", default=0.0)
     description = fields.Text(string="Descripcion", translate=True)
 
-    @api.constrains("benefit_type", "discount_percent")
+    @api.constrains("discount_percent")
     def _check_discount_percent(self):
         for record in self:
             if record.discount_percent < 0 or record.discount_percent > 100:
                 raise ValidationError("El descuento debe estar entre 0 y 100.")
-            if record.benefit_type == "free" and record.discount_percent != 100:
-                raise ValidationError(
-                    "Un beneficio de acceso gratis debe tener 100% de descuento."
-                )
+
+    @api.onchange("benefit_type")
+    def _onchange_benefit_type(self):
+        # "Acceso gratis" has no percentage to fill in; keep the value clean.
+        if self.benefit_type != "discount":
+            self.discount_percent = 0.0
 
     @api.constrains("active", "plan_id", "benefit_scope")
     def _check_single_active_benefit_per_scope(self):

@@ -1,25 +1,40 @@
-import math
+"""
+05_accounting_invoices.py
+-------------------------
+Creates exactly the demo subscriptions, each with a coherent billing history
+(one paid invoice per recurrence period, back-dated month by month / year by year):
+
+  - Cliente Portal 04 -> Suscripcion Anual   (2 yearly invoices)
+  - Cliente Portal 07 -> Suscripcion Mensual (5 monthly invoices)
+
+Confirming a sale order with a subscribable product creates the subscription
+(see sale_order.action_confirm). We then issue back-dated paid invoices through
+the subscription's own create_invoice() so the portal billing history reads
+"hace un mes, hace dos meses..." instead of all on the same day.
+
+Depends on: 01_customers.py, 02_subscription_config.py, 03_products.py
+"""
+import calendar
 import xmlrpc.client
 from datetime import date
 
 from config import DB, PASSWORD, connect
 
 IVA_RATE = 15.0
-PAYMENT_RATIO = 0.5
-TARGET_ORDER_COUNT = 13
-ACT006_REF_PREFIX = "ACT006-SUBSCRIPTION"
-SUBSCRIPTION_PRODUCT_KEYWORDS = ["Suscripcion", "Plan Nutricion", "Plan Nutrición"]
+
+# The ONLY subscriptions seeded, with their billing cadence.
+#   interval_months: 1 = monthly, 12 = yearly
+#   periods: how many paid invoices of history to generate (last one = today)
+SUBSCRIPTION_ASSIGNMENTS = [
+    {"ref": "IZSUB-04", "email": "pruebasjos04@gmail.com", "product": "Suscripcion Anual",
+     "interval_months": 12, "periods": 2},
+    {"ref": "IZSUB-07", "email": "pruebasjos07@gmail.com", "product": "Suscripcion Mensual",
+     "interval_months": 1, "periods": 5},
+]
 
 
 def execute(models, model, method, *args, **kwargs):
     return models.execute_kw(DB, UID, PASSWORD, model, method, list(args), kwargs)
-
-
-def search(models, model, domain, limit=None):
-    kwargs = {}
-    if limit:
-        kwargs["limit"] = limit
-    return execute(models, model, "search", domain, **kwargs)
 
 
 def search_read(models, model, domain, fields, limit=None, order=None):
@@ -37,96 +52,44 @@ def read(models, model, ids, fields):
     return execute(models, model, "read", ids, fields=fields)
 
 
+def add_months(base, months):
+    """Return base shifted by `months` (can be negative), clamping the day."""
+    index = base.month - 1 + months
+    year = base.year + index // 12
+    month = index % 12 + 1
+    day = min(base.day, calendar.monthrange(year, month)[1])
+    return date(year, month, day)
+
+
 def ensure_accounting_base(models):
     sale_journals = search_read(
-        models,
-        "account.journal",
-        [["type", "=", "sale"]],
-        ["id", "name", "code"],
-        limit=1,
+        models, "account.journal", [["type", "=", "sale"]], ["id", "name", "code"], limit=1
     )
     payment_journals = search_read(
-        models,
-        "account.journal",
-        [["type", "in", ["bank", "cash"]]],
-        ["id", "name", "code", "type"],
-        limit=1,
+        models, "account.journal", [["type", "in", ["bank", "cash"]]],
+        ["id", "name", "code", "type"], limit=1,
     )
     taxes = search_read(
-        models,
-        "account.tax",
-        [
-            ["type_tax_use", "=", "sale"],
-            ["amount", "=", IVA_RATE],
-            ["active", "=", True],
-        ],
-        ["id", "name", "amount"],
-        limit=1,
+        models, "account.tax",
+        [["type_tax_use", "=", "sale"], ["amount", "=", IVA_RATE], ["active", "=", True]],
+        ["id", "name", "amount"], limit=1,
     )
 
     if not sale_journals:
         raise RuntimeError("No sale journal found. Install/configure Accounting first.")
     if not payment_journals:
-        raise RuntimeError("No bank or cash journal found. Configure an accounting payment journal first.")
+        raise RuntimeError("No bank or cash journal found. Configure a payment journal first.")
     if not taxes:
         raise RuntimeError(f"No active sales tax with {IVA_RATE:.0f}% found. Configure VAT/IVA first.")
 
     tax = taxes[0]
-    products = search(models, "product.template", [["sale_ok", "=", True]])
+    products = execute(models, "product.template", "search", [["sale_ok", "=", True]])
     if products:
         execute(models, "product.template", "write", products, {"taxes_id": [(6, 0, [tax["id"]])]})
 
     print(f"Tax configured for sale products: {tax['name']} ({tax['amount']}%)")
     print(f"Sales journal: {sale_journals[0]['name']} [{sale_journals[0]['code']}]")
     print(f"Payment journal: {payment_journals[0]['name']} [{payment_journals[0]['code']}]")
-
-
-def get_customers(models):
-    customers = search_read(
-        models,
-        "res.partner",
-        [["customer_rank", ">", 0]],
-        ["id", "name"],
-        limit=TARGET_ORDER_COUNT,
-        order="id asc",
-    )
-    return customers
-
-
-def get_subscription_products(models):
-    domain = [
-        "|",
-        ["name", "ilike", SUBSCRIPTION_PRODUCT_KEYWORDS[0]],
-        ["name", "ilike", SUBSCRIPTION_PRODUCT_KEYWORDS[1]],
-    ]
-    products = search_read(
-        models,
-        "product.product",
-        domain,
-        ["id", "name"],
-        order="name asc",
-    )
-    if not products:
-        raise RuntimeError("Run 03_products.py first. ACT006 requires subscription products.")
-    return products
-
-
-def get_act006_sale_orders(models):
-    orders = search_read(
-        models,
-        "sale.order",
-        [
-            ["client_order_ref", "ilike", ACT006_REF_PREFIX],
-            ["state", "in", ["draft", "sent", "sale"]],
-        ],
-        ["id", "name", "state", "invoice_status", "invoice_ids", "client_order_ref"],
-        order="name asc",
-    )
-    return orders
-
-
-def get_target_refs():
-    return {f"{ACT006_REF_PREFIX}-{index + 1:02d}" for index in range(TARGET_ORDER_COUNT)}
 
 
 def get_default_pricelist_id(models):
@@ -137,191 +100,176 @@ def get_default_pricelist_id(models):
 
 
 def ensure_subscription_orders(models):
-    existing_orders = get_act006_sale_orders(models)
-    existing_refs = {order["client_order_ref"] for order in existing_orders}
-    target_refs = get_target_refs()
-
-    customers = get_customers(models)
-    subscription_products = get_subscription_products(models)
+    """Create (idempotently) one sale order per assignment and return their ids."""
     pricelist_id = get_default_pricelist_id(models)
-
-    if not customers:
-        print("No customer/member records found; skipping ACT006 subscription order creation.")
-        return []
-
-    created = 0
-    for index in range(TARGET_ORDER_COUNT):
-        ref = f"{ACT006_REF_PREFIX}-{index + 1:02d}"
-        if ref in existing_refs:
+    order_ids = []
+    for assignment in SUBSCRIPTION_ASSIGNMENTS:
+        customers = search_read(
+            models, "res.partner",
+            [["email", "=", assignment["email"]], ["customer_rank", ">", 0]],
+            ["id", "name"], limit=1,
+        )
+        products = search_read(
+            models, "product.product",
+            [["name", "=", assignment["product"]], ["sale_ok", "=", True]],
+            ["id", "name"], limit=1,
+        )
+        if not customers or not products:
+            print(f"  Skipping {assignment['ref']}: missing customer or product. "
+                  f"Run 01_customers.py and 03_products.py first.")
             continue
 
-        customer = customers[index % len(customers)]
-        product = subscription_products[index % len(subscription_products)]
-        order_id = execute(
-            models,
-            "sale.order",
-            "create",
-            {
-                "partner_id": customer["id"],
-                "client_order_ref": ref,
+        existing = search_read(
+            models, "sale.order", [["client_order_ref", "=", assignment["ref"]]],
+            ["id", "state"], limit=1,
+        )
+        if existing:
+            order_id = existing[0]["id"]
+            if existing[0]["state"] in ("draft", "sent"):
+                execute(models, "sale.order", "write", [order_id], {"pricelist_id": pricelist_id})
+        else:
+            order_id = execute(models, "sale.order", "create", {
+                "partner_id": customers[0]["id"],
+                "client_order_ref": assignment["ref"],
                 "pricelist_id": pricelist_id,
-                "note": "ACT006: contrato de suscripcion / pago recurrente simulado.",
-            },
-        )
-        execute(
-            models,
-            "sale.order.line",
-            "create",
-            {
+                "note": "Suscripcion Iron Zone (seed).",
+            })
+            execute(models, "sale.order.line", "create", {
                 "order_id": order_id,
-                "product_id": product["id"],
+                "product_id": products[0]["id"],
                 "product_uom_qty": 1,
-            },
-        )
-        created += 1
-        print(f"Created subscription order {ref}: {customer['name']} -> {product['name']}")
-
-    if created:
-        print(f"ACT006 subscription orders created: {created}")
-    else:
-        print("ACT006 subscription orders already exist.")
-
-    orders = get_act006_sale_orders(models)
-    target_orders = [order for order in orders if order["client_order_ref"] in target_refs]
-    draft_target_ids = [order["id"] for order in target_orders if order["state"] in ("draft", "sent")]
-    if draft_target_ids:
-        execute(models, "sale.order", "write", draft_target_ids, {"pricelist_id": pricelist_id})
-    return target_orders
+            })
+            print(f"  Created subscription order {assignment['ref']}: "
+                  f"{customers[0]['name']} -> {assignment['product']}")
+        order_ids.append(order_id)
+    return order_ids
 
 
-def confirm_orders(models, orders):
-    to_confirm = [order["id"] for order in orders if order["state"] in ("draft", "sent")]
+def confirm_orders(models, order_ids):
+    if not order_ids:
+        return
+    orders = read(models, "sale.order", order_ids, ["id", "state"])
+    to_confirm = [o["id"] for o in orders if o["state"] in ("draft", "sent")]
     if to_confirm:
         execute(models, "sale.order", "action_confirm", to_confirm)
-        print(f"Confirmed sale orders: {len(to_confirm)}")
+        print(f"Confirmed sale orders: {len(to_confirm)} (subscriptions created in Borrador)")
     else:
         print("Sale orders already confirmed.")
 
 
-def create_invoice_for_order(models, order_id):
-    ctx = {"active_model": "sale.order", "active_ids": [order_id], "active_id": order_id}
-    wizard_id = execute(
-        models,
-        "sale.advance.payment.inv",
-        "create",
-        {
-            "advance_payment_method": "delivered",
-            "sale_order_ids": [(6, 0, [order_id])],
-        },
-        context=ctx,
+def find_subscription_id(models, order_ref):
+    orders = search_read(models, "sale.order", [["client_order_ref", "=", order_ref]], ["id"], limit=1)
+    if not orders:
+        return None
+    subs = search_read(
+        models, "sale.subscription", [["sale_order_id", "=", orders[0]["id"]]], ["id"], limit=1
     )
-
-    try:
-        execute(models, "sale.advance.payment.inv", "create_invoices", [wizard_id], context=ctx)
-    except xmlrpc.client.Fault as fault:
-        # Odoo creates the invoice, then XML-RPC can fail while serializing the UI action.
-        if "cannot marshal None" not in fault.faultString:
-            raise
+    return subs[0]["id"] if subs else None
 
 
-def ensure_invoices(models, orders):
-    invoice_ids = []
-
-    for order in orders:
-        current_invoice_ids = order["invoice_ids"]
-        if not current_invoice_ids:
-            create_invoice_for_order(models, order["id"])
-            refreshed = read(models, "sale.order", [order["id"]], ["invoice_ids", "name"])[0]
-            current_invoice_ids = refreshed["invoice_ids"]
-            if current_invoice_ids:
-                print(f"Created invoice for {refreshed['name']}")
-        else:
-            print(f"Invoice already exists for {order['name']}")
-
-        invoice_ids.extend(current_invoice_ids)
-
-    return sorted(set(invoice_ids))
-
-
-def post_invoices(models, invoice_ids):
-    invoices = read(models, "account.move", invoice_ids, ["id", "name", "state", "payment_state"])
-    draft_ids = [invoice["id"] for invoice in invoices if invoice["state"] == "draft"]
-    if draft_ids:
-        execute(models, "account.move", "action_post", draft_ids)
-        print(f"Posted invoices: {len(draft_ids)}")
-    else:
-        print("Invoices already posted.")
-
-
-def pay_invoice(models, invoice_id):
+def pay_invoice(models, invoice_id, payment_date):
     ctx = {"active_model": "account.move", "active_ids": [invoice_id], "active_id": invoice_id}
-    wizard_id = execute(models, "account.payment.register", "create", {}, context=ctx)
+    wizard_id = execute(models, "account.payment.register", "create",
+                        {"payment_date": payment_date}, context=ctx)
     execute(models, "account.payment.register", "action_create_payments", [wizard_id], context=ctx)
 
 
-def register_payments(models, invoice_ids):
-    invoices = read(
-        models,
-        "account.move",
-        invoice_ids,
-        ["id", "name", "state", "payment_state", "amount_residual", "invoice_origin"],
+def generate_billing_history(models, sub_id, interval_months, periods):
+    """Issue `periods` back-dated paid invoices, one per recurrence period."""
+    existing = search_read(
+        models, "account.move",
+        [["subscription_id", "=", sub_id], ["move_type", "=", "out_invoice"]],
+        ["id"],
     )
-    posted = [invoice for invoice in invoices if invoice["state"] == "posted"]
-    paid = [invoice for invoice in posted if invoice["payment_state"] == "paid"]
-    target_paid = math.ceil(len(posted) * PAYMENT_RATIO)
-    pending = [invoice for invoice in posted if invoice["payment_state"] != "paid"]
-    to_pay = pending[: max(0, target_paid - len(paid))]
+    if len(existing) >= periods:
+        print(f"  Billing history already present for subscription {sub_id}.")
+        return
 
-    for invoice in to_pay:
-        pay_invoice(models, invoice["id"])
-        print(f"Registered payment: {invoice['name']} ({invoice['invoice_origin']})")
+    today = date.today()
+    start = add_months(today, -interval_months * (periods - 1))
+    invoice_dates = [add_months(start, interval_months * i) for i in range(periods)]
 
-    if not to_pay:
-        print(f"At least half of the invoices are already paid ({len(paid)}/{len(posted)}).")
-
-
-def print_summary(models, invoice_ids):
-    invoices = read(
-        models,
-        "account.move",
-        invoice_ids,
-        ["name", "invoice_origin", "state", "payment_state", "amount_total"],
-    )
-    paid_count = 0
-    print("")
-    print("ACT006 subscription invoice summary:")
-    for invoice in sorted(invoices, key=lambda item: item["name"] or ""):
-        if invoice["payment_state"] == "paid":
-            paid_count += 1
-        print(
-            f"  {invoice['name']} | Order: {invoice['invoice_origin']} | "
-            f"State: {invoice['state']} | Payment: {invoice['payment_state']} | "
-            f"Total: {invoice['amount_total']}"
+    for invoice_date in invoice_dates:
+        iso = invoice_date.isoformat()
+        # create_invoice() stamps the invoice with recurring_next_date as its date
+        execute(models, "sale.subscription", "write", [sub_id], {"recurring_next_date": iso})
+        try:
+            execute(models, "sale.subscription", "create_invoice", [sub_id])
+        except xmlrpc.client.Fault as fault:
+            # create_invoice returns a recordset; XML-RPC can't marshal it, but the
+            # invoice is created. Re-raise anything that is not that marshalling issue.
+            if "marshal" not in fault.faultString:
+                raise
+        invoices = search_read(
+            models, "account.move",
+            [["subscription_id", "=", sub_id], ["invoice_date", "=", iso],
+             ["move_type", "=", "out_invoice"]],
+            ["id", "state"], order="id desc", limit=1,
         )
-    print(f"Done: {len(invoices)} subscription invoices generated, {paid_count} paid.")
+        if not invoices:
+            continue
+        invoice_id = invoices[0]["id"]
+        if invoices[0]["state"] == "draft":
+            execute(models, "account.move", "action_post", [invoice_id])
+        pay_invoice(models, invoice_id, iso)
+
+    # Finalise: active, started in the past, next billing in the future
+    execute(models, "sale.subscription", "write", [sub_id], {"date_start": start.isoformat()})
+    in_progress = search_read(
+        models, "sale.subscription.stage", [["type", "=", "in_progress"]], ["id"], limit=1
+    )
+    if in_progress:
+        execute(models, "sale.subscription", "write", [sub_id], {"stage_id": in_progress[0]["id"]})
+    # Second write (no stage_id) so the model does not recompute it back to the past
+    execute(models, "sale.subscription", "write", [sub_id],
+            {"recurring_next_date": add_months(today, interval_months).isoformat()})
+    print(f"  Generated {periods} paid invoices for subscription {sub_id}.")
+
+
+def print_summary(models):
+    subs = search_read(
+        models, "sale.subscription",
+        [["stage_type", "=", "in_progress"], ["active", "=", True]],
+        ["name", "partner_id", "subscription_plan_id", "recurring_next_date"], order="id asc",
+    )
+    print("")
+    print(f"Done: {len(subs)} active subscriptions:")
+    for sub in subs:
+        invoices = search_read(
+            models, "account.move",
+            [["subscription_id", "=", sub["id"]], ["move_type", "=", "out_invoice"],
+             ["state", "=", "posted"]],
+            ["invoice_date", "amount_total", "payment_state"], order="invoice_date asc",
+        )
+        partner = sub["partner_id"][1] if sub["partner_id"] else "-"
+        print(f"  {sub['name']} | {partner} | next: {sub['recurring_next_date']} | "
+              f"{len(invoices)} invoices")
+        for inv in invoices:
+            print(f"      {inv['invoice_date']} | {inv['amount_total']} | {inv['payment_state']}")
 
 
 def run():
     global UID
     UID, models = connect()
 
-    print(f"Running ACT006 accounting automation on {date.today().isoformat()}...")
+    print(f"Running subscription seeding on {date.today().isoformat()}...")
     ensure_accounting_base(models)
-    orders = ensure_subscription_orders(models)
-    confirm_orders(models, orders)
+    order_ids = ensure_subscription_orders(models)
+    if not order_ids:
+        print("No subscription orders could be created; aborting.")
+        return
+    confirm_orders(models, order_ids)
 
-    target_refs = get_target_refs()
-    refreshed_orders = [
-        order for order in get_act006_sale_orders(models)
-        if order["client_order_ref"] in target_refs
-    ]
-    invoice_ids = ensure_invoices(models, refreshed_orders)
-    if not invoice_ids:
-        raise RuntimeError("No invoices were generated.")
+    for assignment in SUBSCRIPTION_ASSIGNMENTS:
+        sub_id = find_subscription_id(models, assignment["ref"])
+        if not sub_id:
+            print(f"  Subscription for {assignment['ref']} not found; skipping history.")
+            continue
+        generate_billing_history(
+            models, sub_id, assignment["interval_months"], assignment["periods"]
+        )
 
-    post_invoices(models, invoice_ids)
-    register_payments(models, invoice_ids)
-    print_summary(models, invoice_ids)
+    print_summary(models)
 
 
 if __name__ == "__main__":

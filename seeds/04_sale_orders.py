@@ -33,7 +33,7 @@ IRON_ZONE_PRODUCTS = [
 # confirm=False → stays as draft Presupuesto
 ORDERS = [
     (0, 0, False),   # 01 Portal04 -> Mensual -> Presupuesto
-    (1, 1, True),    # 02 Portal07 -> Anual -> Confirmado
+    (1, 4, True),    # 02 Portal07 -> Camiseta -> Confirmado (no subscription: subs come only from seed 05)
     (2, 2, False),   # 03 Portal08 -> Proteina -> Presupuesto
     (0, 3, True),    # 04 Portal04 -> Barras -> Confirmado
     (1, 4, False),   # 05 Portal07 -> Camiseta -> Presupuesto
@@ -43,7 +43,7 @@ ORDERS = [
     (2, 8, False),   # 09 Portal08 -> Bandas -> Presupuesto
     (0, 9, True),    # 10 Portal04 -> Straps -> Confirmado
     (1, 0, False),   # 11 Portal07 -> Mensual -> Presupuesto
-    (2, 1, True),    # 12 Portal08 -> Anual -> Confirmado
+    (2, 2, True),    # 12 Portal08 -> Proteina -> Confirmado (no subscription: Portal08 has none)
     (0, 2, False),   # 13 Portal04 -> Proteina -> Presupuesto
     (1, 3, True),    # 14 Portal07 -> Barras -> Confirmado
     (2, 4, False),   # 15 Portal08 -> Camiseta -> Presupuesto

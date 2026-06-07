@@ -198,6 +198,10 @@ class SaleOrder(models.Model):
                     ("event_id", "=", event.id),
                     ("partner_id", "=", partner.id),
                     ("state", "!=", "cancel"),
+                    # Exclude this order's own (draft) registrations, otherwise the
+                    # post-payment confirmation would see the cart's own ticket and
+                    # wrongly abort, leaving a paid-but-unconfirmed order.
+                    ("sale_order_line_id.order_id", "!=", self.id),
                 ]
             )
         )
@@ -369,4 +373,9 @@ class SaleOrder(models.Model):
         )
         if event_lines:
             event_lines._apply_subscription_event_benefit()
+        product_lines = self.order_line.filtered(
+            lambda line: line._is_subscription_product_line()
+        )
+        if product_lines:
+            product_lines._apply_subscription_product_benefit()
         return order_line

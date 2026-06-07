@@ -151,14 +151,18 @@ class IzWebsiteEvent(WebsiteEventSaleController):
         is_free_event = event.event_ticket_ids and not paid_tickets
         is_first_time = not user.partner_id._has_previous_event_registration()
 
-        # Check subscription benefit
+        # Check subscription benefit. Only a "free" (100%) benefit makes the event
+        # free → direct registration. A partial discount (e.g. 30%) must still go
+        # through the paid flow so the customer pays the reduced price.
         all_benefits = user.partner_id._get_current_subscription_benefits('events')
         if event.subscription_plan_ids:
             all_benefits = all_benefits.filtered(lambda b: b.plan_id in event.subscription_plan_ids)
-        has_subscription_benefit = bool(all_benefits[:1])
+        has_free_benefit = bool(
+            all_benefits.filtered(lambda b: b.benefit_type == "free")[:1]
+        )
 
-        if not is_free_event and not is_first_time and not has_subscription_benefit:
-            # No eligibility — send to regular modal flow
+        if not is_free_event and not is_first_time and not has_free_benefit:
+            # Paid event with at most a partial discount — go to the paid flow
             return request.redirect('/event/%s/register' % event_id)
 
         # Block if already registered
