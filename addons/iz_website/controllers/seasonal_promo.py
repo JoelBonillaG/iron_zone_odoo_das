@@ -101,6 +101,18 @@ class IzSeasonalPromoWebsiteSale(WebsiteSale):
                 email=order.iz_seasonal_promo_email
             )
 
+    @http.route()
+    def cart(self, **post):
+        order = request.website.sale_get_order()
+        self._reapply_seasonal_promo(order)
+        return super().cart(**post)
+
+    @http.route()
+    def checkout(self, **post):
+        order = request.website.sale_get_order()
+        self._reapply_seasonal_promo(order)
+        return super().checkout(**post)
+
     def _get_shop_payment_values(self, order, **kwargs):
         self._reapply_seasonal_promo(order)
         return super()._get_shop_payment_values(order, **kwargs)

@@ -2,3 +2,4 @@
 from . import main
 from . import portal
 from . import seasonal_promo
+from . import event_promo

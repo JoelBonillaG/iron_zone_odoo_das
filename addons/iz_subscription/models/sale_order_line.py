@@ -66,25 +66,46 @@ class SaleOrderLine(models.Model):
 
             # --- Priority 1: Women's Day Promo (Yoga Avanzado / Pilates Avanzado) ---
             # Solo aplica para mujeres y solo puede elegir una de las dos clases.
-            promo_keywords = ["yoga avanzado", "pilates avanzado"]
+            promo_keywords_f = ["yoga avanzado", "pilates avanzado"]
+            promo_keywords_m = ["crossfit am", "boxeo técnica"]
+            
             event_name = (ticket.event_id.name or "").lower()
-            is_promo_event = any(kw in event_name for kw in promo_keywords)
-
-            if is_promo_event and partner.iz_gender == 'female':
+            
+            is_promo_event_f = any(kw in event_name for kw in promo_keywords_f)
+            if is_promo_event_f and partner.iz_gender == 'female':
                 # Verificar si ya usó el beneficio (registros pasados en cualquiera de las dos)
                 # Excluimos la orden actual para que el sistema no se bloquee al añadir el item
                 already_used = self.env['event.registration'].sudo().search_count([
                     ('partner_id', '=', partner.id),
                     ('state', '!=', 'cancel'),
                     ('sale_order_id', '!=', line.order_id.id),
-                    '|',
-                    ('event_id.name', 'ilike', 'Yoga Avanzado'),
-                    ('event_id.name', 'ilike', 'Pilates Avanzado')
+                    ('event_id.name', 'in', ['Yoga Avanzado', 'Pilates Avanzado'])
                 ])
                 # Verificar si ya tiene otra línea de la promo con 100% en este mismo carrito
                 other_promo_lines = line.order_id.order_line.filtered(
                     lambda l: l != line and l.event_ticket_id and \
-                              any(kw in (l.event_id.name or "").lower() for kw in promo_keywords) and \
+                              any(kw in (l.event_ticket_id.event_id.name or "").lower() for kw in promo_keywords_f) and \
+                              l.discount == 100.0
+                )
+                if already_used == 0 and not other_promo_lines:
+                    line.discount = 100.0
+                    line.subscription_benefit_id = False
+                    line.subscription_plan_id = False
+                    line.subscription_discount_percent = 100.0
+                    continue
+
+            promo_keywords_m = ["crossfit am", "entrenamiento en grupo", "boxeo tecnica", "boxeo técnica"]
+            is_promo_event_m = any(kw in event_name for kw in promo_keywords_m)
+            if is_promo_event_m and partner.iz_gender == 'male':
+                already_used = self.env['event.registration'].sudo().search_count([
+                    ('partner_id', '=', partner.id),
+                    ('state', '!=', 'cancel'),
+                    ('sale_order_id', '!=', line.order_id.id),
+                    ('event_id.name', 'in', ['CrossFit AM', 'Entrenamiento en Grupo', 'Boxeo Tecnica', 'Boxeo Técnica'])
+                ])
+                other_promo_lines = line.order_id.order_line.filtered(
+                    lambda l: l != line and l.event_ticket_id and \
+                              any(kw in (l.event_ticket_id.event_id.name or "").lower() for kw in promo_keywords_m) and \
                               l.discount == 100.0
                 )
                 if already_used == 0 and not other_promo_lines:

@@ -413,9 +413,9 @@
         <table width="100%" cellpadding="0" cellspacing="0" style="margin:35px 0;">
           <tr>
             <td align="center">
-<a t-att-href="base_url + '/event/yoga-avanzado-8/register'" style="background:linear-gradient(to right,#8e2de2,#d946ef);color:#ffffff;text-decoration:none;padding:18px 45px;border-radius:6px;font-weight:bold;font-size:15px;display:inline-block;text-transform:uppercase;letter-spacing:2px;box-shadow:0 6px 20px rgba(217,70,239,0.4);transition:all 0.3s ease;">Obtener Mi Clase Premium (Yoga)</a>
+<a t-att-href="base_url + '/promo/womens-day?event_slug=yoga-avanzado-8'" style="background:linear-gradient(to right,#8e2de2,#d946ef);color:#ffffff;text-decoration:none;padding:18px 45px;border-radius:6px;font-weight:bold;font-size:15px;display:inline-block;text-transform:uppercase;letter-spacing:2px;box-shadow:0 6px 20px rgba(217,70,239,0.4);transition:all 0.3s ease;">Obtener Mi Clase Premium (Yoga)</a>
                <p style="color:#888; font-size:12px; margin-top:10px;">Válido solo por esta semana. Presentar este correo en recepción.</p>
-               <p style="color:#888; font-size:12px; margin-top:5px;">También disponible: <a t-att-href="base_url + '/event/pilates-avanzado-5/register'" style="color:#d946ef;text-decoration:none;">Pilates Avanzado</a></p>
+               <p style="color:#888; font-size:12px; margin-top:5px;">También disponible: <a t-att-href="base_url + '/promo/womens-day?event_slug=pilates-avanzado-5'" style="color:#d946ef;text-decoration:none;">Pilates Avanzado</a></p>
              </td>
           </tr>
         </table>
@@ -494,9 +494,9 @@
         <table width="100%" cellpadding="0" cellspacing="0" style="margin:35px 0;">
           <tr>
             <td align="center">
-<a t-att-href="base_url + '/event/entrenamiento-en-grupo-10/register'" style="background:linear-gradient(to right,#1cb5e0,#000046);color:#ffffff;text-decoration:none;padding:18px 45px;border-radius:6px;font-weight:bold;font-size:15px;display:inline-block;text-transform:uppercase;letter-spacing:2px;box-shadow:0 6px 20px rgba(28,181,224,0.4);transition:all 0.3s ease;">Activar Descuento y Clase</a>
+<a t-att-href="base_url + '/promo/mens-day?event_slug=entrenamiento-en-grupo-10'" style="background:linear-gradient(to right,#1cb5e0,#000046);color:#ffffff;text-decoration:none;padding:18px 45px;border-radius:6px;font-weight:bold;font-size:15px;display:inline-block;text-transform:uppercase;letter-spacing:2px;box-shadow:0 6px 20px rgba(28,181,224,0.4);transition:all 0.3s ease;">Activar Descuento y Clase</a>
                <p style="color:#888; font-size:12px; margin-top:10px;">Oferta válida por tiempo limitado.</p>
-               <p style="color:#888; font-size:12px; margin-top:5px;">También disponible: <a t-att-href="base_url + '/event/boxeo-tecnica-7/register'" style="color:#1cb5e0;text-decoration:none;">Boxeo Técnica</a></p>
+               <p style="color:#888; font-size:12px; margin-top:5px;">También disponible: <a t-att-href="base_url + '/promo/mens-day?event_slug=boxeo-tecnica-7'" style="color:#1cb5e0;text-decoration:none;">Boxeo Técnica</a></p>
              </td>
           </tr>
         </table>
