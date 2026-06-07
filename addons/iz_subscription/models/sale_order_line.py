@@ -24,7 +24,7 @@ class SaleOrderLine(models.Model):
         copy=False,
     )
 
-    @api.depends("product_id", "product_uom_qty", "order_id.partner_id", "event_ticket_id")
+    @api.depends("product_id", "product_uom_qty", "order_id.partner_id", "order_id.partner_id.iz_gender", "event_ticket_id")
     def _compute_discount(self):
         super()._compute_discount()
         # Garantiza que el beneficio se aplique cada vez que Odoo recalcula el descuento
@@ -60,18 +60,51 @@ class SaleOrderLine(models.Model):
     def _apply_subscription_event_benefit(self):
         for line in self:
             ticket = line.event_ticket_id if "event_ticket_id" in line._fields else False
+            partner = line.order_id.partner_id
+            if not ticket or not partner:
+                continue
 
-            # --- Priority 1: First event free (highest priority) ---
-            if ticket:
-                partner = line.order_id.partner_id
-                if partner and not partner._has_previous_event_registration():
+            # --- Priority 1: Women's Day Promo (Yoga Avanzado / Pilates Avanzado) ---
+            # Solo aplica para mujeres y solo puede elegir una de las dos clases.
+            promo_keywords = ["yoga avanzado", "pilates avanzado"]
+            event_name = (ticket.event_id.name or "").lower()
+            is_promo_event = any(kw in event_name for kw in promo_keywords)
+
+            if is_promo_event and partner.iz_gender == 'female':
+                # Verificar si ya usó el beneficio (registros pasados en cualquiera de las dos)
+                # Excluimos la orden actual para que el sistema no se bloquee al añadir el item
+                already_used = self.env['event.registration'].sudo().search_count([
+                    ('partner_id', '=', partner.id),
+                    ('state', '!=', 'cancel'),
+                    ('sale_order_id', '!=', line.order_id.id),
+                    '|',
+                    ('event_id.name', 'ilike', 'Yoga Avanzado'),
+                    ('event_id.name', 'ilike', 'Pilates Avanzado')
+                ])
+                # Verificar si ya tiene otra línea de la promo con 100% en este mismo carrito
+                other_promo_lines = line.order_id.order_line.filtered(
+                    lambda l: l != line and l.event_ticket_id and \
+                              any(kw in (l.event_id.name or "").lower() for kw in promo_keywords) and \
+                              l.discount == 100.0
+                )
+                if already_used == 0 and not other_promo_lines:
                     line.discount = 100.0
                     line.subscription_benefit_id = False
                     line.subscription_plan_id = False
                     line.subscription_discount_percent = 100.0
                     continue
 
-            # --- Priority 2: Subscription benefit discount ---
+            # --- Priority 2: First event free (General) ---
+            # Evitar aplicar si ya tiene registros O si ya hay otra línea gratis en el carrito
+            other_free_lines = line.order_id.order_line.filtered(
+                lambda l: l != line and l.event_ticket_id and l.discount == 100.0
+            )
+            if not partner._has_previous_event_registration(exclude_order_id=line.order_id.id) and not other_free_lines:
+                line.discount = 100.0
+                line.subscription_benefit_id = False
+                line.subscription_plan_id = False
+                line.subscription_discount_percent = 100.0
+                continue
             plan, _subscription, benefit = line._get_subscription_event_benefit()
             if not benefit:
                 if "event_ticket_id" in line._fields and line.event_ticket_id:

@@ -17,7 +17,7 @@ from odoo.exceptions import ValidationError
 TEST_EMAIL = os.environ.get('TEST_EMAIL') or 'ejemplo@ironzone.com'
 
 # 2. ELIGE LA PLANTILLA QUE DESEAS PROBAR (Cambia este string por cualquiera de la lista de abajo)
-TEMPLATE_TO_TEST = 'seasonal'
+TEMPLATE_TO_TEST = 'womens_day'
 
 # Opciones válidas para TEMPLATE_TO_TEST:
 # ------------------------------------------------------------------

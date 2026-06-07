@@ -1,7 +1,8 @@
 import json
+import logging
 from datetime import date, datetime
 
-from odoo import http, _
+from odoo import http, _, fields
 from markupsafe import Markup
 from odoo.addons.auth_signup.models.res_users import SignupError
 from odoo.exceptions import UserError, ValidationError
@@ -11,6 +12,7 @@ from odoo.http import request
 import werkzeug
 from werkzeug.urls import url_encode
 
+_logger = logging.getLogger(__name__)
 
 class IzWebsiteSaleAddress(WebsiteSale):
     @http.route()
@@ -145,6 +147,16 @@ class IzSignupController(AuthSignupHome):
                 if not request.env['ir.http']._verify_request_recaptcha_token('signup'):
                     raise UserError(_("Suspicious activity detected by Google reCaptcha."))
 
+                # --- Inyectar Validaciones de Iron Zone ---
+                if not qcontext.get('token'):
+                    missing_error = self._iz_validate_required_fields(request.params)
+                    if missing_error:
+                        raise UserError(missing_error)
+
+                    _age, age_error = self._iz_compute_age(request.params.get("iz_birthdate", ""))
+                    if age_error:
+                        raise UserError(age_error)
+
                 # Save draft before processing
                 if not qcontext.get('token'):
                     request.session["iz_signup_draft"] = {
@@ -187,25 +199,18 @@ class IzSignupController(AuthSignupHome):
                         if template:
                             try:
                                 today = date.today()
-                                is_bday = bool(partner.iz_birthdate and partner.iz_birthdate.month == today.month and partner.iz_birthdate.day == today.day)
+                                bdate = fields.Date.to_date(partner.iz_birthdate)
+                                is_bday = bool(bdate and bdate.month == today.month and bdate.day == today.day)
                                 ctx = {"partner": partner, "is_birthday": is_bday, "is_birthday_today": is_bday}
                                 template.sudo().with_context(**ctx).send_mail(partner.id, force_send=True)
                                 partner.sudo().write({"iz_welcome_sent": True})
-                            except Exception as e:
-                                import logging
-                                _logger = logging.getLogger(__name__)
-                                _logger.error("Error sending IZ welcome email: %s", str(e))
+                            except Exception as exc:
+                                _logger.error("Error sending IZ welcome email: %s", str(exc))
                         else:
-                            import logging
-                            _logger = logging.getLogger(__name__)
                             _logger.error("IZ welcome template not found: iz_website.mail_template_welcome")
                     else:
-                        import logging
-                        _logger = logging.getLogger(__name__)
                         _logger.error("Partner not found or no email for user: %s", user_sudo.login)
                 else:
-                    import logging
-                    _logger = logging.getLogger(__name__)
                     _logger.error("User not found after signup with login: %s", qcontext.get('login'))
 
                 # Clear draft on success
@@ -219,8 +224,6 @@ class IzSignupController(AuthSignupHome):
                 if request.env["res.users"].sudo().search_count([("login", "=", qcontext.get("login"))], limit=1):
                     qcontext['error'] = _("Another user is already registered using this email address.")
                 else:
-                    import logging
-                    _logger = logging.getLogger(__name__)
                     _logger.warning("%s", e)
                     qcontext['error'] = _("Could not create a new account.") + Markup('<br/>') + str(e)
                 qcontext = self.get_auth_signup_qcontext()

@@ -198,6 +198,7 @@ class SaleOrder(models.Model):
                     ("event_id", "=", event.id),
                     ("partner_id", "=", partner.id),
                     ("state", "!=", "cancel"),
+                    ("sale_order_id", "!=", self.id),
                 ]
             )
         )

@@ -60,6 +60,28 @@ class EventRegistration(models.Model):
         if not self.partner_id:
             return values
 
+        # --- Beneficio especial: Día de la Mujer ---
+        ticket = self.event_ticket_id if "event_ticket_id" in self._fields else False
+        event = ticket.event_id if ticket else False
+        if event and self.partner_id.iz_gender == 'female':
+            promo_keywords = ["yoga avanzado", "pilates avanzado"]
+            if any(kw in (event.name or "").lower() for kw in promo_keywords):
+                already_used = self.env['event.registration'].sudo().search_count([
+                    ('partner_id', '=', self.partner_id.id),
+                    ('id', '!=', self.id),
+                    ('sale_order_id', '!=', self.sale_order_id.id if self.sale_order_id else False),
+                    ('state', '!=', 'cancel'),
+                    '|',
+                    ('event_id.name', 'ilike', 'Yoga Avanzado'),
+                    ('event_id.name', 'ilike', 'Pilates Avanzado')
+                ])
+                if already_used == 0:
+                    values.update({
+                        "subscription_discount_percent": 100.0,
+                        "subscription_final_price": 0.0,
+                    })
+                    return values
+
         plan, subscription = self.partner_id._get_current_subscription_plan()
         if not plan:
             return values
