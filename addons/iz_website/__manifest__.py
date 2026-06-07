@@ -24,6 +24,7 @@
         "data/mass_mailing.xml",
         "data/cron.xml",
         "data/website_config.xml",
+        "data/email_event_links.xml",
         "data/ir.model.access.csv",
         "views/website_layout.xml",
         "views/website_footer.xml",

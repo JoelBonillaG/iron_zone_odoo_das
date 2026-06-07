@@ -15,6 +15,7 @@
       <field name="body_html"><![CDATA[
 <div style="background-color:#050505;font-family:'Segoe UI',Roboto,Helvetica,Arial,sans-serif;padding:45px 0;margin:0;">
   <t t-set="base_url" t-value="(object.env['ir.config_parameter'].sudo().get_param('web.base.url') or 'http://localhost:8069')"/>
+  <t t-set="event_link_yoga" t-value="object.env['ir.config_parameter'].sudo().get_param('iz_website.event_link_yoga_principiantes', 'object.env["ir.config_parameter"].sudo().get_param("iz_website.event_link_yoga_principiantes", "/event/yoga-principiantes-2/register")')"/>
   <t t-set="company" t-value="object.company_id or object.env.company"/>
   <t t-set="today" t-value="object.env['res.partner']._fields['iz_birthdate'].context_today(object)"/>
   <table width="100%" cellpadding="0" cellspacing="0" style="max-width:600px;margin:0 auto;background-color:#111111;border:1px solid #222;border-radius:16px;overflow:hidden;box-shadow:0 15px 35px rgba(0,0,0,0.6);">
@@ -93,7 +94,7 @@
         <table width="100%" cellpadding="0" cellspacing="0" style="margin:35px 0;">
           <tr>
             <td align="center">
-              <a t-att-href="base_url + '/event/yoga-principiantes-2/register'" style="background:linear-gradient(to right,#ff4b2b,#ff416c);color:#ffffff;text-decoration:none;padding:18px 45px;border-radius:6px;font-weight:bold;font-size:15px;display:inline-block;text-transform:uppercase;letter-spacing:2px;box-shadow:0 6px 20px rgba(255,75,43,0.4);transition:all 0.3s ease;">Reservar Mi Clase Gratis</a>
+              <a t-att-href="base_url + (object.env['ir.config_parameter'].sudo().get_param('iz_website.event_link_yoga_principiantes', '/event/yoga-principiantes-2/register'))" style="background:linear-gradient(to right,#ff4b2b,#ff416c);color:#ffffff;text-decoration:none;padding:18px 45px;border-radius:6px;font-weight:bold;font-size:15px;display:inline-block;text-transform:uppercase;letter-spacing:2px;box-shadow:0 6px 20px rgba(255,75,43,0.4);transition:all 0.3s ease;">Reservar Mi Clase Gratis</a>
               <p style="color:#888; font-size:12px; margin-top:10px;">*Disponible solo esta semana. Cupos limitados.</p>
             </td>
           </tr>
@@ -145,6 +146,7 @@
   <t t-set="display_name" t-value="partner.name or object.name or object.login"/>
   <t t-set="today" t-value="object.env['res.partner']._fields['iz_birthdate'].context_today(object)"/>
   <t t-set="base_url" t-value="(object.env['ir.config_parameter'].sudo().get_param('web.base.url') or 'http://localhost:8069')"/>
+  <t t-set="event_link_yoga" t-value="object.env['ir.config_parameter'].sudo().get_param('iz_website.event_link_yoga_principiantes', 'object.env["ir.config_parameter"].sudo().get_param("iz_website.event_link_yoga_principiantes", "/event/yoga-principiantes-2/register")')"/>
   <t t-set="company" t-value="partner.company_id or object.company_id or object.env.company"/>
   <t t-set="is_birthday_today" t-value="partner and partner.iz_birthdate and partner.iz_birthdate.month == today.month and partner.iz_birthdate.day == today.day"/>
   <table width="100%" cellpadding="0" cellspacing="0" style="max-width:600px;margin:0 auto;background-color:#111111;border:1px solid #222;border-radius:16px;overflow:hidden;box-shadow:0 15px 35px rgba(0,0,0,0.6);">
@@ -222,15 +224,15 @@
         <table width="100%" cellpadding="0" cellspacing="0" style="margin:35px 0;">
           <tr>
             <td align="center">
-              <a t-att-href="base_url + '/event/yoga-principiantes-2/register'" style="background:linear-gradient(to right,#ff4b2b,#ff416c);color:#ffffff;text-decoration:none;padding:18px 45px;border-radius:6px;font-weight:bold;font-size:15px;display:inline-block;text-transform:uppercase;letter-spacing:2px;box-shadow:0 6px 20px rgba(255,75,43,0.4);transition:all 0.3s ease;">Reservar Mi Clase Gratis</a>
+              <a t-att-href="base_url + (object.env['ir.config_parameter'].sudo().get_param('iz_website.event_link_yoga_principiantes', '/event/yoga-principiantes-2/register'))" style="background:linear-gradient(to right,#ff4b2b,#ff416c);color:#ffffff;text-decoration:none;padding:18px 45px;border-radius:6px;font-weight:bold;font-size:15px;display:inline-block;text-transform:uppercase;letter-spacing:2px;box-shadow:0 6px 20px rgba(255,75,43,0.4);transition:all 0.3s ease;">Reservar Mi Clase Gratis</a>
               <p style="color:#888;font-size:12px;margin-top:10px;">Disponible solo esta semana. Cupos limitados.</p>
               <p style="color:#888;font-size:12px;margin-top:8px;line-height:1.6;">
                 Acceso directo al sitio:
-                <a t-att-href="base_url + '/event/yoga-principiantes-2/register'" style="color:#ff4b2b;text-decoration:none;">Yoga Principiantes</a>
+                <a t-att-href="base_url + (object.env['ir.config_parameter'].sudo().get_param('iz_website.event_link_yoga_principiantes', '/event/yoga-principiantes-2/register'))" style="color:#ff4b2b;text-decoration:none;">Yoga Principiantes</a>
                 &nbsp;|&nbsp;
-                <a t-att-href="base_url + '/event/hiit-entrenamiento-6/register'" style="color:#ff4b2b;text-decoration:none;">HIIT Entrenamiento</a>
+                <a t-att-href="base_url + (object.env['ir.config_parameter'].sudo().get_param('iz_website.event_link_hiit_entrenamiento', '/event/hiit-entrenamiento-6/register'))" style="color:#ff4b2b;text-decoration:none;">HIIT Entrenamiento</a>
                 &nbsp;|&nbsp;
-                <a t-att-href="base_url + '/shop'" style="color:#ff4b2b;text-decoration:none;">Tienda</a>
+                <a t-att-href="base_url + (object.env['ir.config_parameter'].sudo().get_param('iz_website.shop_url', '/shop'))" style="color:#ff4b2b;text-decoration:none;">Tienda</a>
             </td>
           </tr>
         </table>
@@ -277,6 +279,7 @@
       <field name="body_html"><![CDATA[
 <div style="background-color:#050505;font-family:'Segoe UI',Roboto,Helvetica,Arial,sans-serif;padding:45px 0;margin:0;">
   <t t-set="base_url" t-value="(object.env['ir.config_parameter'].sudo().get_param('web.base.url') or 'http://localhost:8069')"/>
+  <t t-set="event_link_yoga" t-value="object.env['ir.config_parameter'].sudo().get_param('iz_website.event_link_yoga_principiantes', 'object.env["ir.config_parameter"].sudo().get_param("iz_website.event_link_yoga_principiantes", "/event/yoga-principiantes-2/register")')"/>
   <table width="100%" cellpadding="0" cellspacing="0" style="max-width:600px;margin:0 auto;background-color:#111111;border:1px solid #222;border-radius:16px;overflow:hidden;box-shadow:0 15px 35px rgba(0,0,0,0.6);">
     <tr>
       <td style="text-align:center;padding:25px;background-color:#000000;border-bottom:2px solid #f5af19;">
@@ -322,7 +325,7 @@
         <table width="100%" cellpadding="0" cellspacing="0" style="margin:35px 0;">
           <tr>
             <td align="center">
-              <a t-att-href="base_url + '/event/funcional-boot-camp-15/register'" style="background:linear-gradient(to right,#f12711,#f5af19);color:#ffffff;text-decoration:none;padding:18px 45px;border-radius:6px;font-weight:bold;font-size:15px;display:inline-block;text-transform:uppercase;letter-spacing:2px;box-shadow:0 6px 20px rgba(245,175,25,0.4);transition:all 0.3s ease;">Activar Mi Regalo Ahora</a>
+              <a t-att-href="base_url + (object.env['ir.config_parameter'].sudo().get_param('iz_website.event_link_boot_camp', '/event/funcional-boot-camp-15/register'))" style="background:linear-gradient(to right,#f12711,#f5af19);color:#ffffff;text-decoration:none;padding:18px 45px;border-radius:6px;font-weight:bold;font-size:15px;display:inline-block;text-transform:uppercase;letter-spacing:2px;box-shadow:0 6px 20px rgba(245,175,25,0.4);transition:all 0.3s ease;">Activar Mi Regalo Ahora</a>
               <p style="color:#888; font-size:12px; margin-top:10px;">Vigencia: 7 días desde hoy.</p>
             </td>
           </tr>
@@ -367,6 +370,7 @@
 <div style="background-color:#050505;font-family:'Segoe UI',Roboto,Helvetica,Arial,sans-serif;padding:45px 0;margin:0;">
   <table width="100%" cellpadding="0" cellspacing="0" style="max-width:600px;margin:0 auto;background-color:#111111;border:1px solid #222;border-radius:16px;overflow:hidden;box-shadow:0 15px 35px rgba(0,0,0,0.6);">
     <t t-set="base_url" t-value="(object.env['ir.config_parameter'].sudo().get_param('web.base.url') or 'http://localhost:8069')"/>
+  <t t-set="event_link_yoga" t-value="object.env['ir.config_parameter'].sudo().get_param('iz_website.event_link_yoga_principiantes', 'object.env["ir.config_parameter"].sudo().get_param("iz_website.event_link_yoga_principiantes", "/event/yoga-principiantes-2/register")')"/>
     <tr>
       <td style="text-align:center;padding:25px;background-color:#000000;border-bottom:2px solid #d946ef;">
         <img src="https://files.catbox.moe/agiuc9.png" style="max-height:70px;" alt="Iron Zone Logo"/>
@@ -403,7 +407,7 @@
         <table width="100%" cellpadding="0" cellspacing="0" style="margin:35px 0;">
           <tr>
             <td align="center">
-              <a t-att-href="base_url + '/event/pilates-avanzado-5/register'" style="background:linear-gradient(to right,#8e2de2,#d946ef);color:#ffffff;text-decoration:none;padding:18px 45px;border-radius:6px;font-weight:bold;font-size:15px;display:inline-block;text-transform:uppercase;letter-spacing:2px;box-shadow:0 6px 20px rgba(217,70,239,0.4);transition:all 0.3s ease;">Obtener Mi Clase Premium</a>
+              <a t-att-href="base_url + (object.env['ir.config_parameter'].sudo().get_param('iz_website.event_link_pilates_avanzado', '/event/pilates-avanzado-5/register'))" style="background:linear-gradient(to right,#8e2de2,#d946ef);color:#ffffff;text-decoration:none;padding:18px 45px;border-radius:6px;font-weight:bold;font-size:15px;display:inline-block;text-transform:uppercase;letter-spacing:2px;box-shadow:0 6px 20px rgba(217,70,239,0.4);transition:all 0.3s ease;">Obtener Mi Clase Premium</a>
               <p style="color:#888; font-size:12px; margin-top:10px;">Válido solo por esta semana. Presentar este correo en recepción.</p>
             </td>
           </tr>
@@ -447,6 +451,7 @@
 <div style="background-color:#050505;font-family:'Segoe UI',Roboto,Helvetica,Arial,sans-serif;padding:45px 0;margin:0;">
   <table width="100%" cellpadding="0" cellspacing="0" style="max-width:600px;margin:0 auto;background-color:#111111;border:1px solid #222;border-radius:16px;overflow:hidden;box-shadow:0 15px 35px rgba(0,0,0,0.6);">
     <t t-set="base_url" t-value="(object.env['ir.config_parameter'].sudo().get_param('web.base.url') or 'http://localhost:8069')"/>
+  <t t-set="event_link_yoga" t-value="object.env['ir.config_parameter'].sudo().get_param('iz_website.event_link_yoga_principiantes', 'object.env["ir.config_parameter"].sudo().get_param("iz_website.event_link_yoga_principiantes", "/event/yoga-principiantes-2/register")')"/>
     <tr>
       <td style="text-align:center;padding:25px;background-color:#000000;border-bottom:2px solid #1cb5e0;">
         <img src="https://files.catbox.moe/agiuc9.png" style="max-height:70px;" alt="Iron Zone Logo"/>
@@ -483,7 +488,7 @@
         <table width="100%" cellpadding="0" cellspacing="0" style="margin:35px 0;">
           <tr>
             <td align="center">
-              <a t-att-href="base_url + '/event/boxeo-tecnica-7/register'" style="background:linear-gradient(to right,#1cb5e0,#000046);color:#ffffff;text-decoration:none;padding:18px 45px;border-radius:6px;font-weight:bold;font-size:15px;display:inline-block;text-transform:uppercase;letter-spacing:2px;box-shadow:0 6px 20px rgba(28,181,224,0.4);transition:all 0.3s ease;">Activar Descuento y Clase</a>
+              <a t-att-href="base_url + (object.env['ir.config_parameter'].sudo().get_param('iz_website.event_link_boxeo_tecnica', '/event/boxeo-tecnica-7/register'))" style="background:linear-gradient(to right,#1cb5e0,#000046);color:#ffffff;text-decoration:none;padding:18px 45px;border-radius:6px;font-weight:bold;font-size:15px;display:inline-block;text-transform:uppercase;letter-spacing:2px;box-shadow:0 6px 20px rgba(28,181,224,0.4);transition:all 0.3s ease;">Activar Descuento y Clase</a>
               <p style="color:#888; font-size:12px; margin-top:10px;">Oferta válida por tiempo limitado.</p>
             </td>
           </tr>
@@ -526,6 +531,7 @@
       <field name="body_html"><![CDATA[
 <div style="background-color:#050505;font-family:'Segoe UI',Roboto,Helvetica,Arial,sans-serif;padding:45px 0;margin:0;">
   <t t-set="base_url" t-value="(object.env['ir.config_parameter'].sudo().get_param('web.base.url') or 'http://localhost:8069')"/>
+  <t t-set="event_link_yoga" t-value="object.env['ir.config_parameter'].sudo().get_param('iz_website.event_link_yoga_principiantes', 'object.env["ir.config_parameter"].sudo().get_param("iz_website.event_link_yoga_principiantes", "/event/yoga-principiantes-2/register")')"/>
   <table width="100%" cellpadding="0" cellspacing="0" style="max-width:600px;margin:0 auto;background-color:#111111;border:1px solid #222;border-radius:16px;overflow:hidden;box-shadow:0 15px 35px rgba(0,0,0,0.6);">
     <tr>
       <td style="text-align:center;padding:25px;background-color:#000000;border-bottom:2px solid #ff8008;">
@@ -555,7 +561,7 @@
         <table width="100%" cellpadding="0" cellspacing="0" style="margin:35px 0;">
           <tr>
             <td align="center">
-              <a t-att-href="base_url + '/shop'" style="background:linear-gradient(to right,#ff8008,#ffc837);color:#111111;text-decoration:none;padding:18px 45px;border-radius:6px;font-weight:bold;font-size:15px;display:inline-block;text-transform:uppercase;letter-spacing:2px;box-shadow:0 6px 20px rgba(255,128,8,0.4);transition:all 0.3s ease;">Renovar Mi Plan de Hierro</a>
+              <a t-att-href="base_url + (object.env['ir.config_parameter'].sudo().get_param('iz_website.shop_url', '/shop'))" style="background:linear-gradient(to right,#ff8008,#ffc837);color:#111111;text-decoration:none;padding:18px 45px;border-radius:6px;font-weight:bold;font-size:15px;display:inline-block;text-transform:uppercase;letter-spacing:2px;box-shadow:0 6px 20px rgba(255,128,8,0.4);transition:all 0.3s ease;">Renovar Mi Plan de Hierro</a>
             </td>
           </tr>
         </table>
@@ -583,6 +589,7 @@
       <field name="body_html"><![CDATA[
 <div style="background-color:#050505;font-family:'Segoe UI',Roboto,Helvetica,Arial,sans-serif;padding:45px 0;margin:0;">
   <t t-set="base_url" t-value="(object.env['ir.config_parameter'].sudo().get_param('web.base.url') or 'http://localhost:8069')"/>
+  <t t-set="event_link_yoga" t-value="object.env['ir.config_parameter'].sudo().get_param('iz_website.event_link_yoga_principiantes', 'object.env["ir.config_parameter"].sudo().get_param("iz_website.event_link_yoga_principiantes", "/event/yoga-principiantes-2/register")')"/>
   <table width="100%" cellpadding="0" cellspacing="0" style="max-width:600px;margin:0 auto;background-color:#111111;border:1px solid #222;border-radius:16px;overflow:hidden;box-shadow:0 15px 35px rgba(0,0,0,0.6);">
     <tr>
       <td style="text-align:center;padding:25px;background-color:#000000;border-bottom:2px solid #ff4b2b;">
@@ -615,7 +622,7 @@
         <table width="100%" cellpadding="0" cellspacing="0" style="margin:35px 0;">
           <tr>
             <td align="center">
-              <a t-att-href="base_url + '/event/musculacion-personalizada-13/register'" style="background:linear-gradient(to right,#ff4b2b,#ff416c);color:#ffffff;text-decoration:none;padding:18px 45px;border-radius:6px;font-weight:bold;font-size:15px;display:inline-block;text-transform:uppercase;letter-spacing:2px;box-shadow:0 6px 20px rgba(255,75,43,0.4);transition:all 0.3s ease;">Ver Detalles Musculación</a>
+              <a t-att-href="base_url + (object.env['ir.config_parameter'].sudo().get_param('iz_website.event_link_musculacion', '/event/musculacion-personalizada-13/register'))" style="background:linear-gradient(to right,#ff4b2b,#ff416c);color:#ffffff;text-decoration:none;padding:18px 45px;border-radius:6px;font-weight:bold;font-size:15px;display:inline-block;text-transform:uppercase;letter-spacing:2px;box-shadow:0 6px 20px rgba(255,75,43,0.4);transition:all 0.3s ease;">Ver Detalles Musculación</a>
               <p style="color:#888; font-size:12px; margin-top:10px;">*Asesoría incluida en tu plan actual.</p>
             </td>
           </tr>
@@ -648,6 +655,7 @@
       <field name="body_html"><![CDATA[
 <div style="background-color:#050505;font-family:'Segoe UI',Roboto,Helvetica,Arial,sans-serif;padding:45px 0;margin:0;">
   <t t-set="base_url" t-value="(object.env['ir.config_parameter'].sudo().get_param('web.base.url') or 'http://localhost:8069')"/>
+  <t t-set="event_link_yoga" t-value="object.env['ir.config_parameter'].sudo().get_param('iz_website.event_link_yoga_principiantes', 'object.env["ir.config_parameter"].sudo().get_param("iz_website.event_link_yoga_principiantes", "/event/yoga-principiantes-2/register")')"/>
   <table width="100%" cellpadding="0" cellspacing="0" style="max-width:600px;margin:0 auto;background-color:#111111;border:1px solid #222;border-radius:16px;overflow:hidden;box-shadow:0 15px 35px rgba(0,0,0,0.6);">
     <tr>
       <td style="text-align:center;padding:25px;background-color:#000000;border-bottom:2px solid #ff8008;">
@@ -680,7 +688,7 @@
         <table width="100%" cellpadding="0" cellspacing="0" style="margin:35px 0;">
           <tr>
             <td align="center">
-              <a t-att-href="base_url + '/event/hiit-entrenamiento-6/register'" style="background:linear-gradient(to right,#ff8008,#ffc837);color:#111111;text-decoration:none;padding:18px 45px;border-radius:6px;font-weight:bold;font-size:15px;display:inline-block;text-transform:uppercase;letter-spacing:2px;box-shadow:0 6px 20px rgba(255,128,8,0.4);transition:all 0.3s ease;">Reservar Mi Sesión HIIT</a>
+              <a t-att-href="base_url + (object.env['ir.config_parameter'].sudo().get_param('iz_website.event_link_hiit_entrenamiento', '/event/hiit-entrenamiento-6/register'))" style="background:linear-gradient(to right,#ff8008,#ffc837);color:#111111;text-decoration:none;padding:18px 45px;border-radius:6px;font-weight:bold;font-size:15px;display:inline-block;text-transform:uppercase;letter-spacing:2px;box-shadow:0 6px 20px rgba(255,128,8,0.4);transition:all 0.3s ease;">Reservar Mi Sesión HIIT</a>
               <p style="color:#888; font-size:12px; margin-top:10px;">*Recomendado: 3 sesiones por semana.</p>
             </td>
           </tr>
@@ -713,6 +721,7 @@
       <field name="body_html"><![CDATA[
 <div style="background-color:#050505;font-family:'Segoe UI',Roboto,Helvetica,Arial,sans-serif;padding:45px 0;margin:0;">
   <t t-set="base_url" t-value="(object.env['ir.config_parameter'].sudo().get_param('web.base.url') or 'http://localhost:8069')"/>
+  <t t-set="event_link_yoga" t-value="object.env['ir.config_parameter'].sudo().get_param('iz_website.event_link_yoga_principiantes', 'object.env["ir.config_parameter"].sudo().get_param("iz_website.event_link_yoga_principiantes", "/event/yoga-principiantes-2/register")')"/>
   <table width="100%" cellpadding="0" cellspacing="0" style="max-width:600px;margin:0 auto;background-color:#111111;border:1px solid #222;border-radius:16px;overflow:hidden;box-shadow:0 15px 35px rgba(0,0,0,0.6);">
     <tr>
       <td style="text-align:center;padding:25px;background-color:#000000;border-bottom:2px solid #0052d4;">
@@ -745,7 +754,7 @@
         <table width="100%" cellpadding="0" cellspacing="0" style="margin:35px 0;">
           <tr>
             <td align="center">
-              <a t-att-href="base_url + '/event/crossfit-am-1/register'" style="background:linear-gradient(to right,#0052d4,#4364f7);color:#ffffff;text-decoration:none;padding:18px 45px;border-radius:6px;font-weight:bold;font-size:15px;display:inline-block;text-transform:uppercase;letter-spacing:2px;box-shadow:0 6px 20px rgba(67,100,247,0.4);transition:all 0.3s ease;">Explorar Clases de Resistencia</a>
+              <a t-att-href="base_url + (object.env['ir.config_parameter'].sudo().get_param('iz_website.event_link_crossfit_am', '/event/crossfit-am-1/register'))" style="background:linear-gradient(to right,#0052d4,#4364f7);color:#ffffff;text-decoration:none;padding:18px 45px;border-radius:6px;font-weight:bold;font-size:15px;display:inline-block;text-transform:uppercase;letter-spacing:2px;box-shadow:0 6px 20px rgba(67,100,247,0.4);transition:all 0.3s ease;">Explorar Clases de Resistencia</a>
               <p style="color:#888; font-size:12px; margin-top:10px;">*Consulta horarios disponibles en el portal.</p>
             </td>
           </tr>
@@ -778,6 +787,7 @@
       <field name="body_html"><![CDATA[
 <div style="background-color:#050505;font-family:'Segoe UI',Roboto,Helvetica,Arial,sans-serif;padding:45px 0;margin:0;">
   <t t-set="base_url" t-value="(object.env['ir.config_parameter'].sudo().get_param('web.base.url') or 'http://localhost:8069')"/>
+  <t t-set="event_link_yoga" t-value="object.env['ir.config_parameter'].sudo().get_param('iz_website.event_link_yoga_principiantes', 'object.env["ir.config_parameter"].sudo().get_param("iz_website.event_link_yoga_principiantes", "/event/yoga-principiantes-2/register")')"/>
   <table width="100%" cellpadding="0" cellspacing="0" style="max-width:600px;margin:0 auto;background-color:#111111;border:1px solid #222;border-radius:16px;overflow:hidden;box-shadow:0 15px 35px rgba(0,0,0,0.6);">
     <tr>
       <td style="text-align:center;padding:25px;background-color:#000000;border-bottom:2px solid #11998e;">
@@ -810,7 +820,7 @@
         <table width="100%" cellpadding="0" cellspacing="0" style="margin:35px 0;">
           <tr>
             <td align="center">
-              <a t-att-href="base_url + '/event/funcional-boot-camp-15/register'" style="background:linear-gradient(to right,#11998e,#38ef7d);color:#111111;text-decoration:none;padding:18px 45px;border-radius:6px;font-weight:bold;font-size:15px;display:inline-block;text-transform:uppercase;letter-spacing:2px;box-shadow:0 6px 20px rgba(56,239,125,0.4);transition:all 0.3s ease;">Ver Detalles del Programa</a>
+              <a t-att-href="base_url + (object.env['ir.config_parameter'].sudo().get_param('iz_website.event_link_boot_camp', '/event/funcional-boot-camp-15/register'))" style="background:linear-gradient(to right,#11998e,#38ef7d);color:#111111;text-decoration:none;padding:18px 45px;border-radius:6px;font-weight:bold;font-size:15px;display:inline-block;text-transform:uppercase;letter-spacing:2px;box-shadow:0 6px 20px rgba(56,239,125,0.4);transition:all 0.3s ease;">Ver Detalles del Programa</a>
               <p style="color:#888; font-size:12px; margin-top:10px;">*Recomendado para todos los niveles.</p>
             </td>
           </tr>
@@ -843,6 +853,7 @@
       <field name="body_html"><![CDATA[
 <div style="background-color:#050505;font-family:'Segoe UI',Roboto,Helvetica,Arial,sans-serif;padding:45px 0;margin:0;">
   <t t-set="base_url" t-value="(object.env['ir.config_parameter'].sudo().get_param('web.base.url') or 'http://localhost:8069')"/>
+  <t t-set="event_link_yoga" t-value="object.env['ir.config_parameter'].sudo().get_param('iz_website.event_link_yoga_principiantes', 'object.env["ir.config_parameter"].sudo().get_param("iz_website.event_link_yoga_principiantes", "/event/yoga-principiantes-2/register")')"/>
   <table width="100%" cellpadding="0" cellspacing="0" style="max-width:600px;margin:0 auto;background-color:#111111;border:1px solid #222;border-radius:16px;overflow:hidden;box-shadow:0 15px 35px rgba(0,0,0,0.6);">
     <tr>
       <td style="text-align:center;padding:25px;background-color:#000000;border-bottom:2px solid #00b4db;">
@@ -875,7 +886,7 @@
         <table width="100%" cellpadding="0" cellspacing="0" style="margin:35px 0;">
           <tr>
             <td align="center">
-              <a t-att-href="base_url + '/event/yoga-principiantes-2/register'" style="background:linear-gradient(to right,#00b4db,#0083b0);color:#ffffff;text-decoration:none;padding:18px 45px;border-radius:6px;font-weight:bold;font-size:15px;display:inline-block;text-transform:uppercase;letter-spacing:2px;box-shadow:0 6px 20px rgba(0,180,219,0.4);transition:all 0.3s ease;">Reservar Mi Clase de Inicio</a>
+              <a t-att-href="base_url + (object.env['ir.config_parameter'].sudo().get_param('iz_website.event_link_yoga_principiantes', '/event/yoga-principiantes-2/register'))" style="background:linear-gradient(to right,#00b4db,#0083b0);color:#ffffff;text-decoration:none;padding:18px 45px;border-radius:6px;font-weight:bold;font-size:15px;display:inline-block;text-transform:uppercase;letter-spacing:2px;box-shadow:0 6px 20px rgba(0,180,219,0.4);transition:all 0.3s ease;">Reservar Mi Clase de Inicio</a>
               <p style="color:#888; font-size:12px; margin-top:10px;">*Asistencia incluida en tu primera semana.</p>
             </td>
           </tr>
@@ -908,6 +919,7 @@
       <field name="body_html"><![CDATA[
 <div style="background-color:#050505;font-family:'Segoe UI',Roboto,Helvetica,Arial,sans-serif;padding:45px 0;margin:0;">
   <t t-set="base_url" t-value="(object.env['ir.config_parameter'].sudo().get_param('web.base.url') or 'http://localhost:8069')"/>
+  <t t-set="event_link_yoga" t-value="object.env['ir.config_parameter'].sudo().get_param('iz_website.event_link_yoga_principiantes', 'object.env["ir.config_parameter"].sudo().get_param("iz_website.event_link_yoga_principiantes", "/event/yoga-principiantes-2/register")')"/>
   <table width="100%" cellpadding="0" cellspacing="0" style="max-width:600px;margin:0 auto;background-color:#111111;border:1px solid #222;border-radius:16px;overflow:hidden;box-shadow:0 15px 35px rgba(0,0,0,0.6);">
     <tr>
       <td style="text-align:center;padding:25px;background-color:#000000;border-bottom:2px solid #ff5858;">
@@ -940,7 +952,7 @@
         <table width="100%" cellpadding="0" cellspacing="0" style="margin:35px 0;">
           <tr>
             <td align="center">
-              <a t-att-href="base_url + '/event/funcional-boot-camp-15/register'" style="background:linear-gradient(to right,#f857a6,#ff5858);color:#ffffff;text-decoration:none;padding:18px 45px;border-radius:6px;font-weight:bold;font-size:15px;display:inline-block;text-transform:uppercase;letter-spacing:2px;box-shadow:0 6px 20px rgba(255,88,88,0.4);transition:all 0.3s ease;">Ver Clases Recomendadas</a>
+              <a t-att-href="base_url + (object.env['ir.config_parameter'].sudo().get_param('iz_website.event_link_boot_camp', '/event/funcional-boot-camp-15/register'))" style="background:linear-gradient(to right,#f857a6,#ff5858);color:#ffffff;text-decoration:none;padding:18px 45px;border-radius:6px;font-weight:bold;font-size:15px;display:inline-block;text-transform:uppercase;letter-spacing:2px;box-shadow:0 6px 20px rgba(255,88,88,0.4);transition:all 0.3s ease;">Ver Clases Recomendadas</a>
               <p style="color:#888; font-size:12px; margin-top:10px;">*Consulta disponibilidad en tu sede.</p>
             </td>
           </tr>
@@ -973,6 +985,7 @@
       <field name="body_html"><![CDATA[
 <div style="background-color:#050505;font-family:'Segoe UI',Roboto,Helvetica,Arial,sans-serif;padding:45px 0;margin:0;">
   <t t-set="base_url" t-value="(object.env['ir.config_parameter'].sudo().get_param('web.base.url') or 'http://localhost:8069')"/>
+  <t t-set="event_link_yoga" t-value="object.env['ir.config_parameter'].sudo().get_param('iz_website.event_link_yoga_principiantes', 'object.env["ir.config_parameter"].sudo().get_param("iz_website.event_link_yoga_principiantes", "/event/yoga-principiantes-2/register")')"/>
   <table width="100%" cellpadding="0" cellspacing="0" style="max-width:600px;margin:0 auto;background-color:#111111;border:1px solid #222;border-radius:16px;overflow:hidden;box-shadow:0 15px 35px rgba(0,0,0,0.6);">
     <tr>
       <td style="text-align:center;padding:25px;background-color:#000000;border-bottom:2px solid #ff4b2b;">
@@ -1005,7 +1018,7 @@
         <table width="100%" cellpadding="0" cellspacing="0" style="margin:35px 0;">
           <tr>
             <td align="center">
-              <a t-att-href="base_url + '/event/pilates-avanzado-5/register'" style="background:linear-gradient(to right,#141e30,#243b55);color:#ffffff;text-decoration:none;padding:18px 45px;border-radius:6px;font-weight:bold;font-size:15px;display:inline-block;text-transform:uppercase;letter-spacing:2px;box-shadow:0 6px 20px rgba(255,75,43,0.4);transition:all 0.3s ease;">Explorar Clases Élite</a>
+              <a t-att-href="base_url + (object.env['ir.config_parameter'].sudo().get_param('iz_website.event_link_pilates_avanzado', '/event/pilates-avanzado-5/register'))" style="background:linear-gradient(to right,#141e30,#243b55);color:#ffffff;text-decoration:none;padding:18px 45px;border-radius:6px;font-weight:bold;font-size:15px;display:inline-block;text-transform:uppercase;letter-spacing:2px;box-shadow:0 6px 20px rgba(255,75,43,0.4);transition:all 0.3s ease;">Explorar Clases Élite</a>
               <p style="color:#888; font-size:12px; margin-top:10px;">*Acceso exclusivo para miembros certificados.</p>
             </td>
           </tr>
@@ -1038,6 +1051,7 @@
       <field name="body_html"><![CDATA[
 <div style="background-color:#050505;font-family:'Segoe UI',Roboto,Helvetica,Arial,sans-serif;padding:45px 0;margin:0;">
   <t t-set="base_url" t-value="(object.env['ir.config_parameter'].sudo().get_param('web.base.url') or 'http://localhost:8069')"/>
+  <t t-set="event_link_yoga" t-value="object.env['ir.config_parameter'].sudo().get_param('iz_website.event_link_yoga_principiantes', 'object.env["ir.config_parameter"].sudo().get_param("iz_website.event_link_yoga_principiantes", "/event/yoga-principiantes-2/register")')"/>
   <table width="100%" cellpadding="0" cellspacing="0" style="max-width:600px;margin:0 auto;background-color:#111111;border:1px solid #222;border-radius:16px;overflow:hidden;box-shadow:0 15px 35px rgba(0,0,0,0.6);">
     <tr>
       <td style="text-align:center;padding:25px;background-color:#000000;border-bottom:2px solid #38ef7d;">
@@ -1070,7 +1084,7 @@
         <table width="100%" cellpadding="0" cellspacing="0" style="margin:35px 0;">
           <tr>
             <td align="center">
-              <a t-att-href="base_url + '/shop'" style="background:linear-gradient(to right,#11998e,#38ef7d);color:#111111;text-decoration:none;padding:18px 45px;border-radius:6px;font-weight:bold;font-size:15px;display:inline-block;text-transform:uppercase;letter-spacing:2px;box-shadow:0 6px 20px rgba(56,239,125,0.4);transition:all 0.3s ease;">Ver Ofertas de Temporada</a>
+              <a t-att-href="base_url + (object.env['ir.config_parameter'].sudo().get_param('iz_website.shop_url', '/shop'))" style="background:linear-gradient(to right,#11998e,#38ef7d);color:#111111;text-decoration:none;padding:18px 45px;border-radius:6px;font-weight:bold;font-size:15px;display:inline-block;text-transform:uppercase;letter-spacing:2px;box-shadow:0 6px 20px rgba(56,239,125,0.4);transition:all 0.3s ease;">Ver Ofertas de Temporada</a>
             </td>
           </tr>
         </table>
