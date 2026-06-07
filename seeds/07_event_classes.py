@@ -3,6 +3,7 @@ from datetime import datetime, timedelta
 import os
 import base64
 import json
+import urllib.request
 
 
 DEFAULT_PASSWORD = "admin123"
@@ -174,6 +175,86 @@ CLASSES = [
         "stage": "Anunciado",
         "description": "Encuentra tu oasis de calma en medio del caos diario con nuestra clase de Meditación Mindfulness. Aprende a vivir el momento presente con atención plena y sin juicios. Guiados por nuestra instructora, practicaremos diferentes técnicas de respiración consciente, escaneo corporal y visualización para calmar la mente y reducir la ansiedad y el estrés. Desarrollarás herramientas prácticas para manejar las emociones, mejorar la concentración y fomentar un profundo estado de bienestar y serenidad interior. Date el regalo de una pausa regeneradora para tu salud mental.",
         "image": "meditacion.jpg",
+    },
+    {
+        "name": "Stretching y Flexibilidad",
+        "instructor": "Sofia Garcia",
+        "capacity": 18,
+        "price": 6.0,
+        "time": "07:30",
+        "stage": "Nuevo",
+        "description": "Recupera la movilidad y alivia tensiones acumuladas en nuestra sesión de Stretching y Flexibilidad. Trabajaremos con técnicas de estiramiento estático, dinámico y de facilitación neuromuscular propioceptiva (FNP) para incrementar progresivamente el rango de movimiento de cada articulación. Ideal como complemento a cualquier disciplina deportiva o simplemente para sentirte bien en tu cuerpo. Reducirás el riesgo de lesiones, mejorarás tu postura y terminarás la sesión con una sensación de ligereza y bienestar total. Sin importar tu nivel de flexibilidad actual, aquí encontrarás el ritmo que necesitas.",
+        "image": "https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=800",
+    },
+    {
+        "name": "Kickboxing Fitness",
+        "instructor": "Carlos Mendez",
+        "capacity": 16,
+        "price": 13.0,
+        "time": "20:00",
+        "stage": "Nuevo",
+        "description": "Combina la potencia del boxeo con la agilidad del kick, en una clase de Kickboxing Fitness diseñada para quemar calorías y tonificar todo el cuerpo. Aprenderás combinaciones de golpes de puño y patadas sobre sacos y con compañero de práctica, todo en un entorno seguro y motivante. Mejora tu coordinación, velocidad de reacción y resistencia cardiovascular mientras aprendes técnicas reales de defensa personal. La adrenalina y energía del grupo te harán olvidar que estás haciendo ejercicio. ¡Desata tu fuerza interior!",
+        "image": "https://images.unsplash.com/photo-1549719386-74dfcbf7dbed?w=800",
+    },
+    {
+        "name": "Body Pump",
+        "instructor": "Carlos Mendez",
+        "capacity": 24,
+        "price": 10.0,
+        "time": "18:00",
+        "stage": "Nuevo",
+        "description": "Body Pump es el entrenamiento con barra que esculpe, tonifica y fortalece todo el cuerpo. Utilizando pesos ligeros a moderados con muchas repeticiones, realizarás movimientos compuestos como sentadillas, press de pecho, remo y curl de bíceps, todo al ritmo de música energizante. Esta clase es perfecta para desarrollar resistencia muscular sin ganar volumen excesivo. Quemarás calorías durante y después del entrenamiento gracias al efecto afterburn. Adáptala a tu nivel eligiendo el peso adecuado. ¡Es hora de definir tu figura!",
+        "image": "https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?w=800",
+    },
+    {
+        "name": "TRX Funcional",
+        "instructor": "Carlos Mendez",
+        "capacity": 14,
+        "price": 14.0,
+        "time": "12:30",
+        "stage": "Reservado",
+        "description": "Entrena con tu propio peso corporal llevándolo al máximo con las correas TRX. Esta metodología de suspensión activa simultáneamente músculos estabilizadores, core y grupos musculares principales en cada ejercicio, maximizando la eficiencia de tu entrenamiento. Desarrollarás fuerza funcional, equilibrio y control corporal de una manera que los pesos convencionales no logran. Apto para todos los niveles gracias a la facilidad de ajustar la dificultad. Es el entrenamiento favorito de fuerzas militares y atletas de élite, ahora al alcance de todos.",
+        "image": "https://images.unsplash.com/photo-1601422407692-ec4eeec1d9b3?w=800",
+    },
+    {
+        "name": "Ballet Fitness",
+        "instructor": "Sofia Garcia",
+        "capacity": 16,
+        "price": 11.0,
+        "time": "10:30",
+        "stage": "Anunciado",
+        "description": "Descubre la elegancia y la fuerza del ballet adaptadas al fitness en nuestra clase de Ballet Fitness. No necesitas experiencia previa en danza; trabajaremos en la barra y en el centro de la sala para fortalecer piernas, glúteos y core con ejercicios inspirados en el ballet clásico. Mejorarás tu postura, equilibrio, coordinación y la conexión mente-cuerpo de una manera suave pero muy efectiva. Terminarás cada sesión sintiéndote más erguido, ágil y consciente de tu cuerpo. Una alternativa elegante y diferente para conseguir un físico largo y definido.",
+        "image": "https://images.unsplash.com/photo-1518834107812-67b0b7c58434?w=800",
+    },
+    {
+        "name": "Parkour parra Niños",
+        "instructor": "Carlos Mendez",
+        "capacity": 12,
+        "price": 9.0,
+        "time": "15:30",
+        "stage": "Anunciado",
+        "description": "Introduce a los más pequeños al fascinante mundo del parkour y el movimiento libre. En un entorno completamente seguro y supervisado, los niños aprenderán a saltar, trepar, rodar y superar obstáculos de manera eficiente y creativa. Esta disciplina fomenta la confianza en uno mismo, la toma de decisiones rápidas, la creatividad motriz y el trabajo en equipo. Es la clase perfecta para que los niños canalicen su energía de forma constructiva mientras desarrollan habilidades físicas fundamentales: fuerza, agilidad, coordinación y valentía. ¡El mundo es su gimnasio!",
+        "image": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=800",
+    },
+    {
+        "name": "Yoga Restaurativo",
+        "instructor": "Sofia Garcia",
+        "capacity": 10,
+        "price": 9.0,
+        "time": "20:30",
+        "stage": "Nuevo",
+        "description": "Regala a tu cuerpo una recuperación profunda con nuestra clase de Yoga Restaurativo. A diferencia del yoga dinámico, aquí utilizamos props (bloques, bolsters, mantas) para sostener el cuerpo en posturas pasivas que se mantienen durante varios minutos, permitiendo una relajación muscular y nerviosa profunda. Es el antídoto perfecto al estrés moderno, al sobreentrenamiento y a la vida agitada. Estimula el sistema nervioso parasimpático, mejora la calidad del sueño y facilita la recuperación muscular. Sal de cada sesión renovado, como si hubieras dormido una siesta de lujo.",
+        "image": "https://images.unsplash.com/photo-1506126613408-eca07ce68773?w=800",
+    },
+    {
+        "name": "Calistenia Intermedia",
+        "instructor": "Carlos Mendez",
+        "capacity": 15,
+        "price": 13.0,
+        "time": "17:00",
+        "stage": "Nuevo",
+        "description": "Domina el arte de mover tu cuerpo con control absoluto en nuestra clase de Calistenia Intermedia. Trabajaremos progresiones hacia habilidades icónicas como las dominadas, las flexiones tipo arquero, el muscle-up y las planchas. Cada sesión combina fuerza, control corporal y conciencia kinestésica para llevarte desde donde estás hasta donde quieres llegar. No necesitas equipamiento costoso, solo tu cuerpo, determinación y nuestra guía experta. Descubre la libertad de movimiento que ofrece la calistenia y empieza a construir el cuerpo más funcional de tu vida.",
+        "image": "https://images.unsplash.com/photo-1598971457999-ca4ef48a9a71?w=800",
     },
 ]
 
@@ -363,7 +444,7 @@ def ensure_event_login_required(uid, models):
     arch = '''
     <xpath expr="//button[@data-bs-target='#modal_ticket_registration']" position="replace">
         <t t-if="request.env.user._is_public()">
-            <a t-attf-href="/web/login?redirect=/event/#{slug(event)}" t-attf-class="btn btn-primary {{cta_additional_classes}}">Register</a>
+            <a t-attf-href="/web/login?redirect=/event/#{slug(event)}" t-attf-class="btn btn-primary {{cta_additional_classes}}">Registrarse</a>
         </t>
         <t t-else="">
             <button type="button" data-bs-toggle="modal" data-bs-target="#modal_ticket_registration" t-attf-class="btn btn-primary {{cta_additional_classes}}">Register</button>
@@ -569,10 +650,17 @@ def run():
         img_base64 = False
         image_filename = class_info.get("image")
         if image_filename:
-            image_path = os.path.join(os.path.dirname(__file__), "images", "events", image_filename)
-            if os.path.exists(image_path):
-                with open(image_path, "rb") as f:
-                    img_base64 = base64.b64encode(f.read()).decode("utf-8")
+            if image_filename.startswith("http"):
+                try:
+                    with urllib.request.urlopen(image_filename, timeout=10) as resp:
+                        img_base64 = base64.b64encode(resp.read()).decode("utf-8")
+                except Exception as e:
+                    print(f"  Warning: could not download image {image_filename}: {e}")
+            else:
+                image_path = os.path.join(os.path.dirname(__file__), "images", "events", image_filename)
+                if os.path.exists(image_path):
+                    with open(image_path, "rb") as f:
+                        img_base64 = base64.b64encode(f.read()).decode("utf-8")
 
         # CSS para ocultar el banner pixelado solo en la página de detalles
         desc_html = '<div style="font-size: 1.3rem; line-height: 1.8; color: #cfcfcf; padding: 15px;">'

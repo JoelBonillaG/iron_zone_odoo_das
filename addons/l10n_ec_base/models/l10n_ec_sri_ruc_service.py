@@ -26,7 +26,7 @@ SRI_CEDULA_ENDPOINT = "https://srienlinea.sri.gob.ec/sri-catastro-sujeto-servici
 SRI_NOMBRE_ENDPOINT = "https://srienlinea.sri.gob.ec/sri-catastro-sujeto-servicio-internet/rest/ConsolidadoContribuyente/obtenerPorRazonSocial"
 
 # Timeout for requests
-REQUEST_TIMEOUT = 15
+REQUEST_TIMEOUT = 4
 
 
 class L10nEcSriRucService(models.AbstractModel):

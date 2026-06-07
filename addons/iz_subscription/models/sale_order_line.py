@@ -43,11 +43,29 @@ class SaleOrderLine(models.Model):
         plan, subscription = partner._get_current_subscription_plan()
         if not plan:
             return plan, subscription, self.env["iz.subscription.benefit"]
-        benefit = partner._get_current_subscription_benefits("events")[:1]
+        benefits = partner._get_current_subscription_benefits("events")
+        # If the event restricts to specific plans, filter — otherwise apply to all events
+        if ticket.event_id and ticket.event_id.subscription_plan_ids:
+            benefits = benefits.filtered(lambda b: b.plan_id in ticket.event_id.subscription_plan_ids)
+        # (no else: if subscription_plan_ids is empty, all benefits apply)
+        benefit = benefits[:1]
         return plan, subscription, benefit
 
     def _apply_subscription_event_benefit(self):
         for line in self:
+            ticket = line.event_ticket_id if "event_ticket_id" in line._fields else False
+
+            # --- Priority 1: First event free (highest priority) ---
+            if ticket:
+                partner = line.order_id.partner_id
+                if partner and not partner._has_previous_event_registration():
+                    line.discount = 100.0
+                    line.subscription_benefit_id = False
+                    line.subscription_plan_id = False
+                    line.subscription_discount_percent = 100.0
+                    continue
+
+            # --- Priority 2: Subscription benefit discount ---
             plan, _subscription, benefit = line._get_subscription_event_benefit()
             if not benefit:
                 if "event_ticket_id" in line._fields and line.event_ticket_id:
@@ -66,6 +84,7 @@ class SaleOrderLine(models.Model):
             line.subscription_benefit_id = benefit
             line.subscription_plan_id = plan
             line.subscription_discount_percent = discount
+
 
     def get_subscription_line_values(self):
         return {

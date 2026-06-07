@@ -1,9 +1,31 @@
+import json
 from datetime import date, datetime
 
 from odoo import http
-from odoo.exceptions import UserError
+from odoo.exceptions import UserError, ValidationError
 from odoo.addons.auth_signup.controllers.main import AuthSignupHome
+from odoo.addons.website_sale.controllers.main import WebsiteSale
 from odoo.http import request
+
+
+class IzWebsiteSaleAddress(WebsiteSale):
+    @http.route()
+    def shop_address_submit(self, *args, **kwargs):
+        request.update_env(
+            context=dict(
+                request.env.context,
+                no_vat_validation=True,
+                tracking_disable=True,
+            )
+        )
+        try:
+            return super().shop_address_submit(*args, **kwargs)
+        except ValidationError as exc:
+            message = exc.args[0] if exc.args else str(exc)
+            return json.dumps({
+                "invalid_fields": ["vat"],
+                "messages": [message],
+            })
 
 
 class IzSignupController(AuthSignupHome):
