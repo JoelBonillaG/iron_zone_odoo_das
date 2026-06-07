@@ -8,6 +8,7 @@
     """,
     'category': 'Productivity',
     'author': 'Iron Zone',
+    'license': 'LGPL-3',
     'depends': ['base', 'mail'],
     'data': [
         'security/ir.model.access.csv',
