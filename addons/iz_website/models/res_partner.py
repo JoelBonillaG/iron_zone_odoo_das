@@ -7,6 +7,14 @@ from odoo.exceptions import ValidationError
 class ResPartner(models.Model):
     _inherit = "res.partner"
 
+    _IZ_PROFILE_FIELDS = {
+        "iz_birthdate",
+        "iz_gender",
+        "iz_fitness_goal",
+        "iz_experience_level",
+    }
+    _IZ_MARKETING_FIELDS = _IZ_PROFILE_FIELDS | {"email", "iz_subscribed"}
+
     iz_subscribed = fields.Boolean(string="Subscribed to Iron Zone mailing list")
     iz_birthdate = fields.Date(string="Fecha de nacimiento")
     iz_gender = fields.Selection(
@@ -42,6 +50,7 @@ class ResPartner(models.Model):
     # Campo fantasma necesario para que Odoo valide vistas antiguas en la DB durante actualizaciones
     iz_last_birthday_year = fields.Integer(string="Último año de cumpleaños")
     iz_welcome_sent = fields.Boolean(string="Welcome Sent")
+    iz_seasonal_promo_used = fields.Boolean(string="Descuento estacional usado")
     iz_onboarding_day1_sent = fields.Boolean(string="Onboarding Day 1 Sent")
     iz_onboarding_day23_sent = fields.Boolean(string="Onboarding Day 2-3 Sent")
     
@@ -88,27 +97,38 @@ class ResPartner(models.Model):
     # CRUD hooks
     # ------------------------------------------------------------------
 
+    def _iz_skip_partner_automation(self):
+        """Skip marketing work during fast transactional writes like checkout."""
+        return self.env.context.get("iz_skip_automation") or (
+            self.env.context.get("tracking_disable")
+            and self.env.context.get("no_vat_validation")
+        )
+
     @api.model_create_multi
     def create(self, vals_list):
         partners = super().create(vals_list)
         today = fields.Date.context_today(self)
-        if self.env.context.get('iz_skip_automation'):
+        if self._iz_skip_partner_automation():
             return partners
             
-        for partner in partners:
+        for partner, vals in zip(partners, vals_list):
+            changed_fields = set(vals)
+            if not (changed_fields & self._IZ_MARKETING_FIELDS):
+                continue
             try:
                 # Synchronize partner category tags
-                partner._iz_sync_partner_tags()
+                if changed_fields & self._IZ_PROFILE_FIELDS:
+                    partner._iz_sync_partner_tags()
                 
                 if partner.iz_subscribed and partner.email:
                     partner._iz_subscribe_to_mailing_list()
-                if partner.email:
+                if partner.email and changed_fields & (self._IZ_PROFILE_FIELDS | {"email"}):
                     partner._iz_assign_to_segment_lists()
             except Exception:
                 pass
             
-            # Enviar siempre la bienvenida en el alta; si hoy es su cumpleaños, pasar flag
-            if partner.email:
+            # Queue welcome email; do not block signup/checkout waiting for SMTP.
+            if partner.iz_subscribed and partner.email:
                 template = self.env.ref("iz_website.mail_template_welcome", raise_if_not_found=False)
                 if template:
                     try:
@@ -116,35 +136,42 @@ class ResPartner(models.Model):
                         if partner.iz_birthdate and partner.iz_birthdate.month == today.month and partner.iz_birthdate.day == today.day:
                             is_bday = True
                         ctx = {"partner": partner, "is_birthday": is_bday, "is_birthday_today": is_bday}
-                        template.with_context(**ctx).send_mail(partner.id, force_send=True)
-                        try:
-                            partner.sudo().write({"iz_welcome_sent": True})
-                        except Exception:
-                            pass
+                        template.with_context(**ctx).send_mail(partner.id, force_send=False)
+                        partner.sudo().write({"iz_welcome_sent": True})
                     except Exception:
                         pass
         return partners
 
     def write(self, vals):
+        if self.env.context.get('iz_skip_automation'):
+            return super().write(vals)
+        self = self.with_context(iz_skip_automation=True)
         # Actualizar timestamp si el género cambia
         if "iz_gender" in vals:
             vals["iz_gender_last_update"] = fields.Datetime.now()
             
         res = super().write(vals)
         today = fields.Date.context_today(self)
-        if self.env.context.get('iz_skip_automation'):
+
+        if self._iz_skip_partner_automation():
+            return res
+
+        changed_fields = set(vals)
+        if not (changed_fields & self._IZ_MARKETING_FIELDS):
             return res
 
         try:
             for partner in self:
                 # Synchronize partner category tags
-                partner._iz_sync_partner_tags()
+                if changed_fields & self._IZ_PROFILE_FIELDS:
+                    partner._iz_sync_partner_tags()
                 
                 # Trigger general and segment subscriptions if they have email and subscribed
                 if partner.email:
-                    if partner.iz_subscribed:
+                    if partner.iz_subscribed and changed_fields & {"email", "iz_subscribed"}:
                         partner._iz_subscribe_to_mailing_list()
-                    partner._iz_assign_to_segment_lists()
+                    if changed_fields & (self._IZ_PROFILE_FIELDS | {"email"}):
+                        partner._iz_assign_to_segment_lists()
                 
                 # Enviar correo de campaña específico al actualizar objetivo fitness
                 if "iz_fitness_goal" in vals and partner.iz_fitness_goal and partner.email:
@@ -152,7 +179,7 @@ class ResPartner(models.Model):
                     template = self.env.ref(f"iz_website.{template_xmlid}", raise_if_not_found=False)
                     if template:
                         try:
-                            template.send_mail(partner.id, force_send=True)
+                            template.send_mail(partner.id)
                         except Exception:
                             pass
                 
@@ -162,7 +189,7 @@ class ResPartner(models.Model):
                     template = self.env.ref(f"iz_website.{template_xmlid}", raise_if_not_found=False)
                     if template:
                         try:
-                            template.send_mail(partner.id, force_send=True)
+                            template.send_mail(partner.id)
                         except Exception:
                             pass
                 
@@ -171,7 +198,7 @@ class ResPartner(models.Model):
                     template = self.env.ref("iz_website.mail_template_birthday", raise_if_not_found=False)
                     if template:
                         try:
-                            template.with_context(partner=partner).send_mail(partner.id, force_send=True)
+                            template.with_context(partner=partner).send_mail(partner.id)
                         except Exception:
                             pass
         except Exception:
@@ -428,8 +455,9 @@ class ResPartner(models.Model):
         if not template:
             return
         try:
+            today = fields.Date.context_today(self)
             is_bday = bool(self.iz_birthdate and self.iz_birthdate.month == today.month and self.iz_birthdate.day == today.day)
-            template.with_context(partner=self, is_birthday=is_bday, is_birthday_today=is_bday).send_mail(self.id, force_send=True)
+            template.with_context(partner=self, is_birthday=is_bday, is_birthday_today=is_bday).send_mail(self.id, force_send=False)
             self.sudo().write({"iz_welcome_sent": True})
         except Exception:
             pass

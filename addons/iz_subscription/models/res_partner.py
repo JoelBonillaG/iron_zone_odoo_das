@@ -77,3 +77,16 @@ class Partner(models.Model):
                 lambda benefit: benefit.benefit_scope == benefit_scope
             )
         return benefits
+
+    def _has_previous_event_registration(self, exclude_order_id=False):
+        """Returns True if this partner has at least one non-cancelled event registration.
+        Used to implement the 'first event free' business rule."""
+        self.ensure_one()
+        domain = [
+            ("partner_id", "=", self.id),
+            ("state", "!=", "cancel"),
+        ]
+        if exclude_order_id:
+            # Evita contarse a sí mismo si ya existe una inscripción borrador en la orden actual
+            domain.append(("sale_order_id", "!=", exclude_order_id))
+        return bool(self.env["event.registration"].sudo().search_count(domain))

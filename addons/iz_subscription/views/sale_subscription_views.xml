@@ -112,7 +112,7 @@
                             <field name="sale_subscription_line_ids">
                                 <list editable="bottom">
                                     <field name="currency_id" column_invisible="1" />
-                                    <field name="product_id" string="Producto" required="True" />
+                                    <field name="product_id" string="Producto" required="True" domain="[('subscribable', '=', True)]" />
                                     <field
                                         name="name"
                                         string="Descripcion"
@@ -457,8 +457,12 @@
         <field name="name">Productos de suscripcion</field>
         <field name="res_model">product.template</field>
         <field name="view_mode">list,form</field>
+        <field name="domain">[('subscribable', '=', True)]</field>
+        <field name="view_ids" eval="[(5, 0, 0),
+            (0, 0, {'view_mode': 'list', 'sequence': 1}),
+            (0, 0, {'view_mode': 'form', 'sequence': 2, 'view_id': ref('product_template_form_view_subscription')})]" />
         <field name="context">
-            {'search_default_subsproducts': True, "default_type": "service", "default_subscribable": True}
+            {"default_type": "service", "default_subscribable": True, "default_sale_ok": True, "default_purchase_ok": False}
         </field>
     </record>
 

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="seasonal_promo_code" model="ir.config_parameter">
+            <field name="key">iz_website.seasonal_promo_code</field>
+            <field name="value">IRONZONE25</field>
+        </record>
+        <record id="seasonal_promo_product_slug" model="ir.config_parameter">
+            <field name="key">iz_website.seasonal_promo_product_slug</field>
+            <field name="value">suscripcion-anual-4</field>
+        </record>
+        <record id="seasonal_promo_discount" model="ir.config_parameter">
+            <field name="key">iz_website.seasonal_promo_discount</field>
+            <field name="value">25</field>
+        </record>
+    </data>
+</odoo>

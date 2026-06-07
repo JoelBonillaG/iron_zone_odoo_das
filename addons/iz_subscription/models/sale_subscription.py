@@ -58,13 +58,13 @@ class SaleSubscription(models.Model):
     pricelist_id = fields.Many2one(
         comodel_name="product.pricelist", required=True, string="Lista de precios"
     )
-    recurring_next_date = fields.Date(string="Proxima factura", default=date.today())
+    recurring_next_date = fields.Date(string="Proxima factura", default=fields.Date.today)
     user_id = fields.Many2one(
         comodel_name="res.users",
         string="Responsable comercial",
         default=lambda self: self.env.user.id,
     )
-    date_start = fields.Date(string="Fecha de inicio", default=date.today())
+    date_start = fields.Date(string="Fecha de inicio", default=fields.Date.today)
     date = fields.Date(
         string="Fecha de fin",
         compute="_compute_rule_boundary",
@@ -296,40 +296,54 @@ class SaleSubscription(models.Model):
             [("type", "=", "in_progress")], limit=1
         )
         self.stage_id = in_progress_stage
-        self._close_lower_priority_active_subscriptions()
+        self._enforce_single_active_subscription()
 
-    def _close_lower_priority_active_subscriptions(self):
+    def _enforce_single_active_subscription(self):
+        """Keep only one active subscription per partner.
+
+        When several subscriptions are active at the same time, the winner is the
+        one with the highest plan priority; ties are broken by the most recent
+        record (highest id). Every other active subscription is closed with the
+        "Cambio de plan" reason. This guarantees a single "Plan vigente" and
+        prevents duplicate active subscriptions of the same plan.
+        """
         today = fields.Date.context_today(self)
         closed_stage = self.env["sale.subscription.stage"].search(
             [("type", "=", "post")], limit=1
         )
+        if not closed_stage:
+            return
         change_reason = self.env["sale.subscription.close.reason"].search(
             [("name", "ilike", "Cambio de plan")], limit=1
         )
-        if not closed_stage:
-            return
-        for subscription in self:
+
+        def _priority(subscription):
             plan = subscription._get_subscription_plan()
-            if not plan or subscription.stage_type != "in_progress":
-                continue
-            replaced_subscriptions = self.search(
+            return plan.priority if plan else 0
+
+        for partner in self.mapped("partner_id"):
+            active_subscriptions = self.search(
                 [
-                    ("id", "!=", subscription.id),
-                    ("partner_id", "=", subscription.partner_id.id),
+                    ("partner_id", "=", partner.id),
                     ("stage_type", "=", "in_progress"),
                     ("active", "=", True),
-                    ("subscription_plan_id.priority", "<", plan.priority),
                 ]
             )
-            for replaced in replaced_subscriptions:
-                values = {
-                    "stage_id": closed_stage.id,
-                    "date": today,
-                    "recurring_next_date": False,
-                }
-                if change_reason:
-                    values["close_reason_id"] = change_reason.id
-                replaced.write(values)
+            if len(active_subscriptions) <= 1:
+                continue
+            winner = active_subscriptions.sorted(
+                key=lambda subscription: (_priority(subscription), subscription.id),
+                reverse=True,
+            )[0]
+            losers = active_subscriptions - winner
+            values = {
+                "stage_id": closed_stage.id,
+                "date": today,
+                "recurring_next_date": False,
+            }
+            if change_reason:
+                values["close_reason_id"] = change_reason.id
+            losers.write(values)
 
     def action_close_subscription(self):
         return {
@@ -340,6 +354,26 @@ class SaleSubscription(models.Model):
             "target": "new",
             "res_id": False,
         }
+
+    def cancel_renewal(self, close_reason_id=False):
+        """Customer cancellation: stop future billing but keep the subscription
+        active (and its benefits) until the end of the current paid period.
+
+        The next billing date becomes the end date, no further invoices are
+        generated, and the recurring cron will close it once that date passes.
+        """
+        today = fields.Date.context_today(self)
+        for subscription in self:
+            period_end = subscription.recurring_next_date or subscription.date or today
+            subscription.write(
+                {
+                    "to_renew": False,
+                    "date": period_end,
+                    "recurring_next_date": False,
+                    "recurring_rule_boundary": False,
+                    "close_reason_id": close_reason_id,
+                }
+            )
 
     def close_subscription(self, close_reason_id=False):
         self.ensure_one()
@@ -575,8 +609,11 @@ class SaleSubscription(models.Model):
                     if record.stage_id.type == "in_progress":
                         record.in_progress = True
                         today = date.today()
-                        record.date_start = today
-                        record.calculate_recurring_next_date(today)
+                        # Only reset date_start if it hasn't been set to a future date
+                        # (a future date_start means the subscription was scheduled to start later)
+                        if not record.date_start or record.date_start > today:
+                            record.date_start = today
+                        record.calculate_recurring_next_date(record.date_start)
                     elif record.stage_id.type == "post":
                         record.close_reason_id = values.get("close_reason_id", False)
                         record.in_progress = False

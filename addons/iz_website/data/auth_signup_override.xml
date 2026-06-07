@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="mail_template_user_signup_account_created" model="mail.template">
+            <field name="name">IZ Portal Bienvenida</field>
+            <field name="model_id" ref="base.model_res_users"/>
+            <field name="subject">¡Bienvenido a Iron Zone! Tu camino al éxito comienza hoy 🔥</field>
+            <field name="email_from">contacto@ironzone.ec</field>
+            <field name="email_to">{{ object.email }}</field>
+            <field name="auto_delete">True</field>
+            <field name="active">False</field>
+            <field name="body_html"><![CDATA[
+<div style="background-color:#050505;font-family:'Segoe UI',Roboto,Helvetica,Arial,sans-serif;padding:45px 0;margin:0;">
+  <t t-set="base_url" t-value="(object.env['ir.config_parameter'].sudo().get_param('web.base.url') or 'http://localhost:8069')"/>
+  <t t-set="company" t-value="object.partner_id.company_id or object.company_id or object.env.company"/>
+  <t t-set="today" t-value="object.env['res.partner']._fields['iz_birthdate'].context_today(object)"/>
+  <t t-set="is_birthday_today" t-value="object.partner_id and object.partner_id.iz_birthdate and object.partner_id.iz_birthdate.month == today.month and object.partner_id.iz_birthdate.day == today.day"/>
+  <table width="100%" cellpadding="0" cellspacing="0" style="max-width:600px;margin:0 auto;background-color:#111111;border:1px solid #222;border-radius:16px;overflow:hidden;box-shadow:0 15px 35px rgba(0,0,0,0.6);">
+    <tr>
+      <td style="text-align:center;padding:25px;background-color:#000000;border-bottom:2px solid #ff4b2b;">
+        <img src="https://files.catbox.moe/agiuc9.png" style="max-height:70px;" alt="Iron Zone Logo"/>
+      </td>
+    </tr>
+    <tr>
+      <td style="background:linear-gradient(135deg,#111111 0%,#222222 100%);padding:40px;text-align:center;border-bottom:1px solid #222;">
+        <h2 style="color:#ff4b2b;font-size:13px;letter-spacing:4px;text-transform:uppercase;margin:0 0 15px;font-weight:700;">BIENVENIDO AL CLAN</h2>
+        <h1 style="color:#ffffff;font-size:32px;margin:0;font-weight:900;text-transform:uppercase;line-height:1.2;letter-spacing:1px;">TU TRANSFORMACIÓN<br/><span style="color:#ff4b2b;">COMIENZA AQUÍ</span></h1>
+        <p style="color:#888888;font-size:14px;margin:15px 0 0;">Resultados reales con acompañamiento profesional.</p>
+      </td>
+    </tr>
+    <tr>
+      <td style="padding:45px 40px 40px;">
+        <p style="color:#ffffff;font-size:19px;line-height:1.6;margin-top:0;font-weight:600;">¡Hola, <span style="color:#ff4b2b;"><t t-out="object.partner_id.name or object.name or object.login"/></span>!</p>
+        <p style="color:#cccccc;font-size:16px;line-height:1.7;margin-bottom:25px;">
+          Tu cuenta ya está lista y queremos ayudarte a comenzar con la mejor experiencia posible. En <strong>Iron Zone</strong> combinamos equipamiento de alta gama con planes diseñados para tu progreso real.
+        </p>
+
+        <table width="100%" style="margin-bottom:25px;">
+          <tr>
+            <td style="color:#cccccc;font-size:14px;padding:10px 0;vertical-align:top;">
+              🏋️ <strong>Acceso Completo:</strong> Maquinaria de última generación.<br/>
+              🔥 <strong>Clases Premium:</strong> HIIT, Yoga, CrossFit y más.<br/>
+              💪 <strong>Coach Certificado:</strong> Asesoría técnica en cada entrenamiento.
+            </td>
+            <td style="color:#cccccc;font-size:14px;padding:10px 0;border-left:1px solid #333;padding-left:20px;vertical-align:top;">
+              ⏰ <strong>Horarios:</strong><br/>
+              Lunes a Viernes: 06:00 - 22:00<br/>
+              Sábados: 08:00 - 16:00
+            </td>
+          </tr>
+        </table>
+
+        <t t-if="not is_birthday_today">
+        <div style="background-color:#1a1a1a;border-left:4px solid #ff4b2b;padding:25px;margin:35px 0;border-radius:0 8px 8px 0;">
+          <h3 style="color:#ffffff;margin:0 0 8px;font-size:18px;text-transform:uppercase;font-weight:700;">🎁 TU BENEFICIO DE BIENVENIDA</h3>
+          <p style="color:#cccccc;margin:0 0 15px;font-size:15px;line-height:1.6;">
+            Queremos que sientas la energía de Iron Zone desde el primer día. Te hemos otorgado un Pase Libre Completo para cualquiera de nuestras clases grupales de alta demanda.
+          </p>
+          <p style="color:#ff4b2b;font-weight:bold;margin:0;font-size:15px;">
+            Te sugerimos iniciar con Yoga Principiantes para movilidad, o HIIT Entrenamiento para quemar calorías al máximo.
+          </p>
+        </div>
+        </t>
+
+        <t t-if="is_birthday_today">
+        <div style="background-color:#1a1a1a;border-left:4px solid #f5af19;padding:25px;margin:35px 0;border-radius:0 8px 8px 0;">
+          <h3 style="color:#ffffff;margin:0 0 8px;font-size:18px;text-transform:uppercase;font-weight:700;">🎂 HOY ES UN DÍA ESPECIAL EN IRON ZONE</h3>
+          <p style="color:#cccccc;margin:0 0 15px;font-size:15px;line-height:1.7;">
+            Queremos darte la bienvenida celebrando contigo. Por eso, hoy activamos un beneficio exclusivo para que disfrutes tu experiencia desde el primer día.
+          </p>
+          <h4 style="color:#ffffff;margin:20px 0 8px;font-size:16px;text-transform:uppercase;font-weight:700;">🎉 TU BENEFICIO ESPECIAL</h4>
+          <p style="color:#cccccc;margin:0 0 15px;font-size:15px;line-height:1.6;">
+            🎁 <strong>Pase de 1 día GRATIS</strong> para que vengas a entrenar y celebrar con nosotros.
+          </p>
+          <p style="color:#f5af19;font-weight:bold;margin:0;font-size:15px;">
+            ¡Ven hoy, trae tu código <strong>IRONBDAY</strong> y vive una experiencia distinta!
+          </p>
+        </div>
+        </t>
+
+        <div style="text-align:center;margin:35px 0 25px;">
+          <a t-attf-href="{{ base_url }}/web/login" style="background:linear-gradient(135deg,#ff6a42,#ff4b2b);color:#ffffff;padding:14px 32px;border-radius:50px;text-decoration:none;font-weight:700;font-size:15px;display:inline-block;">
+            Ir a mi cuenta
+          </a>
+        </div>
+
+        <div style="border-top:1px solid #222;padding-top:20px;text-align:center;">
+          <p style="color:#888888;font-size:13px;margin:0 0 5px;">
+            <t t-out="company.name"/> | <t t-out="company.phone"/> | <a t-attf-href="${company.website}" style="color:#ff4b2b;text-decoration:none;"><t t-out="company.website"/></a>
+          </p>
+          <p style="color:#555555;font-size:12px;margin:5px 0 0;">
+            Con la tecnología de <a href="https://www.odoo.com" style="color:#777777;text-decoration:none;">Odoo</a>
+          </p>
+        </div>
+      </td>
+    </tr>
+  </table>
+</div>
+    ]]></field>
+    <field name="use_default">False</field>
+    <field name="ref_ir_act_window" eval="False"/>
+    <field name="ref_ir_value" eval="False"/>
+    <field name="ref_ir_ui_view" eval="False"/>
+    <field name="lang">es_EC</field>
+</record>
+</data>
+</odoo>

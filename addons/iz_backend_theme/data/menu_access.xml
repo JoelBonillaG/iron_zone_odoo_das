@@ -97,4 +97,25 @@
     <record id="base.menu_administration" model="ir.ui.menu">
         <field name="groups_id" eval="[(6, 0, [ref('iz_backend_theme.group_ironzone_admin')])]"/>
     </record>
+
+    <!-- Reception/Subscriptions role can create subscription products -->
+    <record id="access_membership_product_template" model="ir.model.access">
+        <field name="name">product.template membership manage</field>
+        <field name="model_id" ref="product.model_product_template"/>
+        <field name="group_id" ref="iz_backend_theme.group_ironzone_membership"/>
+        <field name="perm_read" eval="1"/>
+        <field name="perm_write" eval="1"/>
+        <field name="perm_create" eval="1"/>
+        <field name="perm_unlink" eval="0"/>
+    </record>
+
+    <record id="access_membership_product_product" model="ir.model.access">
+        <field name="name">product.product membership manage</field>
+        <field name="model_id" ref="product.model_product_product"/>
+        <field name="group_id" ref="iz_backend_theme.group_ironzone_membership"/>
+        <field name="perm_read" eval="1"/>
+        <field name="perm_write" eval="1"/>
+        <field name="perm_create" eval="1"/>
+        <field name="perm_unlink" eval="0"/>
+    </record>
 </odoo>

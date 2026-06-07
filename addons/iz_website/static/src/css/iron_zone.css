@@ -467,9 +467,14 @@ header .dropdown-item:hover,
     padding-top: clamp(2rem, 6vw, 4.5rem);
 }
 
-.iz-section_head,
-.iz-page_header {
+.iz-section_head {
     max-width: 860px;
+}
+
+/* Keep the header text readable but let the section span the normal container
+   (same left edge as the rest of the page, properly centered) */
+.iz-page_header h1 {
+    max-width: 22ch;
 }
 
 .iz-eyebrow {
@@ -2338,6 +2343,153 @@ main:has(.iz-subscriptions-page) .o_portal_submenu {
     font-size: 0.74rem;
     font-weight: 800;
     padding: 0.12rem 0.45rem;
+}
+
+/* ── Mis suscripciones (portal) ───────────────────────────────────────── */
+.iz-sub-wrap {
+    width: 100%;
+}
+
+.iz-sub-card {
+    background: var(--iz-surface);
+    border: 1px solid var(--iz-line);
+    color: var(--iz-text);
+}
+
+.iz-sub-eyebrow {
+    color: var(--iz-muted);
+    font-size: 0.85rem;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+}
+
+.iz-sub-section-title {
+    color: #fff;
+    font-size: 1.25rem;
+    font-weight: 700;
+}
+
+.iz-bill-row {
+    align-items: center;
+    border-top: 1px solid var(--iz-line);
+    display: grid;
+    gap: 1rem;
+    grid-template-columns: 1fr auto auto auto;
+    padding: 0.85rem 0;
+}
+
+.iz-bill-row:first-child {
+    border-top: 0;
+}
+
+.iz-bill-date {
+    color: var(--iz-text);
+    font-weight: 600;
+}
+
+.iz-bill-amount {
+    color: var(--iz-muted);
+}
+
+.iz-bill-badge {
+    border-radius: 999px;
+    font-weight: 700;
+}
+
+.iz-bill-link {
+    color: var(--iz-accent);
+    font-weight: 600;
+    text-decoration: none;
+    white-space: nowrap;
+}
+
+.iz-bill-link:hover {
+    text-decoration: underline;
+}
+
+.iz-cancel-link {
+    color: #ff6b6b !important;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.iz-cancel-link:hover {
+    color: #ff4d4d !important;
+    text-decoration: underline;
+}
+
+.iz-sub-title {
+    color: #fff;
+    font-size: clamp(1.5rem, 3vw, 2rem);
+    font-weight: 700;
+}
+
+.iz-sub-renew {
+    color: var(--iz-muted);
+    font-size: 0.92rem;
+}
+
+.iz-sub-row {
+    align-items: center;
+    border-top: 1px solid var(--iz-line);
+    display: flex;
+    gap: 1rem;
+    justify-content: space-between;
+    padding: 0.75rem 0;
+}
+
+.iz-sub-row:first-child {
+    border-top: 0;
+}
+
+.iz-sub-label {
+    color: var(--iz-muted);
+}
+
+.iz-sub-value {
+    color: var(--iz-text);
+    font-weight: 600;
+    text-align: right;
+}
+
+.iz-sub-accordion .accordion-item {
+    background: transparent;
+    border: 1px solid var(--iz-line);
+    border-radius: var(--iz-radius);
+    overflow: hidden;
+}
+
+.iz-sub-accordion .accordion-button {
+    background: var(--iz-surface-2);
+    box-shadow: none;
+    color: var(--iz-text);
+    font-weight: 600;
+}
+
+.iz-sub-accordion .accordion-button:not(.collapsed) {
+    background: var(--iz-accent-soft);
+    color: #fff;
+}
+
+.iz-sub-accordion .accordion-button:focus {
+    box-shadow: none;
+}
+
+.iz-sub-accordion .accordion-button::after {
+    filter: invert(1) grayscale(1) brightness(2);
+}
+
+.iz-sub-accordion .accordion-body {
+    background: var(--iz-surface);
+    color: var(--iz-text);
+}
+
+.iz-sub-benefit {
+    border-top: 1px solid var(--iz-line);
+}
+
+.iz-sub-benefit:first-child {
+    border-top: 0;
 }
 
 .iz-ticket-subscription-benefit {

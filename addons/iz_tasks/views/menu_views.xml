@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Action: All Tasks -->
+    <record id="action_iz_tasks_task" model="ir.actions.act_window">
+        <field name="name">Tareas</field>
+        <field name="res_model">iz_tasks.task</field>
+        <field name="view_mode">kanban,list,form,graph,pivot</field>
+        <field name="context">{}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Crea tu primera tarea
+            </p>
+            <p>
+                Organiza tu trabajo, asigna tareas y hazles seguimiento.
+            </p>
+        </field>
+    </record>
+
+    <!-- Action: Dashboard (Tasks grouped and pre-filtered) -->
+    <record id="action_iz_tasks_dashboard" model="ir.actions.act_window">
+        <field name="name">Dashboard de Tareas</field>
+        <field name="res_model">iz_tasks.task</field>
+        <field name="view_mode">graph,pivot,kanban,list,form</field>
+        <field name="context">{'search_default_group_by_state': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No hay datos para el dashboard
+            </p>
+            <p>
+                Crea tareas para poder analizarlas aquí.
+            </p>
+        </field>
+    </record>
+
+    <!-- Top Menu -->
+    <menuitem id="menu_iz_tasks_root" 
+              name="Gestión de Tareas" 
+              sequence="10"/>
+
+    <!-- Sub Menus -->
+    <menuitem id="menu_iz_tasks_dashboard" 
+              name="Dashboard" 
+              parent="menu_iz_tasks_root" 
+              action="action_iz_tasks_dashboard" 
+              sequence="10"/>
+
+    <menuitem id="menu_iz_tasks_tasks" 
+              name="Tareas" 
+              parent="menu_iz_tasks_root" 
+              action="action_iz_tasks_task" 
+              sequence="20"/>
+</odoo>

@@ -93,7 +93,7 @@
         <table width="100%" cellpadding="0" cellspacing="0" style="margin:35px 0;">
           <tr>
             <td align="center">
-              <a t-att-href="base_url + '/event/yoga-principiantes-2/register'" style="background:linear-gradient(to right,#ff4b2b,#ff416c);color:#ffffff;text-decoration:none;padding:18px 45px;border-radius:6px;font-weight:bold;font-size:15px;display:inline-block;text-transform:uppercase;letter-spacing:2px;box-shadow:0 6px 20px rgba(255,75,43,0.4);transition:all 0.3s ease;">Reservar Mi Clase Gratis</a>
+              <a t-att-href="base_url + (object.env['ir.config_parameter'].sudo().get_param('iz_website.event_link_yoga_principiantes', '/event/yoga-principiantes-2/register'))" style="background:linear-gradient(to right,#ff4b2b,#ff416c);color:#ffffff;text-decoration:none;padding:18px 45px;border-radius:6px;font-weight:bold;font-size:15px;display:inline-block;text-transform:uppercase;letter-spacing:2px;box-shadow:0 6px 20px rgba(255,75,43,0.4);transition:all 0.3s ease;">Reservar Mi Clase Gratis</a>
               <p style="color:#888; font-size:12px; margin-top:10px;">*Disponible solo esta semana. Cupos limitados.</p>
             </td>
           </tr>
@@ -132,13 +132,14 @@
          BIENVENIDA PORTAL
     ══════════════════════════════════════════════════ -->
     <record id="auth_signup.mail_template_user_signup_account_created" model="mail.template">
-      <field name="name">IZ Portal Bienvenida</field>
-      <field name="model_id" ref="base.model_res_users"/>
-      <field name="subject">¡Bienvenido a Iron Zone! Tu camino al éxito comienza hoy 🔥</field>
-      <field name="email_from">contacto@ironzone.ec</field>
-      <field name="email_to">{{ object.email }}</field>
-      <field name="auto_delete">True</field>
-      <field name="body_html"><![CDATA[
+        <field name="name">IZ Portal Bienvenida</field>
+        <field name="model_id" ref="base.model_res_users"/>
+        <field name="subject">¡Bienvenido a Iron Zone! Tu camino al éxito comienza hoy 🔥</field>
+        <field name="email_from">contacto@ironzone.ec</field>
+        <field name="email_to">{{ object.email }}</field>
+        <field name="auto_delete">True</field>
+        <field name="active">False</field>
+        <field name="body_html"><![CDATA[
 <div style="background-color:#050505;font-family:'Segoe UI',Roboto,Helvetica,Arial,sans-serif;padding:45px 0;margin:0;">
   <t t-set="partner" t-value="object.partner_id"/>
   <t t-set="display_name" t-value="partner.name or object.name or object.login"/>
@@ -221,15 +222,15 @@
         <table width="100%" cellpadding="0" cellspacing="0" style="margin:35px 0;">
           <tr>
             <td align="center">
-              <a t-att-href="base_url + '/event/yoga-principiantes-2/register'" style="background:linear-gradient(to right,#ff4b2b,#ff416c);color:#ffffff;text-decoration:none;padding:18px 45px;border-radius:6px;font-weight:bold;font-size:15px;display:inline-block;text-transform:uppercase;letter-spacing:2px;box-shadow:0 6px 20px rgba(255,75,43,0.4);transition:all 0.3s ease;">Reservar Mi Clase Gratis</a>
+              <a t-att-href="base_url + (object.env['ir.config_parameter'].sudo().get_param('iz_website.event_link_yoga_principiantes', '/event/yoga-principiantes-2/register'))" style="background:linear-gradient(to right,#ff4b2b,#ff416c);color:#ffffff;text-decoration:none;padding:18px 45px;border-radius:6px;font-weight:bold;font-size:15px;display:inline-block;text-transform:uppercase;letter-spacing:2px;box-shadow:0 6px 20px rgba(255,75,43,0.4);transition:all 0.3s ease;">Reservar Mi Clase Gratis</a>
               <p style="color:#888;font-size:12px;margin-top:10px;">Disponible solo esta semana. Cupos limitados.</p>
               <p style="color:#888;font-size:12px;margin-top:8px;line-height:1.6;">
                 Acceso directo al sitio:
-                <a t-att-href="base_url + '/event/yoga-principiantes-2/register'" style="color:#ff4b2b;text-decoration:none;">Yoga Principiantes</a>
+                <a t-att-href="base_url + (object.env['ir.config_parameter'].sudo().get_param('iz_website.event_link_yoga_principiantes', '/event/yoga-principiantes-2/register'))" style="color:#ff4b2b;text-decoration:none;">Yoga Principiantes</a>
                 &nbsp;|&nbsp;
-                <a t-att-href="base_url + '/event/hiit-entrenamiento-6/register'" style="color:#ff4b2b;text-decoration:none;">HIIT Entrenamiento</a>
+                <a t-att-href="base_url + (object.env['ir.config_parameter'].sudo().get_param('iz_website.event_link_hiit_entrenamiento', '/event/hiit-entrenamiento-6/register'))" style="color:#ff4b2b;text-decoration:none;">HIIT Entrenamiento</a>
                 &nbsp;|&nbsp;
-                <a t-att-href="base_url + '/shop'" style="color:#ff4b2b;text-decoration:none;">Tienda</a>
+                <a t-att-href="base_url + (object.env['ir.config_parameter'].sudo().get_param('iz_website.shop_url', '/shop'))" style="color:#ff4b2b;text-decoration:none;">Tienda</a>
             </td>
           </tr>
         </table>
@@ -305,27 +306,37 @@
           </p>
         </div>
 
-        <div style="background-color:#1a1a1a;border-left:4px solid #f5af19;padding:25px;margin:35px 0;border-radius:0 8px 8px 0;">
-          <h3 style="color:#ffffff;margin:0 0 8px;font-size:18px;text-transform:uppercase;font-weight:700;">🎁 CORTESÍA EXCLUSIVA PARA TI</h3>
-          <p style="color:#cccccc;margin:0 0 15px;font-size:15px;line-height:1.6;">
-            Te regalamos un <strong>Pase de Acceso Libre de 1 Día</strong> para ti y un acompañante para disfrutar de nuestro evento especial de alta intensidad.
-          </p>
-          <p style="color:#cccccc;margin:0 0 20px;font-size:15px;line-height:1.6;">
-            Además, si decides renovar tu suscripción durante los próximos 7 días, obtendrás un <strong>20% DE DESCUENTO DIRECTO</strong> utilizando el cupón de cumpleaños:
-          </p>
-          <div style="background-color:#050505;border:1px dashed #f5af19;padding:15px;text-align:center;border-radius:4px;margin-bottom:5px;">
-            <code style="color:#f5af19;font-size:22px;font-weight:bold;letter-spacing:4px;">IRONBDAY20</code>
-          </div>
-        </div>
+<div style="background-color:#1a1a1a;border-left:4px solid #f5af19;padding:25px;margin:35px 0;border-radius:0 8px 8px 0;">
+           <h3 style="color:#ffffff;margin:0 0 8px;font-size:18px;text-transform:uppercase;font-weight:700;">🎁 CORTESÍA EXCLUSIVA PARA TI</h3>
+           <p style="color:#cccccc;margin:0 0 15px;font-size:15px;line-height:1.6;">
+             Te regalamos un <strong>Pase de Acceso Libre de 1 Día</strong> para ti y un acompañante para disfrutar de nuestro evento especial de alta intensidad.
+           </p>
+           <p style="color:#cccccc;margin:0 0 20px;font-size:15px;line-height:1.6;">
+             Además, si decides renovar tu suscripción durante los próximos 7 días, obtendrás un <strong>20% DE DESCUENTO DIRECTO</strong> utilizando el cupón de cumpleaños:
+           </p>
+           <div style="background-color:#050505;border:1px dashed #f5af19;padding:15px;text-align:center;border-radius:4px;margin-bottom:5px;">
+             <code style="color:#f5af19;font-size:22px;font-weight:bold;letter-spacing:4px;">IRONBDAY20</code>
+           </div>
+           <p style="color:#f5af19;font-weight:bold;margin:15px 0 0;font-size:15px;">
+             Este cupón solo es válido si recibes este correo de cumpleaños.
+           </p>
+         </div>
 
-        <table width="100%" cellpadding="0" cellspacing="0" style="margin:35px 0;">
-          <tr>
-            <td align="center">
-              <a t-att-href="base_url + '/event/funcional-boot-camp-15/register'" style="background:linear-gradient(to right,#f12711,#f5af19);color:#ffffff;text-decoration:none;padding:18px 45px;border-radius:6px;font-weight:bold;font-size:15px;display:inline-block;text-transform:uppercase;letter-spacing:2px;box-shadow:0 6px 20px rgba(245,175,25,0.4);transition:all 0.3s ease;">Activar Mi Regalo Ahora</a>
-              <p style="color:#888; font-size:12px; margin-top:10px;">Vigencia: 7 días desde hoy.</p>
-            </td>
-          </tr>
-        </table>
+         <table width="100%" cellpadding="0" cellspacing="0" style="margin:35px 0;">
+           <tr>
+             <td align="center">
+               <a t-att-href="base_url + '/shop/cart?subscription=annual&coupon=IRONBDAY20'" style="background:linear-gradient(to right,#f12711,#f5af19);color:#ffffff;text-decoration:none;padding:18px 45px;border-radius:6px;font-weight:bold;font-size:15px;display:inline-block;text-transform:uppercase;letter-spacing:2px;box-shadow:0 6px 20px rgba(245,175,25,0.4);transition:all 0.3s ease;">Renovar con Descuento de Cumpleaños</a>
+               <p style="color:#888; font-size:12px; margin-top:10px;">Oferta válida 7 días. Cupón IRONBDAY20 aplicado automáticamente.</p>
+             </td>
+           </tr>
+         </table>
+         <table width="100%" cellpadding="0" cellspacing="0" style="margin:15px 0;">
+           <tr>
+             <td align="center">
+               <a t-att-href="base_url + '/event/musculacion-personalizada-13/register'" style="background:linear-gradient(to right,#ff4b2b,#f12711);color:#ffffff;text-decoration:none;padding:16px 35px;border-radius:6px;font-weight:bold;font-size:14px;display:inline-block;text-transform:uppercase;letter-spacing:1px;box-shadow:0 4px 15px rgba(255,75,43,0.3);">Reservar Clase Musculación</a>
+             </td>
+           </tr>
+         </table>
 
         <p style="color:#999999;font-size:15px;line-height:1.7;margin-bottom:0;">
           Sigue avanzando hacia tus objetivos. Es un placer tenerte como parte de nuestra comunidad. ¡Feliz día!
@@ -402,9 +413,10 @@
         <table width="100%" cellpadding="0" cellspacing="0" style="margin:35px 0;">
           <tr>
             <td align="center">
-              <a t-att-href="base_url + '/event/pilates-avanzado-5/register'" style="background:linear-gradient(to right,#8e2de2,#d946ef);color:#ffffff;text-decoration:none;padding:18px 45px;border-radius:6px;font-weight:bold;font-size:15px;display:inline-block;text-transform:uppercase;letter-spacing:2px;box-shadow:0 6px 20px rgba(217,70,239,0.4);transition:all 0.3s ease;">Obtener Mi Clase Premium</a>
-              <p style="color:#888; font-size:12px; margin-top:10px;">Válido solo por esta semana. Presentar este correo en recepción.</p>
-            </td>
+<a t-att-href="base_url + '/promo/womens-day?event_slug=yoga-avanzado-8'" style="background:linear-gradient(to right,#8e2de2,#d946ef);color:#ffffff;text-decoration:none;padding:18px 45px;border-radius:6px;font-weight:bold;font-size:15px;display:inline-block;text-transform:uppercase;letter-spacing:2px;box-shadow:0 6px 20px rgba(217,70,239,0.4);transition:all 0.3s ease;">Obtener Mi Clase Premium (Yoga)</a>
+               <p style="color:#888; font-size:12px; margin-top:10px;">Válido solo por esta semana. Presentar este correo en recepción.</p>
+               <p style="color:#888; font-size:12px; margin-top:5px;">También disponible: <a t-att-href="base_url + '/promo/womens-day?event_slug=pilates-avanzado-5'" style="color:#d946ef;text-decoration:none;">Pilates Avanzado</a></p>
+             </td>
           </tr>
         </table>
 
@@ -482,9 +494,10 @@
         <table width="100%" cellpadding="0" cellspacing="0" style="margin:35px 0;">
           <tr>
             <td align="center">
-              <a t-att-href="base_url + '/event/boxeo-tecnica-7/register'" style="background:linear-gradient(to right,#1cb5e0,#000046);color:#ffffff;text-decoration:none;padding:18px 45px;border-radius:6px;font-weight:bold;font-size:15px;display:inline-block;text-transform:uppercase;letter-spacing:2px;box-shadow:0 6px 20px rgba(28,181,224,0.4);transition:all 0.3s ease;">Activar Descuento y Clase</a>
-              <p style="color:#888; font-size:12px; margin-top:10px;">Oferta válida por tiempo limitado.</p>
-            </td>
+<a t-att-href="base_url + '/promo/mens-day?event_slug=entrenamiento-en-grupo-10'" style="background:linear-gradient(to right,#1cb5e0,#000046);color:#ffffff;text-decoration:none;padding:18px 45px;border-radius:6px;font-weight:bold;font-size:15px;display:inline-block;text-transform:uppercase;letter-spacing:2px;box-shadow:0 6px 20px rgba(28,181,224,0.4);transition:all 0.3s ease;">Activar Descuento y Clase</a>
+               <p style="color:#888; font-size:12px; margin-top:10px;">Oferta válida por tiempo limitado.</p>
+               <p style="color:#888; font-size:12px; margin-top:5px;">También disponible: <a t-att-href="base_url + '/promo/mens-day?event_slug=boxeo-tecnica-7'" style="color:#1cb5e0;text-decoration:none;">Boxeo Técnica</a></p>
+             </td>
           </tr>
         </table>
 
@@ -544,20 +557,32 @@
           Has construido un gran hábito entrenando para tu nivel <strong><t t-esc="object.iz_experience_level or 'actual'"/></strong>. Tu membresía vencerá en exactamente <strong>7 días</strong> y no queremos que pierdas tu ritmo.
         </p>
         
-        <div style="background-color:#1a1a1a;border-left:4px solid #ff8008;padding:25px;margin:35px 0;border-radius:0 8px 8px 0;">
-          <h3 style="color:#ffffff;margin:0 0 8px;font-size:18px;text-transform:uppercase;font-weight:700;">⚡ MANTÉN TU TARIFA PREFERENCIAL</h3>
-          <p style="color:#cccccc;margin:0;font-size:15px;line-height:1.6;">
-            Si renuevas tu plan hoy mismo, <strong>congelamos el costo de tu membresía</strong> y te regalamos acceso prioritario a todas nuestras masterclasses avanzadas durante el próximo periodo.
-          </p>
-        </div>
+<div style="background-color:#1a1a1a;border-left:4px solid #ff8008;padding:25px;margin:35px 0;border-radius:0 8px 8px 0;">
+           <h3 style="color:#ffffff;margin:0 0 8px;font-size:18px;text-transform:uppercase;font-weight:700;">⚡ MANTÉN TU TARIFA PREFERENCIAL</h3>
+           <p style="color:#cccccc;margin:0;font-size:15px;line-height:1.6;">
+             Si renuevas tu plan hoy mismo, <strong>congelamos el costo de tu membresía</strong> y te regalamos acceso completamente gratis a todas nuestras clases avanzadas durante el próximo periodo.
+           </p>
+           <p style="color:#ff8008;font-weight:bold;margin:15px 0 0;font-size:15px;">
+             Renueva el mismo día y obtén acceso inmediato a clases premium sin costo adicional.
+           </p>
+         </div>
 
-        <table width="100%" cellpadding="0" cellspacing="0" style="margin:35px 0;">
-          <tr>
-            <td align="center">
-              <a t-att-href="base_url + '/shop'" style="background:linear-gradient(to right,#ff8008,#ffc837);color:#111111;text-decoration:none;padding:18px 45px;border-radius:6px;font-weight:bold;font-size:15px;display:inline-block;text-transform:uppercase;letter-spacing:2px;box-shadow:0 6px 20px rgba(255,128,8,0.4);transition:all 0.3s ease;">Renovar Mi Plan de Hierro</a>
-            </td>
-          </tr>
-        </table>
+         <table width="100%" cellpadding="0" cellspacing="0" style="margin:35px 0;">
+           <tr>
+             <td align="center">
+               <a t-att-href="base_url + '/shop/cart?subscription=monthly&renew=1'" style="background:linear-gradient(to right,#ff8008,#ffc837);color:#111111;text-decoration:none;padding:18px 45px;border-radius:6px;font-weight:bold;font-size:15px;display:inline-block;text-transform:uppercase;letter-spacing:2px;box-shadow:0 6px 20px rgba(255,128,8,0.4);transition:all 0.3s ease;">Renovar Mi Plan Mensual</a>
+               <p style="color:#888; font-size:12px; margin-top:10px;">Renueva ahora y accede a clases avanzadas gratis el mismo día.</p>
+             </td>
+           </tr>
+         </table>
+         <table width="100%" cellpadding="0" cellspacing="0" style="margin:15px 0;">
+           <tr>
+             <td align="center">
+               <a t-att-href="base_url + '/shop/cart?subscription=annual'" style="background:linear-gradient(to right,#ff4b2b,#ff8008);color:#ffffff;text-decoration:none;padding:18px 45px;border-radius:6px;font-weight:bold;font-size:15px;display:inline-block;text-transform:uppercase;letter-spacing:2px;box-shadow:0 6px 20px rgba(255,75,43,0.4);transition:all 0.3s ease;">Renovar con Plan Anual</a>
+               <p style="color:#888; font-size:12px; margin-top:5px;">Beneficio especial por temporada aplicado.</p>
+             </td>
+           </tr>
+         </table>
 
         <p style="color:#999999;font-size:15px;line-height:1.7;margin-bottom:0;">
           ¡Nos vemos en el piso de entrenamiento para seguir superándonos día con día! Tu disciplina nos inspira.
@@ -600,7 +625,26 @@
         <p style="color:#cccccc;font-size:16px;line-height:1.7;margin-bottom:25px;">
           Sabemos que tu objetivo es <strong><t t-esc="object.iz_fitness_goal or 'la hipertrofia'"/></strong>. Para lograr un crecimiento real y sostenible, combinamos técnicas de tensión mecánica y sobrecarga progresiva bajo supervisión técnica.
         </p>
-        
+
+        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin:35px 0;">
+          <div style="background-color:#1a1a1a;border-radius:12px;padding:22px 16px;text-align:center;box-sizing:border-box;">
+            <div style="font-size:32px;margin-bottom:8px;">🏋️‍♂️</div>
+            <div style="color:#ffffff;font-size:12px;font-weight:700;line-height:1.2;text-transform:uppercase;letter-spacing:1px;">YOGA<br/>PRINCIPIANTES</div>
+          </div>
+          <div style="background-color:#1a1a1a;border-radius:12px;padding:22px 16px;text-align:center;box-sizing:border-box;">
+            <div style="font-size:32px;margin-bottom:8px;">💪</div>
+            <div style="color:#ffffff;font-size:12px;font-weight:700;line-height:1.2;text-transform:uppercase;letter-spacing:1px;">CALISTENIA<br/>INTERMEDIA</div>
+          </div>
+          <div style="background-color:#1a1a1a;border-radius:12px;padding:22px 16px;text-align:center;box-sizing:border-box;">
+            <div style="font-size:32px;margin-bottom:8px;">👥</div>
+            <div style="color:#ffffff;font-size:12px;font-weight:700;line-height:1.2;text-transform:uppercase;letter-spacing:1px;">ENTRENAMIENTO<br/>GRUPO</div>
+          </div>
+          <div style="background-color:#1a1a1a;border-radius:12px;padding:22px 16px;text-align:center;box-sizing:border-box;">
+            <div style="font-size:32px;margin-bottom:8px;">🥊</div>
+            <div style="color:#ffffff;font-size:12px;font-weight:700;line-height:1.2;text-transform:uppercase;letter-spacing:1px;">BOXEO<br/>TÉCNICA</div>
+          </div>
+        </div>
+
         <div style="background-color:#1a1a1a;border-left:4px solid #ff4b2b;padding:25px;margin:35px 0;border-radius:0 8px 8px 0;">
           <h3 style="color:#ffffff;margin:0 0 8px;font-size:18px;text-transform:uppercase;font-weight:700;">🏋️‍♂️ RECOMENDACIÓN PREMIUM DISPONIBLE</h3>
           <p style="color:#cccccc;margin:0 0 15px;font-size:15px;line-height:1.6;">
@@ -614,7 +658,7 @@
         <table width="100%" cellpadding="0" cellspacing="0" style="margin:35px 0;">
           <tr>
             <td align="center">
-              <a t-att-href="base_url + '/event/musculacion-personalizada-13/register'" style="background:linear-gradient(to right,#ff4b2b,#ff416c);color:#ffffff;text-decoration:none;padding:18px 45px;border-radius:6px;font-weight:bold;font-size:15px;display:inline-block;text-transform:uppercase;letter-spacing:2px;box-shadow:0 6px 20px rgba(255,75,43,0.4);transition:all 0.3s ease;">Ver Detalles Musculación</a>
+              <a t-att-href="base_url + (object.env['ir.config_parameter'].sudo().get_param('iz_website.event_link_musculacion', '/event/musculacion-personalizada-13/register'))" style="background:linear-gradient(to right,#ff4b2b,#ff416c);color:#ffffff;text-decoration:none;padding:18px 45px;border-radius:6px;font-weight:bold;font-size:15px;display:inline-block;text-transform:uppercase;letter-spacing:2px;box-shadow:0 6px 20px rgba(255,75,43,0.4);transition:all 0.3s ease;">Ver Detalles Musculación</a>
               <p style="color:#888; font-size:12px; margin-top:10px;">*Asesoría incluida en tu plan actual.</p>
             </td>
           </tr>
@@ -665,7 +709,26 @@
         <p style="color:#cccccc;font-size:16px;line-height:1.7;margin-bottom:25px;">
           Para alcanzar tu objetivo de <strong><t t-esc="object.iz_fitness_goal or 'reducción de medidas'"/></strong>, hemos diseñado protocolos que maximizan el consumo calórico incluso después de entrenar.
         </p>
-        
+
+        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin:35px 0;">
+          <div style="background-color:#1a1a1a;border-radius:12px;padding:22px 16px;text-align:center;box-sizing:border-box;">
+            <div style="font-size:32px;margin-bottom:8px;">🧘‍♀️</div>
+            <div style="color:#ffffff;font-size:12px;font-weight:700;line-height:1.2;text-transform:uppercase;letter-spacing:1px;">YOGA<br/>PRINCIPIANTES</div>
+          </div>
+          <div style="background-color:#1a1a1a;border-radius:12px;padding:22px 16px;text-align:center;box-sizing:border-box;">
+            <div style="font-size:32px;margin-bottom:8px;">🚴</div>
+            <div style="color:#ffffff;font-size:12px;font-weight:700;line-height:1.2;text-transform:uppercase;letter-spacing:1px;">CALISTENIA<br/>INTERMEDIA</div>
+          </div>
+          <div style="background-color:#1a1a1a;border-radius:12px;padding:22px 16px;text-align:center;box-sizing:border-box;">
+            <div style="font-size:32px;margin-bottom:8px;">🏋️</div>
+            <div style="color:#ffffff;font-size:12px;font-weight:700;line-height:1.2;text-transform:uppercase;letter-spacing:1px;">ENTRENAMIENTO<br/>GRUPO</div>
+          </div>
+          <div style="background-color:#1a1a1a;border-radius:12px;padding:22px 16px;text-align:center;box-sizing:border-box;">
+            <div style="font-size:32px;margin-bottom:8px;">🥊</div>
+            <div style="color:#ffffff;font-size:12px;font-weight:700;line-height:1.2;text-transform:uppercase;letter-spacing:1px;">BOXEO<br/>TÉCNICA</div>
+          </div>
+        </div>
+
         <div style="background-color:#1a1a1a;border-left:4px solid #ff8008;padding:25px;margin:35px 0;border-radius:0 8px 8px 0;">
           <h3 style="color:#ffffff;margin:0 0 8px;font-size:18px;text-transform:uppercase;font-weight:700;">🔥 TU CLASE RECOMENDADA</h3>
           <p style="color:#cccccc;margin:0 0 15px;font-size:15px;line-height:1.6;">
@@ -679,7 +742,7 @@
         <table width="100%" cellpadding="0" cellspacing="0" style="margin:35px 0;">
           <tr>
             <td align="center">
-              <a t-att-href="base_url + '/event/hiit-entrenamiento-6/register'" style="background:linear-gradient(to right,#ff8008,#ffc837);color:#111111;text-decoration:none;padding:18px 45px;border-radius:6px;font-weight:bold;font-size:15px;display:inline-block;text-transform:uppercase;letter-spacing:2px;box-shadow:0 6px 20px rgba(255,128,8,0.4);transition:all 0.3s ease;">Reservar Mi Sesión HIIT</a>
+              <a t-att-href="base_url + (object.env['ir.config_parameter'].sudo().get_param('iz_website.event_link_hiit_entrenamiento', '/event/hiit-entrenamiento-6/register'))" style="background:linear-gradient(to right,#ff8008,#ffc837);color:#111111;text-decoration:none;padding:18px 45px;border-radius:6px;font-weight:bold;font-size:15px;display:inline-block;text-transform:uppercase;letter-spacing:2px;box-shadow:0 6px 20px rgba(255,128,8,0.4);transition:all 0.3s ease;">Reservar Mi Sesión HIIT</a>
               <p style="color:#888; font-size:12px; margin-top:10px;">*Recomendado: 3 sesiones por semana.</p>
             </td>
           </tr>
@@ -730,7 +793,26 @@
         <p style="color:#cccccc;font-size:16px;line-height:1.7;margin-bottom:25px;">
           Sabemos que tu objetivo es <strong><t t-esc="object.iz_fitness_goal or 'la resistencia'"/></strong>. Para mejorar tu capacidad cardiovascular y muscular, es fundamental entrenar con intensidades programadas que optimicen tu rendimiento.
         </p>
-        
+
+        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin:35px 0;">
+          <div style="background-color:#1a1a1a;border-radius:12px;padding:22px 16px;text-align:center;box-sizing:border-box;">
+            <div style="font-size:32px;margin-bottom:8px;">🧘‍♀️</div>
+            <div style="color:#ffffff;font-size:12px;font-weight:700;line-height:1.2;text-transform:uppercase;letter-spacing:1px;">YOGA<br/>PRINCIPIANTES</div>
+          </div>
+          <div style="background-color:#1a1a1a;border-radius:12px;padding:22px 16px;text-align:center;box-sizing:border-box;">
+            <div style="font-size:32px;margin-bottom:8px;">🚴</div>
+            <div style="color:#ffffff;font-size:12px;font-weight:700;line-height:1.2;text-transform:uppercase;letter-spacing:1px;">CALISTENIA<br/>INTERMEDIA</div>
+          </div>
+          <div style="background-color:#1a1a1a;border-radius:12px;padding:22px 16px;text-align:center;box-sizing:border-box;">
+            <div style="font-size:32px;margin-bottom:8px;">👥</div>
+            <div style="color:#ffffff;font-size:12px;font-weight:700;line-height:1.2;text-transform:uppercase;letter-spacing:1px;">ENTRENAMIENTO<br/>GRUPO</div>
+          </div>
+          <div style="background-color:#1a1a1a;border-radius:12px;padding:22px 16px;text-align:center;box-sizing:border-box;">
+            <div style="font-size:32px;margin-bottom:8px;">🥊</div>
+            <div style="color:#ffffff;font-size:12px;font-weight:700;line-height:1.2;text-transform:uppercase;letter-spacing:1px;">BOXEO<br/>TÉCNICA</div>
+          </div>
+        </div>
+
         <div style="background-color:#1a1a1a;border-left:4px solid #0052d4;padding:25px;margin:35px 0;border-radius:0 8px 8px 0;">
           <h3 style="color:#ffffff;margin:0 0 8px;font-size:18px;text-transform:uppercase;font-weight:700;">🚀 RETO DE ALTO NIVEL RECOMENDADO</h3>
           <p style="color:#cccccc;margin:0 0 15px;font-size:15px;line-height:1.6;">
@@ -744,7 +826,7 @@
         <table width="100%" cellpadding="0" cellspacing="0" style="margin:35px 0;">
           <tr>
             <td align="center">
-              <a t-att-href="base_url + '/event/crossfit-am-1/register'" style="background:linear-gradient(to right,#0052d4,#4364f7);color:#ffffff;text-decoration:none;padding:18px 45px;border-radius:6px;font-weight:bold;font-size:15px;display:inline-block;text-transform:uppercase;letter-spacing:2px;box-shadow:0 6px 20px rgba(67,100,247,0.4);transition:all 0.3s ease;">Explorar Clases de Resistencia</a>
+              <a t-att-href="base_url + '/event/spinning-18-00-3/register'" style="background:linear-gradient(to right,#0052d4,#4364f7);color:#ffffff;text-decoration:none;padding:18px 45px;border-radius:6px;font-weight:bold;font-size:15px;display:inline-block;text-transform:uppercase;letter-spacing:2px;box-shadow:0 6px 20px rgba(67,100,247,0.4);transition:all 0.3s ease;">Explorar Clases de Resistencia</a>
               <p style="color:#888; font-size:12px; margin-top:10px;">*Consulta horarios disponibles en el portal.</p>
             </td>
           </tr>
@@ -770,7 +852,7 @@
     <record id="mail_template_goal_general_fitness" model="mail.template">
       <field name="name">IZ Campaña – Fitness general</field>
       <field name="model_id" ref="base.model_res_partner"/>
-      <field name="subject">Bienestar Total: Vitalidad Completa en el Funcional Boot Camp 🌟</field>
+      <field name="subject">Bienestar Total: Inicia con Yoga Principiantes para Salud Integral 🌟</field>
       <field name="email_from">contacto@ironzone.ec</field>
       <field name="email_to">{{ object.email }}</field>
       <field name="auto_delete">True</field>
@@ -809,7 +891,7 @@
         <table width="100%" cellpadding="0" cellspacing="0" style="margin:35px 0;">
           <tr>
             <td align="center">
-              <a t-att-href="base_url + '/event/funcional-boot-camp-15/register'" style="background:linear-gradient(to right,#11998e,#38ef7d);color:#111111;text-decoration:none;padding:18px 45px;border-radius:6px;font-weight:bold;font-size:15px;display:inline-block;text-transform:uppercase;letter-spacing:2px;box-shadow:0 6px 20px rgba(56,239,125,0.4);transition:all 0.3s ease;">Ver Detalles del Programa</a>
+              <a t-att-href="base_url + '/event/yoga-principiantes-2/register'" style="background:linear-gradient(to right,#11998e,#38ef7d);color:#111111;text-decoration:none;padding:18px 45px;border-radius:6px;font-weight:bold;font-size:15px;display:inline-block;text-transform:uppercase;letter-spacing:2px;box-shadow:0 6px 20px rgba(56,239,125,0.4);transition:all 0.3s ease;">Reservar Clase de Yoga</a>
               <p style="color:#888; font-size:12px; margin-top:10px;">*Recomendado para todos los niveles.</p>
             </td>
           </tr>
@@ -874,7 +956,7 @@
         <table width="100%" cellpadding="0" cellspacing="0" style="margin:35px 0;">
           <tr>
             <td align="center">
-              <a t-att-href="base_url + '/event/yoga-principiantes-2/register'" style="background:linear-gradient(to right,#00b4db,#0083b0);color:#ffffff;text-decoration:none;padding:18px 45px;border-radius:6px;font-weight:bold;font-size:15px;display:inline-block;text-transform:uppercase;letter-spacing:2px;box-shadow:0 6px 20px rgba(0,180,219,0.4);transition:all 0.3s ease;">Reservar Mi Clase de Inicio</a>
+              <a t-att-href="base_url + (object.env['ir.config_parameter'].sudo().get_param('iz_website.event_link_yoga_principiantes', '/event/yoga-principiantes-2/register'))" style="background:linear-gradient(to right,#00b4db,#0083b0);color:#ffffff;text-decoration:none;padding:18px 45px;border-radius:6px;font-weight:bold;font-size:15px;display:inline-block;text-transform:uppercase;letter-spacing:2px;box-shadow:0 6px 20px rgba(0,180,219,0.4);transition:all 0.3s ease;">Reservar Mi Clase de Inicio</a>
               <p style="color:#888; font-size:12px; margin-top:10px;">*Asistencia incluida en tu primera semana.</p>
             </td>
           </tr>
@@ -939,7 +1021,7 @@
         <table width="100%" cellpadding="0" cellspacing="0" style="margin:35px 0;">
           <tr>
             <td align="center">
-              <a t-att-href="base_url + '/event/funcional-boot-camp-15/register'" style="background:linear-gradient(to right,#f857a6,#ff5858);color:#ffffff;text-decoration:none;padding:18px 45px;border-radius:6px;font-weight:bold;font-size:15px;display:inline-block;text-transform:uppercase;letter-spacing:2px;box-shadow:0 6px 20px rgba(255,88,88,0.4);transition:all 0.3s ease;">Ver Clases Recomendadas</a>
+              <a t-att-href="base_url + '/event/calistenia-intermedia-24/register'" style="background:linear-gradient(to right,#f857a6,#ff5858);color:#ffffff;text-decoration:none;padding:18px 45px;border-radius:6px;font-weight:bold;font-size:15px;display:inline-block;text-transform:uppercase;letter-spacing:2px;box-shadow:0 6px 20px rgba(255,88,88,0.4);transition:all 0.3s ease;">Ver Clases Recomendadas</a>
               <p style="color:#888; font-size:12px; margin-top:10px;">*Consulta disponibilidad en tu sede.</p>
             </td>
           </tr>
@@ -1069,7 +1151,7 @@
         <table width="100%" cellpadding="0" cellspacing="0" style="margin:35px 0;">
           <tr>
             <td align="center">
-              <a t-att-href="base_url + '/shop'" style="background:linear-gradient(to right,#11998e,#38ef7d);color:#111111;text-decoration:none;padding:18px 45px;border-radius:6px;font-weight:bold;font-size:15px;display:inline-block;text-transform:uppercase;letter-spacing:2px;box-shadow:0 6px 20px rgba(56,239,125,0.4);transition:all 0.3s ease;">Ver Ofertas de Temporada</a>
+              <a t-att-href="base_url + '/promo/seasonal?promo_code=' + (object.env['ir.config_parameter'].sudo().get_param('iz_website.seasonal_promo_code', 'IRONZONE25')) + '&amp;email=' + (object.email or '')" style="background:linear-gradient(to right,#11998e,#38ef7d);color:#111111;text-decoration:none;padding:18px 45px;border-radius:6px;font-weight:bold;font-size:15px;display:inline-block;text-transform:uppercase;letter-spacing:2px;box-shadow:0 6px 20px rgba(56,239,125,0.4);transition:all 0.3s ease;">Ver Ofertas de Temporada</a>
             </td>
           </tr>
         </table>

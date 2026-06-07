@@ -263,6 +263,8 @@ class ResPartner(models.Model):
         Validates the Tax ID (vat) based on the Identifier Type for Ecuador.
         Algorithms: Modulo 10 (Cedula/RUC Natural) and Modulo 11 (RUC Private/Public).
         """
+        if self.env.context.get("no_vat_validation"):
+            return
         for partner in self:
             identifier_type = partner._get_l10n_ec_identifier_type()
             if partner.country_id.code != "EC" or not identifier_type:
@@ -281,16 +283,25 @@ class ResPartner(models.Model):
 
             if not vat.isdigit():
                 raise ValidationError(
-                    _("Ecuadorian RUC/Cédula must contain only digits.")
+                    _("La cédula/RUC ecuatoriano debe contener solo dígitos.")
                 )
 
             is_ruc = identifier_type == "ruc"
             expected_len = 13 if is_ruc else 10
 
             if len(vat) != expected_len:
+                document_label = _("RUC") if is_ruc else _("Cédula")
                 raise ValidationError(
-                    _("Invalid length for %s. Expected %s digits, got %s.")
-                    % (identifier_type.upper(), expected_len, len(vat))
+                    _(
+                        "Si tu tipo de identificación es %(document_type)s, "
+                        "debe tener exactamente %(expected_len)s dígitos. "
+                        "Ingresaste %(actual_len)s."
+                    )
+                    % {
+                        "document_type": document_label,
+                        "expected_len": expected_len,
+                        "actual_len": len(vat),
+                    }
                 )
 
             if is_ruc and not vat.endswith("001"):
@@ -300,11 +311,13 @@ class ResPartner(models.Model):
                 pass
 
             if not self._validate_ec_document(vat):
+                document_label = _("RUC") if is_ruc else _("cédula")
                 raise ValidationError(
                     _(
-                        "Invalid Ecuadorian Identity Number (%s): Check Digit Verification Failed."
+                        "La %(document_type)s ingresada (%(vat)s) no es válida. "
+                        "Revisa el número o usa el tipo de identificación correcto."
                     )
-                    % vat
+                    % {"document_type": document_label, "vat": vat}
                 )
 
     def _validate_ec_document(self, document_number):
