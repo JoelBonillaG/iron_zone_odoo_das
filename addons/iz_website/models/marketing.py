@@ -21,7 +21,7 @@ class IzMarketing(models.TransientModel):
         sent = 0
         for partner in partners:
             try:
-                template.with_context(partner=partner).send_mail(partner.id, force_send=True)
+                template.with_context(partner=partner).send_mail(partner.id)
                 sent += 1
             except Exception:
                 pass
@@ -37,7 +37,7 @@ class IzMarketing(models.TransientModel):
         sent = 0
         for partner in partners:
             try:
-                template.with_context(partner=partner).send_mail(partner.id, force_send=True)
+                template.with_context(partner=partner).send_mail(partner.id)
                 partner.sudo().write({flag_field: True})
                 sent += 1
             except Exception:
@@ -125,10 +125,10 @@ class IzMarketing(models.TransientModel):
             if partner and partner.email and partner not in partners_notified:
                 if template:
                     try:
-                        template.send_mail(partner.id, force_send=True)
+                        template.send_mail(partner.id)
                     except Exception:
                         pass
-                partners_notified |= partner
+                    partners_notified |= partner
 
     # ------------------------------------------------------------------
     # Campañas estacionales

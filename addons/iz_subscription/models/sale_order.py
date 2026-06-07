@@ -255,6 +255,9 @@ class SaleOrder(models.Model):
         if not ticket:
             return add_qty, set_qty, ""
 
+        # Promo validations for Women's and Men's Day are handled by sale_order_line.py
+        # which applies the 100% discount if eligible. We do not block adding to cart here
+        # so they can still purchase the class at full price.
         requested_qty = (
             self._iz_to_int(set_qty)
             if set_qty

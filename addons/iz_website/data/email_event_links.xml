@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- Event links used in email templates (configurable per deployment) -->
+        <record id="event_link_yoga_principiantes" model="ir.config_parameter">
+            <field name="key">iz_website.event_link_yoga_principiantes</field>
+            <field name="value">/event/yoga-principiantes-2/register</field>
+        </record>
+        <record id="event_link_hiit_entrenamiento" model="ir.config_parameter">
+            <field name="key">iz_website.event_link_hiit_entrenamiento</field>
+            <field name="value">/event/hiit-entrenamiento-6/register</field>
+        </record>
+        <record id="event_link_boot_camp" model="ir.config_parameter">
+            <field name="key">iz_website.event_link_boot_camp</field>
+            <field name="value">/event/funcional-boot-camp-15/register</field>
+        </record>
+        <record id="event_link_pilates_avanzado" model="ir.config_parameter">
+            <field name="key">iz_website.event_link_pilates_avanzado</field>
+            <field name="value">/event/pilates-avanzado-5/register</field>
+        </record>
+        <record id="event_link_boxeo_tecnica" model="ir.config_parameter">
+            <field name="key">iz_website.event_link_boxeo_tecnica</field>
+            <field name="value">/event/boxeo-tecnica-7/register</field>
+        </record>
+        <record id="event_link_musculacion" model="ir.config_parameter">
+            <field name="key">iz_website.event_link_musculacion</field>
+            <field name="value">/event/musculacion-personalizada-13/register</field>
+        </record>
+        <record id="event_link_crossfit_am" model="ir.config_parameter">
+            <field name="key">iz_website.event_link_crossfit_am</field>
+            <field name="value">/event/crossfit-am-1/register</field>
+        </record>
+        <record id="event_link_spinning" model="ir.config_parameter">
+            <field name="key">iz_website.event_link_spinning</field>
+            <field name="value">/event/spinning-3/register</field>
+        </record>
+    </data>
+</odoo>

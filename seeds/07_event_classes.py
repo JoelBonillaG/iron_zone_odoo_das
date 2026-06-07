@@ -447,7 +447,7 @@ def ensure_event_login_required(uid, models):
             <a t-attf-href="/web/login?redirect=/event/#{slug(event)}" t-attf-class="btn btn-primary {{cta_additional_classes}}">Registrarse</a>
         </t>
         <t t-else="">
-            <button type="button" data-bs-toggle="modal" data-bs-target="#modal_ticket_registration" t-attf-class="btn btn-primary {{cta_additional_classes}}">Register</button>
+            <button type="button" data-bs-toggle="modal" data-bs-target="#modal_ticket_registration" t-attf-class="btn btn-primary {{cta_additional_classes}}">Inscribirse</button>
         </t>
     </xpath>
     '''
@@ -481,7 +481,13 @@ def ensure_event_ticket_info(uid, models):
                 <div class="mb-2 d-flex align-items-center">
                     <i class="fa fa-ticket fa-fw me-2 text-muted"/> 
                     <strong class="me-2">Precio:</strong> 
-                    <t t-if="event.event_ticket_ids and event.event_ticket_ids[0].price > 0">
+                    <t t-set="is_promo" t-value="any(p in (event.name or '').lower() for p in ['yoga avanzado', 'pilates avanzado'])"/>
+                    <t t-set="is_female" t-value="user_id.partner_id.iz_gender == 'female'"/>
+                    
+                    <t t-if="is_promo and is_female">
+                        <span class="badge text-bg-success">¡Gratis por ser tu día! 💜</span>
+                    </t>
+                    <t t-elif="event.event_ticket_ids and event.event_ticket_ids[0].price > 0">
                         <span t-out="event.event_ticket_ids[0].price" t-options="{'widget': 'monetary', 'display_currency': website.currency_id}"/>
                     </t>
                     <t t-else="">
@@ -502,7 +508,13 @@ def ensure_event_ticket_info(uid, models):
                 <div class="mb-2 d-flex align-items-center">
                     <i class="fa fa-ticket fa-fw me-2 text-muted"/> 
                     <strong class="me-2">Precio:</strong> 
-                    <t t-if="event.event_ticket_ids and event.event_ticket_ids[0].price > 0">
+                    <t t-set="is_promo" t-value="any(p in (event.name or '').lower() for p in ['yoga avanzado', 'pilates avanzado'])"/>
+                    <t t-set="is_female" t-value="user_id.partner_id.iz_gender == 'female'"/>
+
+                    <t t-if="is_promo and is_female">
+                        <span class="badge text-bg-success">¡Gratis por ser tu día! 💜</span>
+                    </t>
+                    <t t-elif="event.event_ticket_ids and event.event_ticket_ids[0].price > 0">
                         <span t-out="event.event_ticket_ids[0].price" t-options="{'widget': 'monetary', 'display_currency': website.currency_id}"/>
                     </t>
                     <t t-else="">
@@ -536,12 +548,49 @@ def ensure_event_ticket_info(uid, models):
         fields=["id"]
     )
 
+def ensure_event_registration_table_promo(uid, models):
+    """Modifica la tabla de registro de boletos para mostrar 'Gratis' en la promo del día de la mujer."""
+    inherit_id = models.execute_kw(DB, uid, PASSWORD, 'ir.ui.view', 'search', [[('key', '=', 'website_event_sale.registration_template')]])
+    if not inherit_id:
+        return
+
+    arch = '''
+    <xpath expr="//div[@name='price']" position="replace">
+        <div class="col-md-3 text-end pt-1" name="price">
+            <t t-set="is_promo" t-value="any(kw in (event.name or '').lower() for kw in ['yoga avanzado', 'pilates avanzado'])"/>
+            <t t-set="is_female" t-value="user.partner_id.iz_gender == 'female'"/>
+            
+            <t t-if="is_promo and is_female">
+                <span class="text-success fw-bold">¡Gratis por tu día! 💜</span>
+            </t>
+            <t t-elif="ticket.price > 0">
+                <span t-field="ticket.price" t-options='{"widget": "monetary", "display_currency": website.currency_id}'/>
+            </t>
+            <t t-else="">
+                <span class="badge text-bg-success">Gratis</span>
+            </t>
+        </div>
+    </xpath>
+    '''
+    create_or_update(
+        uid, models, "ir.ui.view", [("key", "=", "iz_event_promo_price_table")],
+        {
+            "name": "Promo Price in Registration Table",
+            "key": "iz_event_promo_price_table",
+            "type": "qweb", "mode": "extension",
+            "inherit_id": inherit_id[0],
+            "arch": arch, "active": True
+        },
+        fields=["id"]
+    )
 
 def run():
     uid, models = connect()
     ensure_event_admin_rule(uid, models)
     ensure_event_login_required(uid, models)
     ensure_event_ticket_info(uid, models)
+    ensure_event_registration_table_promo(uid, models)
+
     archive_old_demo_events(uid, models)
 
     # Get company info

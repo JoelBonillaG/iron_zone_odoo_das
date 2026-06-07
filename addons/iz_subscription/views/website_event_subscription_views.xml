@@ -46,7 +46,7 @@
 
     <!--
         Modal ticket price display.
-        Priority: first-event free > subscription benefit > regular price.
+        Priority: first-event free > women's day promo > subscription benefit > regular price.
         If event.subscription_plan_ids is set, only matching plans apply.
         If empty, the user's benefit applies to all events.
     -->
@@ -54,6 +54,17 @@
         <xpath expr="//span[@t-out='ticket.price']" position="replace">
             <!-- First-event check (highest priority) -->
             <t t-set="is_first_time_user" t-value="not website.is_public_user() and not request.env.user.partner_id._has_previous_event_registration()"/>
+            <!-- Women's Day Promo Check -->
+            <t t-set="womens_promo_events" t-value="['yoga avanzado', 'pilates avanzado']"/>
+            <t t-set="is_womens_promo" t-value="any(kw in (event.name or '').lower() for kw in womens_promo_events)"/>
+            <t t-set="is_female" t-value="request.env.user.partner_id.iz_gender == 'female'"/>
+            <t t-set="womens_promo_used" t-value="request.env['event.registration'].sudo().search_count([
+                ('partner_id', '=', request.env.user.partner_id.id),
+                ('state', '!=', 'cancel'),
+                '|',
+                ('event_id.name', 'ilike', 'Yoga Avanzado'),
+                ('event_id.name', 'ilike', 'Pilates Avanzado')
+            ])"/>
             <!-- Subscription benefit: apply to all events unless event restricts to specific plans -->
             <t t-set="all_benefits" t-value="request.env.user.partner_id._get_current_subscription_benefits('events') if not website.is_public_user() else False"/>
             <t t-set="subscription_benefit" t-value="(all_benefits.filtered(lambda b: b.plan_id in event.subscription_plan_ids)[:1] if event.subscription_plan_ids else all_benefits[:1]) if all_benefits else False"/>
@@ -62,6 +73,9 @@
 
             <t t-if="is_first_time_user">
                 <span class="text-success fw-bold">Gratis — Primer evento</span>
+            </t>
+            <t t-elif="is_womens_promo and is_female and womens_promo_used == 0">
+                <span class="text-success fw-bold">¡Gratis por tu día! 💜</span>
             </t>
             <t t-elif="is_free_benefit">
                 <span class="text-success fw-bold">Incluido en tu plan</span>
@@ -85,23 +99,32 @@
         <xpath expr="//button[contains(@data-bs-target,'modal_ticket_registration')]" position="replace">
             <t t-set="already_registered" t-value="not request.env.user._is_public() and request.env.user.partner_id.id in event.inscritos_ids.ids"/>
             <!-- Free event: all defined tickets cost $0 -->
-            <t t-set="is_free_event" t-value="event.event_ticket_ids and not event.event_ticket_ids.filtered(lambda t: t.price &gt; 0)"/>
+            <t t-set="is_free_event" t-value="event.event_ticket_ids and not event.event_ticket_ids.filtered(lambda t: t.price > 0)"/>
             <!-- First-time: user has never registered for any event -->
             <t t-set="is_first_time_user" t-value="not request.env.user._is_public() and not request.env.user.partner_id._has_previous_event_registration()"/>
             <!-- Subscription benefit: only a FREE (100%) benefit skips the modal.
                  A partial discount must use the paid flow (modal/cart). -->
             <t t-set="_sub_all_benefits" t-value="request.env.user.partner_id._get_current_subscription_benefits('events') if not request.env.user._is_public() else False"/>
-            <t t-set="_sub_scoped" t-value="(_sub_all_benefits.filtered(lambda b: b.plan_id in event.subscription_plan_ids) if (event.subscription_plan_ids and _sub_all_benefits) else _sub_all_benefits)"/>
-            <t t-set="has_free_benefit" t-value="bool(_sub_scoped.filtered(lambda b: b.benefit_type == 'free')[:1]) if _sub_scoped else False"/>
-
+            <t t-set="has_subscription_benefit" t-value="((_sub_all_benefits.filtered(lambda b: b.plan_id in event.subscription_plan_ids)[:1] if event.subscription_plan_ids else _sub_all_benefits[:1]) if _sub_all_benefits else False)"/>
+             <!-- Women's Day Promo Check -->
+            <t t-set="womens_promo_events" t-value="['yoga avanzado', 'pilates avanzado']"/>
+            <t t-set="is_womens_promo" t-value="any(kw in (event.name or '').lower() for kw in womens_promo_events)"/>
+            <t t-set="is_female" t-value="request.env.user.partner_id.iz_gender == 'female'"/>
+            <t t-set="womens_promo_used" t-value="request.env['event.registration'].sudo().search_count([
+                ('partner_id', '=', request.env.user.partner_id.id),
+                ('state', '!=', 'cancel'),
+                '|',
+                ('event_id.name', 'ilike', 'Yoga Avanzado'),
+                ('event_id.name', 'ilike', 'Pilates Avanzado')
+            ])"/>
             <t t-if="already_registered">
                 <div class="alert alert-success d-flex align-items-center gap-2 py-2 px-3 rounded-3" role="alert">
                     <i class="fa fa-check-circle fa-lg"/>
                     <span class="fw-semibold">Ya estás inscrito en esta clase</span>
                 </div>
             </t>
-            <t t-elif="is_first_time_user or is_free_event or has_free_benefit">
-                <!-- Bypass modal and cart entirely: POST directly to free-register only when truly free -->
+            <t t-elif="is_first_time_user or is_free_event or has_free_benefit or (is_womens_promo and is_female and womens_promo_used == 0)">
+                <!-- Bypass modal and cart entirely: POST directly to free-register for free/first/subscriber -->
                 <form method="post" t-att-action="'/event/%s/free-register' % event.id" style="display:inline;">
                     <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
                     <button type="submit" t-attf-class="btn btn-primary #{cta_additional_classes or ''}">
@@ -121,7 +144,7 @@
 
     <!--
         Event sidebar: show pricing badge.
-        Priority: first-event free > subscription discount > nothing extra.
+        Priority: first-event free > women's day promo > subscription discount > nothing extra.
         If event.subscription_plan_ids is empty, benefit applies to all events.
     -->
     <template id="event_sidebar_subscription_benefit" inherit_id="website_event.event_description_full" name="Subscription benefit in event sidebar" priority="40">
@@ -137,6 +160,18 @@
                 <t t-set="ticket_price" t-value="event.event_ticket_ids[0].price if event.event_ticket_ids else 0.0"/>
                 <t t-set="subscription_final_price" t-value="subscription_benefit.apply_to_amount(ticket_price) if subscription_benefit else ticket_price"/>
 
+                <!-- Women's Day Promo Check -->
+                <t t-set="womens_promo_events" t-value="['yoga avanzado', 'pilates avanzado']"/>
+                <t t-set="is_womens_promo" t-value="any(kw in (event.name or '').lower() for kw in womens_promo_events)"/>
+                <t t-set="is_female" t-value="request.env.user.partner_id.iz_gender == 'female'"/>
+                <t t-set="womens_promo_used" t-value="request.env['event.registration'].sudo().search_count([
+                    ('partner_id', '=', request.env.user.partner_id.id),
+                    ('state', '!=', 'cancel'),
+                    '|',
+                    ('event_id.name', 'ilike', 'Yoga Avanzado'),
+                    ('event_id.name', 'ilike', 'Pilates Avanzado')
+                ])"/>
+
                 <t t-if="is_first_time_user">
                     <div class="o_wevent_sidebar_block iz-ticket-subscription-benefit border-bottom pb-3 mb-4 d-none d-lg-flex">
                         <span>Tu primer evento</span>
@@ -144,6 +179,15 @@
                             <i class="fa fa-gift me-1"/>¡Gratis!
                         </div>
                         <small class="text-muted">El primer evento siempre es sin costo.</small>
+                    </div>
+                </t>
+                <t t-elif="is_womens_promo and is_female and womens_promo_used == 0">
+                    <div class="o_wevent_sidebar_block iz-ticket-subscription-benefit border-bottom pb-3 mb-4 d-none d-lg-flex">
+                        <span>Clase del Día de la Mujer</span>
+                        <div class="text-success fw-bold mt-1">
+                            <i class="fa fa-gift me-1"/>¡Gratis!
+                        </div>
+                        <small class="text-muted">Canjea tu clase premium sin costo.</small>
                     </div>
                 </t>
                 <t t-elif="subscription_benefit">
@@ -175,6 +219,18 @@
                 <t t-set="ticket_price" t-value="event.event_ticket_ids[0].price if event.event_ticket_ids else 0.0"/>
                 <t t-set="subscription_final_price" t-value="subscription_benefit.apply_to_amount(ticket_price) if subscription_benefit else ticket_price"/>
 
+                <!-- Women's Day Promo Check -->
+                <t t-set="womens_promo_events" t-value="['yoga avanzado', 'pilates avanzado']"/>
+                <t t-set="is_womens_promo" t-value="any(kw in (event.name or '').lower() for kw in womens_promo_events)"/>
+                <t t-set="is_female" t-value="request.env.user.partner_id.iz_gender == 'female'"/>
+                <t t-set="womens_promo_used" t-value="request.env['event.registration'].sudo().search_count([
+                    ('partner_id', '=', request.env.user.partner_id.id),
+                    ('state', '!=', 'cancel'),
+                    '|',
+                    ('event_id.name', 'ilike', 'Yoga Avanzado'),
+                    ('event_id.name', 'ilike', 'Pilates Avanzado')
+                ])"/>
+
                 <t t-if="is_first_time_user">
                     <div class="o_wevent_sidebar_block iz-ticket-subscription-benefit border-bottom pb-3 mb-4 d-lg-none mt-3">
                         <span>Tu primer evento</span>
@@ -182,6 +238,15 @@
                             <i class="fa fa-gift me-1"/>¡Gratis!
                         </div>
                         <small class="text-muted">El primer evento siempre es sin costo.</small>
+                    </div>
+                </t>
+                <t t-elif="is_womens_promo and is_female and womens_promo_used == 0">
+                    <div class="o_wevent_sidebar_block iz-ticket-subscription-benefit border-bottom pb-3 mb-4 d-lg-none mt-3">
+                        <span>Clase del Día de la Mujer</span>
+                        <div class="text-success fw-bold mt-1">
+                            <i class="fa fa-gift me-1"/>¡Gratis!
+                        </div>
+                        <small class="text-muted">Canjea tu clase premium sin costo.</small>
                     </div>
                 </t>
                 <t t-elif="subscription_benefit">

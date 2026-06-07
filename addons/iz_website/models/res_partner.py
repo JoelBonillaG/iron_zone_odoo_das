@@ -50,6 +50,7 @@ class ResPartner(models.Model):
     # Campo fantasma necesario para que Odoo valide vistas antiguas en la DB durante actualizaciones
     iz_last_birthday_year = fields.Integer(string="Último año de cumpleaños")
     iz_welcome_sent = fields.Boolean(string="Welcome Sent")
+    iz_seasonal_promo_used = fields.Boolean(string="Descuento estacional usado")
     iz_onboarding_day1_sent = fields.Boolean(string="Onboarding Day 1 Sent")
     iz_onboarding_day23_sent = fields.Boolean(string="Onboarding Day 2-3 Sent")
     
@@ -136,21 +137,22 @@ class ResPartner(models.Model):
                             is_bday = True
                         ctx = {"partner": partner, "is_birthday": is_bday, "is_birthday_today": is_bday}
                         template.with_context(**ctx).send_mail(partner.id, force_send=False)
-                        try:
-                            partner.sudo().write({"iz_welcome_sent": True})
-                        except Exception:
-                            pass
+                        partner.sudo().write({"iz_welcome_sent": True})
                     except Exception:
                         pass
         return partners
 
     def write(self, vals):
+        if self.env.context.get('iz_skip_automation'):
+            return super().write(vals)
+        self = self.with_context(iz_skip_automation=True)
         # Actualizar timestamp si el género cambia
         if "iz_gender" in vals:
             vals["iz_gender_last_update"] = fields.Datetime.now()
             
         res = super().write(vals)
         today = fields.Date.context_today(self)
+
         if self._iz_skip_partner_automation():
             return res
 
@@ -177,7 +179,7 @@ class ResPartner(models.Model):
                     template = self.env.ref(f"iz_website.{template_xmlid}", raise_if_not_found=False)
                     if template:
                         try:
-                            template.send_mail(partner.id, force_send=True)
+                            template.send_mail(partner.id)
                         except Exception:
                             pass
                 
@@ -187,7 +189,7 @@ class ResPartner(models.Model):
                     template = self.env.ref(f"iz_website.{template_xmlid}", raise_if_not_found=False)
                     if template:
                         try:
-                            template.send_mail(partner.id, force_send=True)
+                            template.send_mail(partner.id)
                         except Exception:
                             pass
                 
@@ -196,7 +198,7 @@ class ResPartner(models.Model):
                     template = self.env.ref("iz_website.mail_template_birthday", raise_if_not_found=False)
                     if template:
                         try:
-                            template.with_context(partner=partner).send_mail(partner.id, force_send=True)
+                            template.with_context(partner=partner).send_mail(partner.id)
                         except Exception:
                             pass
         except Exception:

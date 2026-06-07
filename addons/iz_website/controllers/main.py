@@ -1,12 +1,18 @@
 import json
+import logging
 from datetime import date, datetime
 
-from odoo import http
+from odoo import http, _, fields
+from markupsafe import Markup
+from odoo.addons.auth_signup.models.res_users import SignupError
 from odoo.exceptions import UserError, ValidationError
 from odoo.addons.auth_signup.controllers.main import AuthSignupHome
 from odoo.addons.website_sale.controllers.main import WebsiteSale
 from odoo.http import request
+import werkzeug
+from werkzeug.urls import url_encode
 
+_logger = logging.getLogger(__name__)
 
 class IzWebsiteSaleAddress(WebsiteSale):
     @http.route()
@@ -116,41 +122,162 @@ class IzSignupController(AuthSignupHome):
             ("intermediate", "Intermedio"),
             ("advanced", "Avanzado"),
         ])
+        draft = request.session.get("iz_signup_draft") or {}
+        for key in ("login", "name", "email", "phone",
+                    "iz_gender", "iz_birthdate", "iz_fitness_goal", "iz_experience_level"):
+            if draft.get(key) and not qcontext.get(key):
+                qcontext[key] = draft[key]
+        if draft:
+            qcontext["show_clear_draft"] = True
         return qcontext
 
     # ------------------------------------------------------------------
-    # Override POST – validate age before creating user
+    # Override POST – complete signup without Odoo's welcome email
     # ------------------------------------------------------------------
 
-    @http.route()
+    @http.route('/web/signup', type='http', auth='public', website=True, sitemap=False)
     def web_auth_signup(self, *args, **kw):
         qcontext = self.get_auth_signup_qcontext()
 
-        # Only validate on actual POST submission (not token-based resets)
-        if request.httprequest.method == "POST" and not qcontext.get("token"):
-            required_error = self._iz_validate_required_fields(request.params)
-            if required_error:
-                qcontext["error"] = required_error
-                response = request.render("auth_signup.signup", qcontext)
-                response.headers["X-Frame-Options"] = "SAMEORIGIN"
-                response.headers["X-XSS-Protection"] = "1; mode=block"
-                return response
+        if not qcontext.get('token') and not qcontext.get('signup_enabled'):
+            raise werkzeug.exceptions.NotFound()
 
-            birthdate_str = request.params.get("iz_birthdate", "").strip()
-            _, error = self._iz_compute_age(birthdate_str)
-            if error:
-                qcontext["error"] = error
-                response = request.render("auth_signup.signup", qcontext)
-                response.headers["X-Frame-Options"] = "SAMEORIGIN"
-                response.headers["X-XSS-Protection"] = "1; mode=block"
-                return response
-
+        if 'error' not in qcontext and request.httprequest.method == 'POST':
             try:
-                birthdate = datetime.strptime(birthdate_str, "%Y-%m-%d").date()
-                today = date.today()
-                if birthdate.month == today.month and birthdate.day == today.day:
-                    request.update_env(context=dict(request.env.context, is_birthday_today=True, is_birthday=True))
-            except Exception:
-                pass
+                if not request.env['ir.http']._verify_request_recaptcha_token('signup'):
+                    raise UserError(_("Suspicious activity detected by Google reCaptcha."))
 
-        return super().web_auth_signup(*args, **kw)
+                # --- Inyectar Validaciones de Iron Zone ---
+                if not qcontext.get('token'):
+                    missing_error = self._iz_validate_required_fields(request.params)
+                    if missing_error:
+                        raise UserError(missing_error)
+
+                    _age, age_error = self._iz_compute_age(request.params.get("iz_birthdate", ""))
+                    if age_error:
+                        raise UserError(age_error)
+
+                # Save draft before processing
+                if not qcontext.get('token'):
+                    request.session["iz_signup_draft"] = {
+                        "login": request.params.get("login", ""),
+                        "name": request.params.get("name", ""),
+                        "email": request.params.get("email", ""),
+                        "phone": request.params.get("phone", ""),
+                        "iz_gender": request.params.get("iz_gender", ""),
+                        "iz_birthdate": request.params.get("iz_birthdate", ""),
+                        "iz_fitness_goal": request.params.get("iz_fitness_goal", ""),
+                        "iz_experience_level": request.params.get("iz_experience_level", ""),
+                    }
+
+                self.do_signup(qcontext)
+
+                # Set user to public if they were not signed in by do_signup (mfa enabled)
+                if request.session.uid is None:
+                    public_user = request.env.ref('base.public_user')
+                    request.update_env(user=public_user)
+
+                # DO NOT send Odoo's default welcome email.
+                # Send IZ welcome email directly.
+                partner_email = (request.params.get("email") or "").strip()
+                User = request.env['res.users']
+                user_sudo = User.sudo().search(
+                    [('login', '=', qcontext.get('login'))], limit=1
+                )
+                if not user_sudo and partner_email:
+                    user_sudo = User.sudo().search(
+                        [('email', '=', partner_email)], limit=1
+                    )
+                if not user_sudo:
+                    login_domain = User._get_login_domain(qcontext.get('login'))
+                    user_sudo = User.sudo().search(login_domain, order=User._get_login_order(), limit=1)
+                
+                if user_sudo:
+                    partner = user_sudo.sudo().partner_id
+                    if partner and partner.email:
+                        template = request.env.ref("iz_website.mail_template_welcome", raise_if_not_found=False)
+                        if template:
+                            try:
+                                today = date.today()
+                                bdate = fields.Date.to_date(partner.iz_birthdate)
+                                is_bday = bool(bdate and bdate.month == today.month and bdate.day == today.day)
+                                ctx = {"partner": partner, "is_birthday": is_bday, "is_birthday_today": is_bday}
+                                template.sudo().with_context(**ctx).send_mail(partner.id, force_send=True)
+                                partner.sudo().write({"iz_welcome_sent": True})
+                            except Exception as exc:
+                                _logger.error("Error sending IZ welcome email: %s", str(exc))
+                        else:
+                            _logger.error("IZ welcome template not found: iz_website.mail_template_welcome")
+                    else:
+                        _logger.error("Partner not found or no email for user: %s", user_sudo.login)
+                else:
+                    _logger.error("User not found after signup with login: %s", qcontext.get('login'))
+
+                # Clear draft on success
+                request.session.pop("iz_signup_draft", None)
+
+                return self.web_login(*args, **kw)
+            except UserError as e:
+                qcontext['error'] = e.args[0]
+                qcontext = self.get_auth_signup_qcontext()
+            except (SignupError, AssertionError) as e:
+                if request.env["res.users"].sudo().search_count([("login", "=", qcontext.get("login"))], limit=1):
+                    qcontext['error'] = _("Another user is already registered using this email address.")
+                else:
+                    _logger.warning("%s", e)
+                    qcontext['error'] = _("Could not create a new account.") + Markup('<br/>') + str(e)
+                qcontext = self.get_auth_signup_qcontext()
+
+        elif 'signup_email' in qcontext:
+            user = request.env['res.users'].sudo().search([('email', '=', qcontext.get('signup_email')), ('state', '!=', 'new')], limit=1)
+            if user:
+                return request.redirect('/web/login?%s' % url_encode({'login': user.login, 'redirect': '/web'}))
+
+        qcontext = self.get_auth_signup_qcontext()
+        response = request.render('auth_signup.signup', qcontext)
+        response.headers['X-Frame-Options'] = 'SAMEORIGIN'
+        response.headers['Content-Security-Policy'] = "frame-ancestors 'self'"
+        return response
+
+
+class SeasonalOfferController(http.Controller):
+    """Controller to handle seasonal offers with automatic discounts."""
+
+    @http.route("/subscription/seasonal-offer", type="http", auth="public", website=True)
+    def seasonal_subscription_offer(self, **kw):
+        """Compatibility link for old seasonal emails."""
+        promo_code = request.env["ir.config_parameter"].sudo().get_param(
+            "iz_website.seasonal_promo_code", "IRONZONE25"
+        )
+        params = {"promo_code": promo_code}
+        if kw.get("email"):
+            params["email"] = kw["email"]
+        return request.redirect("/promo/seasonal?%s" % url_encode(params))
+
+
+class RenewalController(http.Controller):
+    """Controller for subscription renewal links from emails."""
+
+    @http.route("/subscription/muscle-gain-monthly", type="http", auth="public", website=True)
+    def renew_monthly(self, **kw):
+        return self._add_subscription_to_cart("IZ_B01")
+
+    @http.route("/subscription/muscle-gain-annual", type="http", auth="public", website=True)
+    def renew_annual(self, **kw):
+        return self._add_subscription_to_cart("IZ_PR01")
+
+    def _add_subscription_to_cart(self, plan_code):
+        """Add subscription product to cart and redirect to checkout."""
+        template = request.env["product.template"].sudo().search(
+            [("subscription_plan_id.code", "=", plan_code), ("sale_ok", "=", True)], limit=1
+        )
+        if not template:
+            return request.redirect("/shop")
+
+        product = template.product_variant_id
+        if not product:
+            return request.redirect("/shop")
+
+        cart = request.website.sale_get_order(force_create=True)
+        cart._cart_update(product_id=product.id, add_qty=1)
+        return request.redirect("/shop/cart")
