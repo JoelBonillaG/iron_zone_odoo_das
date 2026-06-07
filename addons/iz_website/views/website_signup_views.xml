@@ -20,9 +20,9 @@
                     <label for="iz_gender" class="form-label fw-semibold">Género</label>
                     <select id="iz_gender" name="iz_gender" class="form-select iz-select" required="required">
                         <option value="">— Selecciona —</option>
-                        <option value="male">Masculino</option>
-                        <option value="female">Femenino</option>
-                        <option value="prefer_not">Prefiero no decirlo</option>
+                        <option value="male" t-att-selected="iz_gender == 'male'">Masculino</option>
+                        <option value="female" t-att-selected="iz_gender == 'female'">Femenino</option>
+                        <option value="prefer_not" t-att-selected="iz_gender == 'prefer_not'">Prefiero no decirlo</option>
                     </select>
                 </div>
 
@@ -35,6 +35,7 @@
                     <input id="iz_birthdate" type="date" name="iz_birthdate" required="required"
                            class="form-control iz-input"
                            t-att-max="today_max"
+                           t-att-value="iz_birthdate"
                            placeholder="YYYY-MM-DD"/>
                     <div id="iz_age_display" class="form-text iz-age-hint" style="display:none;"/>
                 </div>
@@ -44,10 +45,10 @@
                     <label for="iz_fitness_goal" class="form-label fw-semibold">Objetivo fitness</label>
                     <select id="iz_fitness_goal" name="iz_fitness_goal" class="form-select iz-select" required="required">
                         <option value="">— Selecciona —</option>
-                        <option value="weight_loss">🔥 Perder peso</option>
-                        <option value="muscle_gain">💪 Ganar masa muscular</option>
-                        <option value="general_fitness">🧘 Mantenerme saludable</option>
-                        <option value="endurance">🏃 Mejorar resistencia física</option>
+                        <option value="weight_loss" t-att-selected="iz_fitness_goal == 'weight_loss'">🔥 Perder peso</option>
+                        <option value="muscle_gain" t-att-selected="iz_fitness_goal == 'muscle_gain'">💪 Ganar masa muscular</option>
+                        <option value="general_fitness" t-att-selected="iz_fitness_goal == 'general_fitness'">🧘 Mantenerme saludable</option>
+                        <option value="endurance" t-att-selected="iz_fitness_goal == 'endurance'">🏃 Mejorar resistencia física</option>
                     </select>
                 </div>
 
@@ -56,9 +57,9 @@
                     <label for="iz_experience_level" class="form-label fw-semibold">Nivel de experiencia</label>
                     <select id="iz_experience_level" name="iz_experience_level" class="form-select iz-select" required="required">
                         <option value="">— Selecciona —</option>
-                        <option value="beginner">🟢 Principiante</option>
-                        <option value="intermediate">🟡 Intermedio</option>
-                        <option value="advanced">🔴 Avanzado</option>
+                        <option value="beginner" t-att-selected="iz_experience_level == 'beginner'">🟢 Principiante</option>
+                        <option value="intermediate" t-att-selected="iz_experience_level == 'intermediate'">🟡 Intermedio</option>
+                        <option value="advanced" t-att-selected="iz_experience_level == 'advanced'">🔴 Avanzado</option>
                     </select>
                 </div>
             </div>

@@ -88,6 +88,48 @@
         return ok;
     }
 
+    const IZ_FORM_KEY = 'iz_signup_draft';
+
+    function saveDraft() {
+        try {
+            const data = {};
+            ['login', 'name', 'email', 'phone',
+             'iz_gender', 'iz_birthdate', 'iz_fitness_goal', 'iz_experience_level'].forEach(function (id) {
+                const el = document.getElementById(id) || document.querySelector('[name="' + id + '"]');
+                if (!el) return;
+                data[id] = el.value;
+            });
+            localStorage.setItem(IZ_FORM_KEY, JSON.stringify(data));
+        } catch (e) {
+            // silently ignore storage errors
+        }
+    }
+
+    function restoreDraft() {
+        try {
+            const raw = localStorage.getItem(IZ_FORM_KEY);
+            if (!raw) return;
+            const data = JSON.parse(raw);
+            Object.keys(data).forEach(function (key) {
+                const el = document.getElementById(key) || document.querySelector('[name="' + key + '"]');
+                if (!el || !data[key]) return;
+                if (el.tagName === 'SELECT') {
+                    el.value = data[key];
+                } else {
+                    el.value = data[key];
+                }
+                el.dispatchEvent(new Event('change', { bubbles: true }));
+                el.dispatchEvent(new Event('input', { bubbles: true }));
+            });
+        } catch (e) {
+            // silently ignore
+        }
+    }
+
+    function clearDraft() {
+        try { localStorage.removeItem(IZ_FORM_KEY); } catch (e) {}
+    }
+
     document.addEventListener('DOMContentLoaded', function () {
         setMaxDate();
         const dateInput = document.getElementById('iz_birthdate');
@@ -97,15 +139,26 @@
         }
         const form = document.querySelector('form#signup_form, form[action*="signup"]');
         if (form) {
+            restoreDraft();
+            ['login', 'name', 'email', 'phone',
+             'iz_gender', 'iz_birthdate', 'iz_fitness_goal', 'iz_experience_level'].forEach(function (id) {
+                const el = document.getElementById(id) || document.querySelector('[name="' + id + '"]');
+                if (!el) return;
+                el.addEventListener('change', saveDraft);
+                el.addEventListener('input', saveDraft);
+            });
             form.addEventListener('submit', function (ev) {
-                // validate required selects first
+                saveDraft();
                 const ok = validateRequiredFields(ev);
-                if (!ok) {
-                    ev.preventDefault();
-                    return;
-                }
+                if (!ok) { ev.preventDefault(); }
                 validateOnSubmit(ev);
             });
+        }
+    });
+
+    window.addEventListener('beforeunload', function () {
+        if (!location.pathname.startsWith('/web/signup')) {
+            clearDraft();
         }
     });
 })();

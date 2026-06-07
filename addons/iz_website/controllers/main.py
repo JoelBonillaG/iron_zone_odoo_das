@@ -94,6 +94,13 @@ class IzSignupController(AuthSignupHome):
             ("intermediate", "Intermedio"),
             ("advanced", "Avanzado"),
         ])
+        draft = request.session.get("iz_signup_draft") or {}
+        for key in ("login", "name", "email", "phone",
+                    "iz_gender", "iz_birthdate", "iz_fitness_goal", "iz_experience_level"):
+            if draft.get(key) and not qcontext.get(key):
+                qcontext[key] = draft[key]
+        if draft:
+            qcontext["show_clear_draft"] = True
         return qcontext
 
     # ------------------------------------------------------------------
@@ -103,32 +110,36 @@ class IzSignupController(AuthSignupHome):
     @http.route()
     def web_auth_signup(self, *args, **kw):
         qcontext = self.get_auth_signup_qcontext()
+        is_post = request.httprequest.method == "POST" and not qcontext.get("token")
 
-        # Only validate on actual POST submission (not token-based resets)
-        if request.httprequest.method == "POST" and not qcontext.get("token"):
-            required_error = self._iz_validate_required_fields(request.params)
-            if required_error:
-                qcontext["error"] = required_error
-                response = request.render("auth_signup.signup", qcontext)
-                response.headers["X-Frame-Options"] = "SAMEORIGIN"
-                response.headers["X-XSS-Protection"] = "1; mode=block"
-                return response
+        if is_post:
+            request.session["iz_signup_draft"] = {
+                "login": request.params.get("login", ""),
+                "name": request.params.get("name", ""),
+                "email": request.params.get("email", ""),
+                "phone": request.params.get("phone", ""),
+                "iz_gender": request.params.get("iz_gender", ""),
+                "iz_birthdate": request.params.get("iz_birthdate", ""),
+                "iz_fitness_goal": request.params.get("iz_fitness_goal", ""),
+                "iz_experience_level": request.params.get("iz_experience_level", ""),
+            }
 
-            birthdate_str = request.params.get("iz_birthdate", "").strip()
-            _, error = self._iz_compute_age(birthdate_str)
-            if error:
-                qcontext["error"] = error
-                response = request.render("auth_signup.signup", qcontext)
-                response.headers["X-Frame-Options"] = "SAMEORIGIN"
-                response.headers["X-XSS-Protection"] = "1; mode=block"
-                return response
+        response = super().web_auth_signup(*args, **kw)
 
-            try:
-                birthdate = datetime.strptime(birthdate_str, "%Y-%m-%d").date()
-                today = date.today()
-                if birthdate.month == today.month and birthdate.day == today.day:
-                    request.update_env(context=dict(request.env.context, is_birthday_today=True, is_birthday=True))
-            except Exception:
-                pass
+        if is_post:
+            qcontext2 = self.get_auth_signup_qcontext()
+            if not qcontext2.get("error"):
+                request.session.pop("iz_signup_draft", None)
+            signup_login = (request.params.get("login") or "").strip()
+            if signup_login:
+                try:
+                    user = self.env["res.users"].search([("login", "=", signup_login)], limit=1)
+                    if user:
+                        self.env["mail.mail"].search([
+                            ("model", "=", "res.users"),
+                            ("res_id", "=", user.id),
+                        ]).unlink()
+                except Exception:
+                    pass
 
-        return super().web_auth_signup(*args, **kw)
+        return response

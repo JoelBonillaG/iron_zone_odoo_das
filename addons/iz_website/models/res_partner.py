@@ -116,7 +116,7 @@ class ResPartner(models.Model):
                         if partner.iz_birthdate and partner.iz_birthdate.month == today.month and partner.iz_birthdate.day == today.day:
                             is_bday = True
                         ctx = {"partner": partner, "is_birthday": is_bday, "is_birthday_today": is_bday}
-                        template.with_context(**ctx).send_mail(partner.id, force_send=True)
+                        template.with_context(**ctx).send_mail(partner.id)
                         try:
                             partner.sudo().write({"iz_welcome_sent": True})
                         except Exception:
@@ -126,14 +126,15 @@ class ResPartner(models.Model):
         return partners
 
     def write(self, vals):
+        if self.env.context.get('iz_skip_automation'):
+            return super().write(vals)
+        self = self.with_context(iz_skip_automation=True)
         # Actualizar timestamp si el género cambia
         if "iz_gender" in vals:
             vals["iz_gender_last_update"] = fields.Datetime.now()
             
         res = super().write(vals)
         today = fields.Date.context_today(self)
-        if self.env.context.get('iz_skip_automation'):
-            return res
 
         try:
             for partner in self:
@@ -152,7 +153,7 @@ class ResPartner(models.Model):
                     template = self.env.ref(f"iz_website.{template_xmlid}", raise_if_not_found=False)
                     if template:
                         try:
-                            template.send_mail(partner.id, force_send=True)
+                            template.send_mail(partner.id)
                         except Exception:
                             pass
                 
@@ -162,7 +163,7 @@ class ResPartner(models.Model):
                     template = self.env.ref(f"iz_website.{template_xmlid}", raise_if_not_found=False)
                     if template:
                         try:
-                            template.send_mail(partner.id, force_send=True)
+                            template.send_mail(partner.id)
                         except Exception:
                             pass
                 
@@ -171,7 +172,7 @@ class ResPartner(models.Model):
                     template = self.env.ref("iz_website.mail_template_birthday", raise_if_not_found=False)
                     if template:
                         try:
-                            template.with_context(partner=partner).send_mail(partner.id, force_send=True)
+                            template.with_context(partner=partner).send_mail(partner.id)
                         except Exception:
                             pass
         except Exception:
@@ -429,7 +430,7 @@ class ResPartner(models.Model):
             return
         try:
             is_bday = bool(self.iz_birthdate and self.iz_birthdate.month == today.month and self.iz_birthdate.day == today.day)
-            template.with_context(partner=self, is_birthday=is_bday, is_birthday_today=is_bday).send_mail(self.id, force_send=True)
+            template.with_context(partner=self, is_birthday=is_bday, is_birthday_today=is_bday).send_mail(self.id)
             self.sudo().write({"iz_welcome_sent": True})
         except Exception:
             pass
