@@ -214,6 +214,7 @@ class IzSignupController(AuthSignupHome):
                 return self.web_login(*args, **kw)
             except UserError as e:
                 qcontext['error'] = e.args[0]
+                qcontext = self.get_auth_signup_qcontext()
             except (SignupError, AssertionError) as e:
                 if request.env["res.users"].sudo().search_count([("login", "=", qcontext.get("login"))], limit=1):
                     qcontext['error'] = _("Another user is already registered using this email address.")
@@ -222,12 +223,14 @@ class IzSignupController(AuthSignupHome):
                     _logger = logging.getLogger(__name__)
                     _logger.warning("%s", e)
                     qcontext['error'] = _("Could not create a new account.") + Markup('<br/>') + str(e)
+                qcontext = self.get_auth_signup_qcontext()
 
         elif 'signup_email' in qcontext:
             user = request.env['res.users'].sudo().search([('email', '=', qcontext.get('signup_email')), ('state', '!=', 'new')], limit=1)
             if user:
                 return request.redirect('/web/login?%s' % url_encode({'login': user.login, 'redirect': '/web'}))
 
+        qcontext = self.get_auth_signup_qcontext()
         response = request.render('auth_signup.signup', qcontext)
         response.headers['X-Frame-Options'] = 'SAMEORIGIN'
         response.headers['Content-Security-Policy'] = "frame-ancestors 'self'"
