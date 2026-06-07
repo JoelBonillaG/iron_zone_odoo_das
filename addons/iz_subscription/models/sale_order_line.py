@@ -1,6 +1,6 @@
 # Copyright 2023 Domatix - Carlos Martínez
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
-from odoo import fields, models
+from odoo import api, fields, models
 
 
 class SaleOrderLine(models.Model):
@@ -128,6 +128,39 @@ class SaleOrderLine(models.Model):
             line.subscription_benefit_id = benefit
             line.subscription_plan_id = plan
             line.subscription_discount_percent = discount
+
+    def _get_subscription_discount_percent(self):
+        """Discount % a subscription benefit grants to this line (0 if none).
+        Events use the 'events' benefit; plain products use the 'products' benefit."""
+        self.ensure_one()
+        ticket = self.event_ticket_id if "event_ticket_id" in self._fields else False
+        if ticket:
+            _plan, _sub, benefit = self._get_subscription_event_benefit()
+            if benefit:
+                return 100.0 if benefit.benefit_type == "free" else benefit.discount_percent
+            return 0.0
+        if self._is_subscription_product_line():
+            partner = self.order_id.partner_id
+            benefit = (
+                partner._get_current_subscription_benefits("products")[:1]
+                if partner
+                else self.env["iz.subscription.benefit"]
+            )
+            if benefit and benefit.benefit_type == "discount":
+                return benefit.discount_percent
+        return 0.0
+
+    @api.depends("product_id", "product_uom_qty", "order_id.partner_id")
+    def _compute_discount(self):
+        # Let Odoo compute the pricelist discount first, then re-apply the
+        # subscription benefit so it survives every recompute (otherwise the
+        # benefit discount gets wiped at checkout/confirm and the customer is
+        # charged the full price).
+        super()._compute_discount()
+        for line in self:
+            percent = line._get_subscription_discount_percent()
+            if percent:
+                line.discount = min(max(percent, 0.0), 100.0)
 
     def get_subscription_line_values(self):
         return {

@@ -371,61 +371,6 @@ def html_steps(*steps):
     return f"<ol>{items}</ol>"
 
 
-def ensure_guide_benefits(uid, models, plans):
-    if not model_exists(uid, models, "iz.subscription.benefit"):
-        return
-
-    benefits = [
-        {
-            "name": "Guías técnicas avanzadas",
-            "plan_code": "IZ_P01",
-            "sequence": 30,
-            "benefit_scope": "general",
-            "benefit_type": "free",
-            "discount_percent": 0.0,
-            "description": "Acceso a guías técnicas con máquina y progresiones intermedias.",
-        },
-        {
-            "name": "Biblioteca completa de guías",
-            "plan_code": "IZ_PR01",
-            "sequence": 30,
-            "benefit_scope": "general",
-            "benefit_type": "free",
-            "discount_percent": 0.0,
-            "description": "Acceso a todas las guías publicadas, incluyendo contenido premium.",
-        },
-        {
-            "name": "Guías integrales de entrenamiento",
-            "plan_code": "IZ_I01",
-            "sequence": 30,
-            "benefit_scope": "general",
-            "benefit_type": "free",
-            "discount_percent": 0.0,
-            "description": "Acceso a guías técnicas, movilidad y recomendaciones de entrenamiento complementario.",
-        },
-    ]
-
-    print("Syncing guide subscription benefits...")
-    for benefit in benefits:
-        plan_id = plans.get(benefit.pop("plan_code"))
-        if not plan_id:
-            continue
-        benefit["plan_id"] = plan_id
-        try:
-            _, created = create_or_update(
-                uid,
-                models,
-                "iz.subscription.benefit",
-                [("plan_id", "=", plan_id), ("name", "=", benefit["name"])],
-                benefit,
-                fields=["id", "name"],
-            )
-            action = "Created" if created else "Updated"
-            print(f"  {action} guide benefit: {benefit['name']}")
-        except Exception as exc:
-            print(f"  Skipped guide benefit '{benefit['name']}': {exc}")
-
-
 def ensure_guides(uid, models, categories, machines, employees, events, plans):
     default_author = employees.get("Carlos Mendez") or employees.get("Sofia Garcia")
     if not default_author:
@@ -472,7 +417,7 @@ def ensure_guides(uid, models, categories, machines, employees, events, plans):
             "video_url": "https://www.youtube.com/watch?v=CAwf7n6Luuc",
             "reference_url": "https://muscularstrength.com/article/how-to-lat-pulldown",
             "requires_subscription": True,
-            "plans": ["IZ_P01", "IZ_PR01", "IZ_I01"],
+            "plans": ["IZ_PR01"],
             "instructions": html_steps(
                 "Ajusta el soporte de muslos para mantener el cuerpo estable durante la traccion.",
                 "Toma la barra con agarre ligeramente mas amplio que los hombros.",
@@ -548,7 +493,7 @@ def ensure_guides(uid, models, categories, machines, employees, events, plans):
             "video_url": "https://www.youtube.com/watch?v=aclHkVaku9U",
             "reference_url": "https://www.nerdfitness.com/blog/strength-training-101-how-to-squat-properly/",
             "requires_subscription": True,
-            "plans": ["IZ_B01", "IZ_P01", "IZ_PR01", "IZ_I01"],
+            "plans": ["IZ_B01", "IZ_PR01"],
             "instructions": html_steps(
                 "Ubica los pies al ancho de hombros con puntas ligeramente abiertas.",
                 "Inicia llevando cadera hacia atras y rodillas en direccion de los pies.",
@@ -574,7 +519,7 @@ def ensure_guides(uid, models, categories, machines, employees, events, plans):
             "video_url": "https://www.youtube.com/watch?v=VmB1G1K7v94",
             "reference_url": "https://www.verywellfit.com/how-to-do-the-dumbbell-bench-press-3498297",
             "requires_subscription": True,
-            "plans": ["IZ_PR01", "IZ_I01"],
+            "plans": ["IZ_PR01"],
             "instructions": html_steps(
                 "Sientate con las mancuernas sobre los muslos y recuestate manteniendo control.",
                 "Apoya pies firmes en el suelo y junta ligeramente las escapulas.",
@@ -650,7 +595,7 @@ def ensure_guides(uid, models, categories, machines, employees, events, plans):
             "video_url": "https://www.youtube.com/watch?v=GZbfZ033f74",
             "reference_url": "https://exrx.net/WeightExercises/BackGeneral/CBStraightBackSeatedRow",
             "requires_subscription": True,
-            "plans": ["IZ_P01", "IZ_PR01", "IZ_I01"],
+            "plans": ["IZ_PR01"],
             "instructions": html_steps(
                 "Ajusta el asiento para que los pies queden firmes y la espalda pueda mantenerse neutra.",
                 "Toma el agarre con hombros bajos y brazos extendidos sin encorvarte.",
@@ -755,7 +700,6 @@ def run():
     events = event_ids_by_name(uid, models)
 
     machines = ensure_machines(uid, models, categories)
-    ensure_guide_benefits(uid, models, plans)
     ensure_guides(uid, models, categories, machines, employees, events, plans)
     print("Done: exercise guide demo data synced.")
 
