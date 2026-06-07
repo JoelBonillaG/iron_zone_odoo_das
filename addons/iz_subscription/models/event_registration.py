@@ -1,4 +1,5 @@
-from odoo import api, fields, models
+from odoo import _, api, fields, models
+from odoo.exceptions import ValidationError
 
 
 class EventRegistration(models.Model):
@@ -95,8 +96,41 @@ class EventRegistration(models.Model):
         for registration in self:
             registration.write(registration._prepare_subscription_benefit_values())
 
+    def _check_single_registration_per_event(self, vals_list):
+        seen_keys = set()
+        for vals in vals_list:
+            event_id = vals.get("event_id")
+            if not event_id:
+                continue
+
+            partner_id = vals.get("partner_id")
+            email = (vals.get("email") or "").strip().lower()
+            if partner_id:
+                key = (event_id, "partner", partner_id)
+                domain = [
+                    ("event_id", "=", event_id),
+                    ("partner_id", "=", partner_id),
+                    ("state", "!=", "cancel"),
+                ]
+            elif email:
+                key = (event_id, "email", email)
+                domain = [
+                    ("event_id", "=", event_id),
+                    ("email", "=ilike", email),
+                    ("state", "!=", "cancel"),
+                ]
+            else:
+                continue
+
+            if key in seen_keys or self.sudo().search_count(domain):
+                raise ValidationError(
+                    _("Solo puedes tener un boleto por evento.")
+                )
+            seen_keys.add(key)
+
     @api.model_create_multi
     def create(self, vals_list):
+        self._check_single_registration_per_event(vals_list)
         records = super().create(vals_list)
         records._apply_subscription_benefit()
         return records

@@ -1,7 +1,7 @@
 from odoo import http
 from odoo.http import request
 from odoo.addons.website_sale.controllers.main import WebsiteSale
-from odoo.addons.website_event.controllers.main import WebsiteEventController
+from odoo.addons.website_event_sale.controllers.main import WebsiteEventSaleController
 
 
 class IzWebsiteSale(WebsiteSale):
@@ -81,7 +81,25 @@ class IzWebsiteSale(WebsiteSale):
         return super().shop_checkout(try_skip_step=try_skip_step, **query_params)
 
 
-class IzWebsiteEvent(WebsiteEventController):
+class IzWebsiteEvent(WebsiteEventSaleController):
+
+    def _process_tickets_form(self, event, form_details):
+        tickets = super()._process_tickets_form(event, form_details)
+        selected_ticket = False
+        limited_tickets = []
+        for ticket in tickets:
+            if not ticket.get('quantity'):
+                continue
+            if selected_ticket:
+                continue
+            ticket['quantity'] = 1
+            selected_ticket = True
+            limited_tickets.append(ticket)
+        return limited_tickets
+
+    def _process_attendees_form(self, event, form_details):
+        registrations = super()._process_attendees_form(event, form_details)
+        return registrations[:1]
 
     @http.route('/event/<int:event_id>/free-register', type='http', auth='user', methods=['POST'], website=True, csrf=True)
     def free_event_register(self, event_id, **kw):
@@ -148,4 +166,3 @@ class IzWebsiteEvent(WebsiteEventController):
             'iCal_url': iCal_url,
             'google_url': google_url,
         })
-
