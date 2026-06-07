@@ -15,7 +15,6 @@
       <field name="body_html"><![CDATA[
 <div style="background-color:#050505;font-family:'Segoe UI',Roboto,Helvetica,Arial,sans-serif;padding:45px 0;margin:0;">
   <t t-set="base_url" t-value="(object.env['ir.config_parameter'].sudo().get_param('web.base.url') or 'http://localhost:8069')"/>
-  <t t-set="event_link_yoga" t-value="object.env['ir.config_parameter'].sudo().get_param('iz_website.event_link_yoga_principiantes', 'object.env["ir.config_parameter"].sudo().get_param("iz_website.event_link_yoga_principiantes", "/event/yoga-principiantes-2/register")')"/>
   <t t-set="company" t-value="object.company_id or object.env.company"/>
   <t t-set="today" t-value="object.env['res.partner']._fields['iz_birthdate'].context_today(object)"/>
   <table width="100%" cellpadding="0" cellspacing="0" style="max-width:600px;margin:0 auto;background-color:#111111;border:1px solid #222;border-radius:16px;overflow:hidden;box-shadow:0 15px 35px rgba(0,0,0,0.6);">
@@ -146,7 +145,6 @@
   <t t-set="display_name" t-value="partner.name or object.name or object.login"/>
   <t t-set="today" t-value="object.env['res.partner']._fields['iz_birthdate'].context_today(object)"/>
   <t t-set="base_url" t-value="(object.env['ir.config_parameter'].sudo().get_param('web.base.url') or 'http://localhost:8069')"/>
-  <t t-set="event_link_yoga" t-value="object.env['ir.config_parameter'].sudo().get_param('iz_website.event_link_yoga_principiantes', 'object.env["ir.config_parameter"].sudo().get_param("iz_website.event_link_yoga_principiantes", "/event/yoga-principiantes-2/register")')"/>
   <t t-set="company" t-value="partner.company_id or object.company_id or object.env.company"/>
   <t t-set="is_birthday_today" t-value="partner and partner.iz_birthdate and partner.iz_birthdate.month == today.month and partner.iz_birthdate.day == today.day"/>
   <table width="100%" cellpadding="0" cellspacing="0" style="max-width:600px;margin:0 auto;background-color:#111111;border:1px solid #222;border-radius:16px;overflow:hidden;box-shadow:0 15px 35px rgba(0,0,0,0.6);">
@@ -279,7 +277,6 @@
       <field name="body_html"><![CDATA[
 <div style="background-color:#050505;font-family:'Segoe UI',Roboto,Helvetica,Arial,sans-serif;padding:45px 0;margin:0;">
   <t t-set="base_url" t-value="(object.env['ir.config_parameter'].sudo().get_param('web.base.url') or 'http://localhost:8069')"/>
-  <t t-set="event_link_yoga" t-value="object.env['ir.config_parameter'].sudo().get_param('iz_website.event_link_yoga_principiantes', 'object.env["ir.config_parameter"].sudo().get_param("iz_website.event_link_yoga_principiantes", "/event/yoga-principiantes-2/register")')"/>
   <table width="100%" cellpadding="0" cellspacing="0" style="max-width:600px;margin:0 auto;background-color:#111111;border:1px solid #222;border-radius:16px;overflow:hidden;box-shadow:0 15px 35px rgba(0,0,0,0.6);">
     <tr>
       <td style="text-align:center;padding:25px;background-color:#000000;border-bottom:2px solid #f5af19;">
@@ -370,7 +367,6 @@
 <div style="background-color:#050505;font-family:'Segoe UI',Roboto,Helvetica,Arial,sans-serif;padding:45px 0;margin:0;">
   <table width="100%" cellpadding="0" cellspacing="0" style="max-width:600px;margin:0 auto;background-color:#111111;border:1px solid #222;border-radius:16px;overflow:hidden;box-shadow:0 15px 35px rgba(0,0,0,0.6);">
     <t t-set="base_url" t-value="(object.env['ir.config_parameter'].sudo().get_param('web.base.url') or 'http://localhost:8069')"/>
-  <t t-set="event_link_yoga" t-value="object.env['ir.config_parameter'].sudo().get_param('iz_website.event_link_yoga_principiantes', 'object.env["ir.config_parameter"].sudo().get_param("iz_website.event_link_yoga_principiantes", "/event/yoga-principiantes-2/register")')"/>
     <tr>
       <td style="text-align:center;padding:25px;background-color:#000000;border-bottom:2px solid #d946ef;">
         <img src="https://files.catbox.moe/agiuc9.png" style="max-height:70px;" alt="Iron Zone Logo"/>
@@ -451,7 +447,6 @@
 <div style="background-color:#050505;font-family:'Segoe UI',Roboto,Helvetica,Arial,sans-serif;padding:45px 0;margin:0;">
   <table width="100%" cellpadding="0" cellspacing="0" style="max-width:600px;margin:0 auto;background-color:#111111;border:1px solid #222;border-radius:16px;overflow:hidden;box-shadow:0 15px 35px rgba(0,0,0,0.6);">
     <t t-set="base_url" t-value="(object.env['ir.config_parameter'].sudo().get_param('web.base.url') or 'http://localhost:8069')"/>
-  <t t-set="event_link_yoga" t-value="object.env['ir.config_parameter'].sudo().get_param('iz_website.event_link_yoga_principiantes', 'object.env["ir.config_parameter"].sudo().get_param("iz_website.event_link_yoga_principiantes", "/event/yoga-principiantes-2/register")')"/>
     <tr>
       <td style="text-align:center;padding:25px;background-color:#000000;border-bottom:2px solid #1cb5e0;">
         <img src="https://files.catbox.moe/agiuc9.png" style="max-height:70px;" alt="Iron Zone Logo"/>
@@ -531,7 +526,6 @@
       <field name="body_html"><![CDATA[
 <div style="background-color:#050505;font-family:'Segoe UI',Roboto,Helvetica,Arial,sans-serif;padding:45px 0;margin:0;">
   <t t-set="base_url" t-value="(object.env['ir.config_parameter'].sudo().get_param('web.base.url') or 'http://localhost:8069')"/>
-  <t t-set="event_link_yoga" t-value="object.env['ir.config_parameter'].sudo().get_param('iz_website.event_link_yoga_principiantes', 'object.env["ir.config_parameter"].sudo().get_param("iz_website.event_link_yoga_principiantes", "/event/yoga-principiantes-2/register")')"/>
   <table width="100%" cellpadding="0" cellspacing="0" style="max-width:600px;margin:0 auto;background-color:#111111;border:1px solid #222;border-radius:16px;overflow:hidden;box-shadow:0 15px 35px rgba(0,0,0,0.6);">
     <tr>
       <td style="text-align:center;padding:25px;background-color:#000000;border-bottom:2px solid #ff8008;">
@@ -589,7 +583,6 @@
       <field name="body_html"><![CDATA[
 <div style="background-color:#050505;font-family:'Segoe UI',Roboto,Helvetica,Arial,sans-serif;padding:45px 0;margin:0;">
   <t t-set="base_url" t-value="(object.env['ir.config_parameter'].sudo().get_param('web.base.url') or 'http://localhost:8069')"/>
-  <t t-set="event_link_yoga" t-value="object.env['ir.config_parameter'].sudo().get_param('iz_website.event_link_yoga_principiantes', 'object.env["ir.config_parameter"].sudo().get_param("iz_website.event_link_yoga_principiantes", "/event/yoga-principiantes-2/register")')"/>
   <table width="100%" cellpadding="0" cellspacing="0" style="max-width:600px;margin:0 auto;background-color:#111111;border:1px solid #222;border-radius:16px;overflow:hidden;box-shadow:0 15px 35px rgba(0,0,0,0.6);">
     <tr>
       <td style="text-align:center;padding:25px;background-color:#000000;border-bottom:2px solid #ff4b2b;">
@@ -655,7 +648,6 @@
       <field name="body_html"><![CDATA[
 <div style="background-color:#050505;font-family:'Segoe UI',Roboto,Helvetica,Arial,sans-serif;padding:45px 0;margin:0;">
   <t t-set="base_url" t-value="(object.env['ir.config_parameter'].sudo().get_param('web.base.url') or 'http://localhost:8069')"/>
-  <t t-set="event_link_yoga" t-value="object.env['ir.config_parameter'].sudo().get_param('iz_website.event_link_yoga_principiantes', 'object.env["ir.config_parameter"].sudo().get_param("iz_website.event_link_yoga_principiantes", "/event/yoga-principiantes-2/register")')"/>
   <table width="100%" cellpadding="0" cellspacing="0" style="max-width:600px;margin:0 auto;background-color:#111111;border:1px solid #222;border-radius:16px;overflow:hidden;box-shadow:0 15px 35px rgba(0,0,0,0.6);">
     <tr>
       <td style="text-align:center;padding:25px;background-color:#000000;border-bottom:2px solid #ff8008;">
@@ -721,7 +713,6 @@
       <field name="body_html"><![CDATA[
 <div style="background-color:#050505;font-family:'Segoe UI',Roboto,Helvetica,Arial,sans-serif;padding:45px 0;margin:0;">
   <t t-set="base_url" t-value="(object.env['ir.config_parameter'].sudo().get_param('web.base.url') or 'http://localhost:8069')"/>
-  <t t-set="event_link_yoga" t-value="object.env['ir.config_parameter'].sudo().get_param('iz_website.event_link_yoga_principiantes', 'object.env["ir.config_parameter"].sudo().get_param("iz_website.event_link_yoga_principiantes", "/event/yoga-principiantes-2/register")')"/>
   <table width="100%" cellpadding="0" cellspacing="0" style="max-width:600px;margin:0 auto;background-color:#111111;border:1px solid #222;border-radius:16px;overflow:hidden;box-shadow:0 15px 35px rgba(0,0,0,0.6);">
     <tr>
       <td style="text-align:center;padding:25px;background-color:#000000;border-bottom:2px solid #0052d4;">
@@ -787,7 +778,6 @@
       <field name="body_html"><![CDATA[
 <div style="background-color:#050505;font-family:'Segoe UI',Roboto,Helvetica,Arial,sans-serif;padding:45px 0;margin:0;">
   <t t-set="base_url" t-value="(object.env['ir.config_parameter'].sudo().get_param('web.base.url') or 'http://localhost:8069')"/>
-  <t t-set="event_link_yoga" t-value="object.env['ir.config_parameter'].sudo().get_param('iz_website.event_link_yoga_principiantes', 'object.env["ir.config_parameter"].sudo().get_param("iz_website.event_link_yoga_principiantes", "/event/yoga-principiantes-2/register")')"/>
   <table width="100%" cellpadding="0" cellspacing="0" style="max-width:600px;margin:0 auto;background-color:#111111;border:1px solid #222;border-radius:16px;overflow:hidden;box-shadow:0 15px 35px rgba(0,0,0,0.6);">
     <tr>
       <td style="text-align:center;padding:25px;background-color:#000000;border-bottom:2px solid #11998e;">
@@ -853,7 +843,6 @@
       <field name="body_html"><![CDATA[
 <div style="background-color:#050505;font-family:'Segoe UI',Roboto,Helvetica,Arial,sans-serif;padding:45px 0;margin:0;">
   <t t-set="base_url" t-value="(object.env['ir.config_parameter'].sudo().get_param('web.base.url') or 'http://localhost:8069')"/>
-  <t t-set="event_link_yoga" t-value="object.env['ir.config_parameter'].sudo().get_param('iz_website.event_link_yoga_principiantes', 'object.env["ir.config_parameter"].sudo().get_param("iz_website.event_link_yoga_principiantes", "/event/yoga-principiantes-2/register")')"/>
   <table width="100%" cellpadding="0" cellspacing="0" style="max-width:600px;margin:0 auto;background-color:#111111;border:1px solid #222;border-radius:16px;overflow:hidden;box-shadow:0 15px 35px rgba(0,0,0,0.6);">
     <tr>
       <td style="text-align:center;padding:25px;background-color:#000000;border-bottom:2px solid #00b4db;">
@@ -919,7 +908,6 @@
       <field name="body_html"><![CDATA[
 <div style="background-color:#050505;font-family:'Segoe UI',Roboto,Helvetica,Arial,sans-serif;padding:45px 0;margin:0;">
   <t t-set="base_url" t-value="(object.env['ir.config_parameter'].sudo().get_param('web.base.url') or 'http://localhost:8069')"/>
-  <t t-set="event_link_yoga" t-value="object.env['ir.config_parameter'].sudo().get_param('iz_website.event_link_yoga_principiantes', 'object.env["ir.config_parameter"].sudo().get_param("iz_website.event_link_yoga_principiantes", "/event/yoga-principiantes-2/register")')"/>
   <table width="100%" cellpadding="0" cellspacing="0" style="max-width:600px;margin:0 auto;background-color:#111111;border:1px solid #222;border-radius:16px;overflow:hidden;box-shadow:0 15px 35px rgba(0,0,0,0.6);">
     <tr>
       <td style="text-align:center;padding:25px;background-color:#000000;border-bottom:2px solid #ff5858;">
@@ -985,7 +973,6 @@
       <field name="body_html"><![CDATA[
 <div style="background-color:#050505;font-family:'Segoe UI',Roboto,Helvetica,Arial,sans-serif;padding:45px 0;margin:0;">
   <t t-set="base_url" t-value="(object.env['ir.config_parameter'].sudo().get_param('web.base.url') or 'http://localhost:8069')"/>
-  <t t-set="event_link_yoga" t-value="object.env['ir.config_parameter'].sudo().get_param('iz_website.event_link_yoga_principiantes', 'object.env["ir.config_parameter"].sudo().get_param("iz_website.event_link_yoga_principiantes", "/event/yoga-principiantes-2/register")')"/>
   <table width="100%" cellpadding="0" cellspacing="0" style="max-width:600px;margin:0 auto;background-color:#111111;border:1px solid #222;border-radius:16px;overflow:hidden;box-shadow:0 15px 35px rgba(0,0,0,0.6);">
     <tr>
       <td style="text-align:center;padding:25px;background-color:#000000;border-bottom:2px solid #ff4b2b;">
@@ -1051,7 +1038,6 @@
       <field name="body_html"><![CDATA[
 <div style="background-color:#050505;font-family:'Segoe UI',Roboto,Helvetica,Arial,sans-serif;padding:45px 0;margin:0;">
   <t t-set="base_url" t-value="(object.env['ir.config_parameter'].sudo().get_param('web.base.url') or 'http://localhost:8069')"/>
-  <t t-set="event_link_yoga" t-value="object.env['ir.config_parameter'].sudo().get_param('iz_website.event_link_yoga_principiantes', 'object.env["ir.config_parameter"].sudo().get_param("iz_website.event_link_yoga_principiantes", "/event/yoga-principiantes-2/register")')"/>
   <table width="100%" cellpadding="0" cellspacing="0" style="max-width:600px;margin:0 auto;background-color:#111111;border:1px solid #222;border-radius:16px;overflow:hidden;box-shadow:0 15px 35px rgba(0,0,0,0.6);">
     <tr>
       <td style="text-align:center;padding:25px;background-color:#000000;border-bottom:2px solid #38ef7d;">
@@ -1084,7 +1070,7 @@
         <table width="100%" cellpadding="0" cellspacing="0" style="margin:35px 0;">
           <tr>
             <td align="center">
-              <a t-att-href="base_url + (object.env['ir.config_parameter'].sudo().get_param('iz_website.shop_url', '/shop'))" style="background:linear-gradient(to right,#11998e,#38ef7d);color:#111111;text-decoration:none;padding:18px 45px;border-radius:6px;font-weight:bold;font-size:15px;display:inline-block;text-transform:uppercase;letter-spacing:2px;box-shadow:0 6px 20px rgba(56,239,125,0.4);transition:all 0.3s ease;">Ver Ofertas de Temporada</a>
+              <a t-att-href="'/promo/seasonal?promo_code=IRONZONE25'" style="background:linear-gradient(to right,#11998e,#38ef7d);color:#111111;text-decoration:none;padding:18px 45px;border-radius:6px;font-weight:bold;font-size:15px;display:inline-block;text-transform:uppercase;letter-spacing:2px;box-shadow:0 6px 20px rgba(56,239,125,0.4);transition:all 0.3s ease;">Ver Ofertas de Temporada</a>
             </td>
           </tr>
         </table>
