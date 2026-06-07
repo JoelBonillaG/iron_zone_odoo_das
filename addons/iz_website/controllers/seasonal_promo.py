@@ -1,7 +1,6 @@
-from datetime import date
-
 from odoo import http
 from odoo.addons.website.controllers.main import Website
+from odoo.addons.website_sale.controllers.main import WebsiteSale
 from odoo.http import request
 
 
@@ -9,99 +8,107 @@ class IzSeasonalPromoController(Website):
     """Handle seasonal campaign promo links."""
 
     def _get_annual_product(self):
-        """Find the annual subscription product by slug, name, or configurable ID."""
-        annual_slug = request.env['ir.config_parameter'].sudo().get_param(
-            'iz_website.seasonal_promo_product_slug', 'suscripcion-anual-4'
+        ProductTemplate = request.env["product.template"].sudo()
+        IrConfig = request.env["ir.config_parameter"].sudo()
+
+        product_id = IrConfig.get_param("iz_website.seasonal_promo_product_id")
+        if product_id:
+            try:
+                product = ProductTemplate.browse(int(product_id)).exists()
+            except (TypeError, ValueError):
+                product = ProductTemplate
+            if product and product.sale_ok:
+                return product
+
+        if "subscription_plan_id" in ProductTemplate._fields:
+            product = ProductTemplate.search(
+                [
+                    ("sale_ok", "=", True),
+                    ("subscription_plan_id.code", "=", "IZ_PR01"),
+                ],
+                limit=1,
+            )
+            if product:
+                return product
+
+        product = ProductTemplate.search(
+            [("sale_ok", "=", True), ("name", "ilike", "anual")],
+            limit=1,
         )
-        product_id = request.env['ir.config_parameter'].sudo().get_param(
-            'iz_website.seasonal_promo_product_id', '4'
-        )
-        try:
-            product_id = int(product_id)
-        except (ValueError, TypeError):
-            product_id = 4
-
-        ProductTemplate = request.env['product.template'].sudo()
-
-        # Try by configured ID first
-        product = ProductTemplate.browse(product_id)
-        if product.exists() and product.sale_ok:
-            return product
-
-        # Fallback: match by name containing 'anual' or 'annual'
-        product = ProductTemplate.search([
-            ('sale_ok', '=', True),
-            ('name', 'ilike', 'anual'),
-        ], limit=1)
         if product:
             return product
 
-        # Last fallback: first sale_ok product with a subscription plan
-        product = ProductTemplate.search([
-            ('sale_ok', '=', True),
-            ('subscription_plan_id', '!=', False),
-        ], limit=1)
-        return product
-
-    def _apply_annual_discount(self, sale_order):
-        """Ensure annual subscription is in cart and apply seasonal discount."""
-        discount_percent = float(
-            request.env['ir.config_parameter'].sudo().get_param(
-                'iz_website.seasonal_promo_discount', '25'
+        if "subscription_plan_id" in ProductTemplate._fields:
+            return ProductTemplate.search(
+                [("sale_ok", "=", True), ("subscription_plan_id", "!=", False)],
+                limit=1,
             )
-        )
+        return ProductTemplate
+
+    def _add_annual_product(self, sale_order):
         product_tmpl = self._get_annual_product()
         if not product_tmpl or not product_tmpl.sale_ok:
             return False
 
-        variant = product_tmpl.product_variant_id
-        if not variant:
+        product = product_tmpl.product_variant_id
+        if not product:
             return False
 
-        # Check if already in cart
-        existing = sale_order.order_line.filtered(
-            lambda l: l.product_id.id == variant.id
-        )
-        if existing:
-            existing.write({'price_unit': round(existing.price_unit * (1 - discount_percent / 100), 2)})
-        else:
-            # Add to cart with discounted price
-            sale_order.write({
-                'order_line': [
-                    (0, 0, {
-                        'product_id': variant.id,
-                        'product_uom_qty': 1,
-                        'price_unit': round(product_tmpl.list_price * (1 - discount_percent / 100), 2),
-                    })
-                ]
-            })
-
-        sale_order.message_post(
-            body=(f"Descuento campaña estacional aplicado: {discount_percent}% "
-                  f"sobre '{product_tmpl.name}'. Precio final: "
-                  f"{round(product_tmpl.list_price * (1 - discount_percent / 100), 2)}")
-        )
+        existing = sale_order.order_line.filtered(lambda line: line.product_id == product)
+        if not existing:
+            sale_order._cart_update(product_id=product.id, add_qty=1)
         return True
 
-    @http.route('/promo/seasonal', type='http', auth='public', website=True, sitemap=False)
+    @http.route("/promo/seasonal", type="http", auth="public", website=True, sitemap=False)
     def seasonal_promo(self, promo_code=None, **kwargs):
-        expected_code = request.env['ir.config_parameter'].sudo().get_param(
-            'iz_website.seasonal_promo_code', 'IRONZONE25'
+        expected_code = request.env["ir.config_parameter"].sudo().get_param(
+            "iz_website.seasonal_promo_code", "IRONZONE25"
         )
         if promo_code != expected_code:
-            return request.redirect('/shop')
+            return request.redirect("/shop")
 
         sale_order = request.website.sale_get_order(force_create=True)
         if not sale_order:
-            return request.redirect('/shop')
+            return request.redirect("/shop")
 
         partner = request.env.user.partner_id
-        if partner and partner.iz_seasonal_promo_used:
-            return request.redirect('/shop/cart?promo_already_used=1')
+        user_email = (
+            request.params.get("email")
+            or kwargs.get("email")
+            or (partner.email if partner else "")
+            or ""
+        ).strip().lower()
 
-        self._apply_annual_discount(sale_order)
+        if user_email and sale_order._iz_seasonal_email_already_used(user_email):
+            sale_order._iz_remove_seasonal_discount()
+            return request.redirect("/shop/cart?promo_already_used=1")
 
-        if partner:
-            partner.sudo().write({'iz_seasonal_promo_used': True})
+        if not self._add_annual_product(sale_order):
+            return request.redirect("/shop")
 
-        return request.redirect('/shop/cart')
+        if user_email:
+            sale_order.sudo().write({"iz_seasonal_promo_email": user_email})
+        sale_order._iz_apply_seasonal_discount(email=user_email)
+        return request.redirect("/shop/cart")
+
+
+class IzSeasonalPromoWebsiteSale(WebsiteSale):
+    """Keep the seasonal discount alive through checkout/payment recalculations."""
+
+    def _reapply_seasonal_promo(self, order):
+        if order and order.iz_seasonal_promo_email:
+            order.sudo()._iz_apply_seasonal_discount(
+                email=order.iz_seasonal_promo_email
+            )
+
+    def _get_shop_payment_values(self, order, **kwargs):
+        self._reapply_seasonal_promo(order)
+        return super()._get_shop_payment_values(order, **kwargs)
+
+    @http.route()
+    def shop_payment_validate(self, sale_order_id=None, **post):
+        order = request.website.sale_get_order()
+        if sale_order_id:
+            order = request.env["sale.order"].sudo().browse(int(sale_order_id)).exists()
+        self._reapply_seasonal_promo(order)
+        return super().shop_payment_validate(sale_order_id=sale_order_id, **post)

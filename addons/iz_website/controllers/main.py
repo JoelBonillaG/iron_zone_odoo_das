@@ -235,3 +235,46 @@ class IzSignupController(AuthSignupHome):
         response.headers['X-Frame-Options'] = 'SAMEORIGIN'
         response.headers['Content-Security-Policy'] = "frame-ancestors 'self'"
         return response
+
+
+class SeasonalOfferController(http.Controller):
+    """Controller to handle seasonal offers with automatic discounts."""
+
+    @http.route("/subscription/seasonal-offer", type="http", auth="public", website=True)
+    def seasonal_subscription_offer(self, **kw):
+        """Compatibility link for old seasonal emails."""
+        promo_code = request.env["ir.config_parameter"].sudo().get_param(
+            "iz_website.seasonal_promo_code", "IRONZONE25"
+        )
+        params = {"promo_code": promo_code}
+        if kw.get("email"):
+            params["email"] = kw["email"]
+        return request.redirect("/promo/seasonal?%s" % url_encode(params))
+
+
+class RenewalController(http.Controller):
+    """Controller for subscription renewal links from emails."""
+
+    @http.route("/subscription/muscle-gain-monthly", type="http", auth="public", website=True)
+    def renew_monthly(self, **kw):
+        return self._add_subscription_to_cart("IZ_B01")
+
+    @http.route("/subscription/muscle-gain-annual", type="http", auth="public", website=True)
+    def renew_annual(self, **kw):
+        return self._add_subscription_to_cart("IZ_PR01")
+
+    def _add_subscription_to_cart(self, plan_code):
+        """Add subscription product to cart and redirect to checkout."""
+        template = request.env["product.template"].sudo().search(
+            [("subscription_plan_id.code", "=", plan_code), ("sale_ok", "=", True)], limit=1
+        )
+        if not template:
+            return request.redirect("/shop")
+
+        product = template.product_variant_id
+        if not product:
+            return request.redirect("/shop")
+
+        cart = request.website.sale_get_order(force_create=True)
+        cart._cart_update(product_id=product.id, add_qty=1)
+        return request.redirect("/shop/cart")
