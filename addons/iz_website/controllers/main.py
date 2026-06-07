@@ -2,8 +2,11 @@ from datetime import date, datetime
 
 from odoo import http
 from odoo.exceptions import UserError
+from odoo.addons.auth_signup.models.res_users import SignupError
 from odoo.addons.auth_signup.controllers.main import AuthSignupHome
 from odoo.http import request
+import werkzeug
+from werkzeug.urls import url_encode
 
 
 class IzSignupController(AuthSignupHome):
@@ -104,42 +107,104 @@ class IzSignupController(AuthSignupHome):
         return qcontext
 
     # ------------------------------------------------------------------
-    # Override POST – validate age before creating user
+    # Override POST – complete signup without Odoo's welcome email
     # ------------------------------------------------------------------
 
-    @http.route()
+    @http.route('/web/signup', type='http', auth='public', website=True, sitemap=False)
     def web_auth_signup(self, *args, **kw):
         qcontext = self.get_auth_signup_qcontext()
-        is_post = request.httprequest.method == "POST" and not qcontext.get("token")
 
-        if is_post:
-            request.session["iz_signup_draft"] = {
-                "login": request.params.get("login", ""),
-                "name": request.params.get("name", ""),
-                "email": request.params.get("email", ""),
-                "phone": request.params.get("phone", ""),
-                "iz_gender": request.params.get("iz_gender", ""),
-                "iz_birthdate": request.params.get("iz_birthdate", ""),
-                "iz_fitness_goal": request.params.get("iz_fitness_goal", ""),
-                "iz_experience_level": request.params.get("iz_experience_level", ""),
-            }
+        if not qcontext.get('token') and not qcontext.get('signup_enabled'):
+            raise werkzeug.exceptions.NotFound()
 
-        response = super().web_auth_signup(*args, **kw)
+        if 'error' not in qcontext and request.httprequest.method == 'POST':
+            try:
+                if not request.env['ir.http']._verify_request_recaptcha_token('signup'):
+                    raise UserError(_("Suspicious activity detected by Google reCaptcha."))
 
-        if is_post:
-            qcontext2 = self.get_auth_signup_qcontext()
-            if not qcontext2.get("error"):
+                # Save draft before processing
+                if not qcontext.get('token'):
+                    request.session["iz_signup_draft"] = {
+                        "login": request.params.get("login", ""),
+                        "name": request.params.get("name", ""),
+                        "email": request.params.get("email", ""),
+                        "phone": request.params.get("phone", ""),
+                        "iz_gender": request.params.get("iz_gender", ""),
+                        "iz_birthdate": request.params.get("iz_birthdate", ""),
+                        "iz_fitness_goal": request.params.get("iz_fitness_goal", ""),
+                        "iz_experience_level": request.params.get("iz_experience_level", ""),
+                    }
+
+                self.do_signup(qcontext)
+
+                # Set user to public if they were not signed in by do_signup (mfa enabled)
+                if request.session.uid is None:
+                    public_user = request.env.ref('base.public_user')
+                    request.update_env(user=public_user)
+
+                # DO NOT send Odoo's default welcome email.
+                # Send IZ welcome email directly.
+                User = request.env['res.users']
+                user_sudo = User.sudo().search(
+                    [('login', '=', qcontext.get('login'))], limit=1
+                )
+                if not user_sudo:
+                    user_sudo = User.sudo().search(
+                        [('email', '=', partner_email)], limit=1
+                    )
+                if not user_sudo:
+                    login_domain = User._get_login_domain(qcontext.get('login'))
+                    user_sudo = User.sudo().search(login_domain, order=User._get_login_order(), limit=1)
+                
+                if user_sudo:
+                    partner = user_sudo.sudo().partner_id
+                    if partner and partner.email:
+                        template = request.env.ref("iz_website.mail_template_welcome", raise_if_not_found=False)
+                        if template:
+                            try:
+                                today = date.today()
+                                is_bday = bool(partner.iz_birthdate and partner.iz_birthdate.month == today.month and partner.iz_birthdate.day == today.day)
+                                ctx = {"partner": partner, "is_birthday": is_bday, "is_birthday_today": is_bday}
+                                template.sudo().with_context(**ctx).send_mail(partner.id, force_send=True)
+                                partner.sudo().write({"iz_welcome_sent": True})
+                            except Exception as e:
+                                import logging
+                                _logger = logging.getLogger(__name__)
+                                _logger.error("Error sending IZ welcome email: %s", str(e))
+                        else:
+                            import logging
+                            _logger = logging.getLogger(__name__)
+                            _logger.error("IZ welcome template not found: iz_website.mail_template_welcome")
+                    else:
+                        import logging
+                        _logger = logging.getLogger(__name__)
+                        _logger.error("Partner not found or no email for user: %s", user_sudo.login)
+                else:
+                    import logging
+                    _logger = logging.getLogger(__name__)
+                    _logger.error("User not found after signup with login: %s", qcontext.get('login'))
+
+                # Clear draft on success
                 request.session.pop("iz_signup_draft", None)
-            signup_login = (request.params.get("login") or "").strip()
-            if signup_login:
-                try:
-                    user = self.env["res.users"].search([("login", "=", signup_login)], limit=1)
-                    if user:
-                        self.env["mail.mail"].search([
-                            ("model", "=", "res.users"),
-                            ("res_id", "=", user.id),
-                        ]).unlink()
-                except Exception:
-                    pass
 
+                return self.web_login(*args, **kw)
+            except UserError as e:
+                qcontext['error'] = e.args[0]
+            except (SignupError, AssertionError) as e:
+                if request.env["res.users"].sudo().search_count([("login", "=", qcontext.get("login"))], limit=1):
+                    qcontext['error'] = _("Another user is already registered using this email address.")
+                else:
+                    import logging
+                    _logger = logging.getLogger(__name__)
+                    _logger.warning("%s", e)
+                    qcontext['error'] = _("Could not create a new account.") + Markup('<br/>') + str(e)
+
+        elif 'signup_email' in qcontext:
+            user = request.env['res.users'].sudo().search([('email', '=', qcontext.get('signup_email')), ('state', '!=', 'new')], limit=1)
+            if user:
+                return request.redirect('/web/login?%s' % url_encode({'login': user.login, 'redirect': '/web'}))
+
+        response = request.render('auth_signup.signup', qcontext)
+        response.headers['X-Frame-Options'] = 'SAMEORIGIN'
+        response.headers['Content-Security-Policy'] = "frame-ancestors 'self'"
         return response
