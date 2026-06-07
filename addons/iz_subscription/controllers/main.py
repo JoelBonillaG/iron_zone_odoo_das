@@ -83,6 +83,14 @@ class IzWebsiteSale(WebsiteSale):
 
 class IzWebsiteEvent(WebsiteEventSaleController):
 
+    @http.route()
+    def registration_new(self, event, **post):
+        return super().registration_new(event, **post)
+
+    @http.route()
+    def registration_confirm(self, event, **post):
+        return super().registration_confirm(event, **post)
+
     def _process_tickets_form(self, event, form_details):
         tickets = super()._process_tickets_form(event, form_details)
         selected_ticket = False
