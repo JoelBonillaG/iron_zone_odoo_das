@@ -263,6 +263,8 @@ class ResPartner(models.Model):
         Validates the Tax ID (vat) based on the Identifier Type for Ecuador.
         Algorithms: Modulo 10 (Cedula/RUC Natural) and Modulo 11 (RUC Private/Public).
         """
+        if self.env.context.get("no_vat_validation"):
+            return
         for partner in self:
             identifier_type = partner._get_l10n_ec_identifier_type()
             if partner.country_id.code != "EC" or not identifier_type:

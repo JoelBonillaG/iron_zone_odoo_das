@@ -1,10 +1,31 @@
+import json
+
 from odoo import http
+from odoo.exceptions import ValidationError
 from odoo.http import request
 from odoo.addons.website_sale.controllers.main import WebsiteSale
 from odoo.addons.website_event_sale.controllers.main import WebsiteEventSaleController
 
 
 class IzWebsiteSale(WebsiteSale):
+
+    @http.route()
+    def shop_address_submit(self, *args, **kwargs):
+        request.update_env(
+            context=dict(
+                request.env.context,
+                no_vat_validation=True,
+                tracking_disable=True,
+            )
+        )
+        try:
+            return super().shop_address_submit(*args, **kwargs)
+        except ValidationError as exc:
+            message = exc.args[0] if exc.args else str(exc)
+            return json.dumps({
+                "invalid_fields": ["vat"],
+                "messages": [message],
+            })
 
     @http.route(['/shop/cart/update'], type='http', auth="public", methods=['POST'], website=True, csrf=False)
     def cart_update(
