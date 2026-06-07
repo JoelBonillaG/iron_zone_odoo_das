@@ -1,6 +1,6 @@
 # Copyright 2023 Domatix - Carlos Martínez
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
-from odoo import fields, models
+from odoo import api, fields, models
 
 
 class SaleOrderLine(models.Model):
@@ -23,6 +23,12 @@ class SaleOrderLine(models.Model):
         readonly=True,
         copy=False,
     )
+
+    @api.depends("product_id", "product_uom_qty", "order_id.partner_id", "event_ticket_id")
+    def _compute_discount(self):
+        super()._compute_discount()
+        # Garantiza que el beneficio se aplique cada vez que Odoo recalcula el descuento
+        self._apply_subscription_event_benefit()
 
     def _get_subscription_event_benefit(self):
         self.ensure_one()
