@@ -1,12 +1,18 @@
 {
   "name": "pruebas-iron-zone",
   "version": "1.0.0",
-  "description": "Automatización de pruebas con Stagehand para Clases Grupales de Iron Zone",
+  "description": "Automatizacion E2E con Playwright para el Modulo 2 de Iron Zone",
   "type": "module",
   "main": "clasesGrupalesExtract.js",
   "scripts": {
     "extract": "node clasesGrupalesExtract.js",
-    "register": "node clasesGrupalesRegistro.js"
+    "register": "node clasesGrupalesRegistro.js",
+    "clases:local": "node clasesGrupalesRegistroLocal.js",
+    "clases:desplegado": "node clasesGrupalesRegistro.js",
+    "suscripciones:local": "node suscripcionesRegistro.js",
+    "suscripciones:desplegado": "node suscripcionesRegistroDesplegado.js",
+    "guias:local": "node guiaEjerciciosRegistro.js",
+    "guias:desplegado": "node guiaEjerciciosRegistroDesplegado.js"
   },
   "dependencies": {
     "@browserbasehq/stagehand": "^3.4.0",
