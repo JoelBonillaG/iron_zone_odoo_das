@@ -16,6 +16,7 @@ Pruebas/**/node_modules/
 # Pruebas - Archivos generados / datos extraídos
 Pruebas/**/*_extraida.json
 Pruebas/**/*_extract*.json
+Pruebas/**/evidencias/
 
 # Pruebas - Variables de entorno locales
 Pruebas/**/.env
