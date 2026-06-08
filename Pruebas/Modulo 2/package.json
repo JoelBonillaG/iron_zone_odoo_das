@@ -8,11 +8,18 @@
     "extract": "node clasesGrupalesExtract.js",
     "register": "node clasesGrupalesRegistro.js",
     "clases:local": "node clasesGrupalesRegistroLocal.js",
+    "clases:usuario-nuevo:local": "node clasesGrupalesUsuarioNuevoRegistroLocal.js",
+    "clases:primer-evento-gratis:local": "node clasesGrupalesPrimerEventoGratisLocal.js",
     "clases:desplegado": "node clasesGrupalesRegistro.js",
     "suscripciones:local": "node suscripcionesRegistro.js",
+    "suscripciones:usuario-nuevo:local": "node suscripcionesCompraMensualFacturaLocal.js",
+    "suscripciones:compra:local": "node suscripcionesCompraMensualFacturaLocal.js",
     "suscripciones:desplegado": "node suscripcionesRegistroDesplegado.js",
+    "guias:entrenador:local": "node guiaEjerciciosEntrenadorCrearLocal.js",
     "guias:local": "node guiaEjerciciosRegistro.js",
-    "guias:desplegado": "node guiaEjerciciosRegistroDesplegado.js"
+    "guias:desplegado": "node guiaEjerciciosRegistroDesplegado.js",
+    "test:local": "node ejecutarPruebasLocales.js",
+    "test:desplegado": "npm run clases:desplegado && npm run suscripciones:desplegado && npm run guias:desplegado"
   },
   "dependencies": {
     "@browserbasehq/stagehand": "^3.4.0",
