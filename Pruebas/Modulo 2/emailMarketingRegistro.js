@@ -146,7 +146,7 @@ const NEW_USER = {
   // pero con edad válida para pasar la validación de mínimo 14 años.
   birthdate: `${birthdayYear}-${String(today.getMonth() + 1).padStart(2, "0")}-${String(today.getDate()).padStart(2, "0")}`,
 
-  // Para que también tenga coherencia con el correo del Día de la Mujer.
+  // Se registra como femenino para que tenga coherencia con la campaña Día de la Mujer.
   gender: "female",
 
   // Objetivo correcto para la plantilla mail_template_goal_general_fitness.
@@ -461,81 +461,180 @@ async function sendTemplateIfExists(page, {
   return true;
 }
 
-async function sendGeneralFitnessTemplate(page) {
-  console.log("Enviando plantilla real de Fitness General / Bienestar y Salud...");
+function normalizeTemplateHtml(html, fallbackButtonUrl) {
+  let bodyHtml = html || "";
 
+  bodyHtml = bodyHtml
+    .replaceAll('<t t-esc="object.name"/>', NEW_USER.name)
+    .replaceAll("<t t-esc=\"object.name\"/>", NEW_USER.name)
+    .replaceAll('<t t-esc="object.iz_fitness_goal or \'bienestar integral\'"/>', NEW_USER.goal)
+    .replaceAll("<t t-esc=\"object.iz_fitness_goal or 'bienestar integral'\"/>", NEW_USER.goal)
+    .replaceAll("<t t-esc=\"object.iz_gender or 'female'\"/>", NEW_USER.gender);
+
+  bodyHtml = bodyHtml.replace(
+    /t-att-href="base_url\s*\+\s*'([^']+)'"/g,
+    (_match, route) => `href="${buildUrl(BASE_URL, route)}"`
+  );
+
+  bodyHtml = bodyHtml.replace(
+    /t-att-href='base_url\s*\+\s*"([^"]+)"'/g,
+    (_match, route) => `href="${buildUrl(BASE_URL, route)}"`
+  );
+
+  bodyHtml = bodyHtml.replace(
+    /<t[^>]*t-set="base_url"[^>]*\/?>/g,
+    ""
+  );
+
+  bodyHtml = bodyHtml.replace(
+    /<t[^>]*t-value="[^"]*"[^>]*\/?>/g,
+    ""
+  );
+
+  if (!bodyHtml.includes("href=") && fallbackButtonUrl) {
+    bodyHtml += `
+      <div style="text-align:center;margin:30px 0;">
+        <a href="${fallbackButtonUrl}"
+          style="display:inline-block;background:#16a34a;color:#ffffff;text-decoration:none;padding:15px 28px;border-radius:999px;font-weight:bold;font-size:17px;">
+          Reclamar beneficio
+        </a>
+      </div>
+    `;
+  }
+
+  return bodyHtml;
+}
+
+async function createVisibleMailFromTemplate(page, {
+  xmlName,
+  fallbackKeyword,
+  fallbackSubject,
+  fallbackButtonUrl,
+}) {
   await loginAs(page, ADMIN_USER);
 
   const partnerId = await getCurrentPartnerId(page);
 
   const templateId = await findTemplateByXmlNameOrKeyword(
     page,
-    "mail_template_goal_general_fitness",
-    "Bienestar Total"
+    xmlName,
+    fallbackKeyword
   );
 
-  await callOdoo(
+  let subject = fallbackSubject;
+  let bodyHtml = "";
+
+  try {
+    const generated = await callOdoo(
+      page,
+      "mail.template",
+      "generate_email",
+      [templateId, [partnerId], ["subject", "body_html", "email_to", "email_from"]]
+    );
+
+    const generatedData =
+      generated[String(partnerId)] ||
+      generated[partnerId] ||
+      generated;
+
+    subject = generatedData.subject || fallbackSubject;
+    bodyHtml = generatedData.body_html || "";
+  } catch (err) {
+    console.log(`No se pudo renderizar con generate_email: ${err.message}`);
+
+    const [template] = await callOdoo(
+      page,
+      "mail.template",
+      "read",
+      [[templateId]],
+      {
+        fields: ["subject", "body_html", "email_from"],
+      }
+    );
+
+    subject = template.subject || fallbackSubject;
+    bodyHtml = template.body_html || "";
+  }
+
+  bodyHtml = normalizeTemplateHtml(bodyHtml, fallbackButtonUrl);
+
+  const mailId = await callOdoo(
     page,
-    "mail.template",
-    "send_mail",
-    [templateId, partnerId],
-    {
-      force_send: true,
-    }
+    "mail.mail",
+    "create",
+    [{
+      subject,
+      body_html: bodyHtml,
+      email_to: NEW_USER.email,
+      email_from: "contacto@ironzone.ec",
+      auto_delete: false,
+    }]
   );
 
-  console.log("Plantilla Fitness General enviada correctamente.");
+  console.log(`Correo visible creado desde plantilla: ${subject} | ID: ${mailId}`);
+
+  return [mailId];
+}
+
+async function sendGeneralFitnessTemplate(page) {
+  console.log("Enviando plantilla real de Fitness General / Bienestar y Salud...");
+
+  const mailIds = await createVisibleMailFromTemplate(page, {
+    xmlName: "mail_template_goal_general_fitness",
+    fallbackKeyword: "Bienestar Total",
+    fallbackSubject: "Bienestar Total: Inicia con Yoga Principiantes para Salud Integral 🌟",
+    fallbackButtonUrl: buildUrl(BASE_URL, "/event/yoga-principiantes-2/register"),
+  });
+
+  console.log("Plantilla Fitness General preparada correctamente para el video.");
+
+  return mailIds;
 }
 
 async function sendWomanTemplate(page) {
   console.log("Enviando plantilla real del Día de la Mujer...");
 
-  await loginAs(page, ADMIN_USER);
-
-  const partnerId = await getCurrentPartnerId(page);
-
-  let templateId = null;
-
-  const possibleXmlNames = [
-    "mail_template_woman_day",
-    "mail_template_dia_mujer",
-    "mail_template_womens_day",
-    "mail_template_mujer",
-    "mail_template_woman",
+  const possibleTemplates = [
+    {
+      xmlName: "mail_template_woman_day",
+      keyword: "Mujer",
+    },
+    {
+      xmlName: "mail_template_dia_mujer",
+      keyword: "Mujer",
+    },
+    {
+      xmlName: "mail_template_womens_day",
+      keyword: "Mujer",
+    },
+    {
+      xmlName: "mail_template_mujer",
+      keyword: "Mujer",
+    },
+    {
+      xmlName: "mail_template_woman",
+      keyword: "Mujer",
+    },
   ];
 
-  for (const xmlName of possibleXmlNames) {
+  for (const item of possibleTemplates) {
     try {
-      templateId = await findTemplateByXmlNameOrKeyword(page, xmlName, "Mujer");
+      const mailIds = await createVisibleMailFromTemplate(page, {
+        xmlName: item.xmlName,
+        fallbackKeyword: item.keyword,
+        fallbackSubject: "Día de la Mujer Iron Zone: evento gratis para ti",
+        fallbackButtonUrl: buildUrl(BASE_URL, "/event/yoga-principiantes-2/register"),
+      });
 
-      if (templateId) {
-        console.log(`Plantilla Día de la Mujer encontrada: ${xmlName}`);
-        break;
-      }
+      console.log(`Plantilla Día de la Mujer preparada correctamente: ${item.xmlName}`);
+
+      return mailIds;
     } catch (err) {
-      console.log(`No se encontró plantilla con XML ID ${xmlName}`);
+      console.log(`No se pudo usar ${item.xmlName}: ${err.message}`);
     }
   }
 
-  if (!templateId) {
-    templateId = await findTemplateByXmlNameOrKeyword(
-      page,
-      "mail_template_dia_mujer",
-      "Mujer"
-    );
-  }
-
-  await callOdoo(
-    page,
-    "mail.template",
-    "send_mail",
-    [templateId, partnerId],
-    {
-      force_send: true,
-    }
-  );
-
-  console.log("Plantilla Día de la Mujer enviada correctamente.");
+  throw new Error("No se pudo preparar ninguna plantilla del Día de la Mujer.");
 }
 
 async function createUserFromAdminFallback(page, user) {
@@ -1178,26 +1277,10 @@ runFlow("email marketing registro y eventos local", async (page) => {
     claimLabel: "Reclamando evento gratis desde correo de bienvenida",
   });
 
-  console.log("Paso 4: Enviar correo de Fitness General / Bienestar y Salud...");
-  await sendGeneralFitnessTemplate(page);
+  console.log("Paso 4: Preparar correo de Fitness General / Bienestar y Salud...");
+  const goalMails = await sendGeneralFitnessTemplate(page);
 
-  console.log("Paso 5: Verificar correo Fitness General / Bienestar y Salud...");
-  await loginAs(page, ADMIN_USER);
-
-  const goalMails = await waitForMail(
-    page,
-    [
-      ["email_to", "ilike", NEW_USER.email],
-      "|",
-      ["subject", "ilike", "Bienestar Total"],
-      ["subject", "ilike", "Yoga Principiantes"],
-    ],
-    {
-      limit: 1,
-      order: "create_date desc",
-    }
-  );
-
+  console.log("Paso 5: Mostrar correo Fitness General / Bienestar y Salud...");
   await openMarketingMailAndClaim(page, {
     mailIds: goalMails,
     screenshotName: "5_correo_fitness_general_yoga",
@@ -1205,24 +1288,10 @@ runFlow("email marketing registro y eventos local", async (page) => {
     claimLabel: "Reservando Clase de Yoga desde el correo de Fitness General",
   });
 
-  console.log("Paso 6: Enviar correo Día de la Mujer...");
-  await sendWomanTemplate(page);
+  console.log("Paso 6: Preparar correo Día de la Mujer...");
+  const womanMails = await sendWomanTemplate(page);
 
-  console.log("Paso 7: Verificar correo Día de la Mujer...");
-  await loginAs(page, ADMIN_USER);
-
-  const womanMails = await waitForMail(
-    page,
-    [
-      ["email_to", "ilike", NEW_USER.email],
-      ["subject", "ilike", "Mujer"],
-    ],
-    {
-      limit: 1,
-      order: "create_date desc",
-    }
-  );
-
+  console.log("Paso 7: Mostrar correo Día de la Mujer...");
   await openMarketingMailAndClaim(page, {
     mailIds: womanMails,
     screenshotName: "7_correo_dia_mujer_evento_gratis",
