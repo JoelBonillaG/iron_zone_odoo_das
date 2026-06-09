@@ -25,6 +25,10 @@ const tests = [
         name: "entrenador crea guia de ejercicios y la ve publicada local",
         script: "guiaEjerciciosEntrenadorCrearLocal.js",
     },
+    {
+        name: "email marketing registro y eventos local",
+        script: "emailMarketingRegistro.js",
+    },
 ];
 
 function runNodeScript(test) {
