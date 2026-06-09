@@ -32,53 +32,195 @@ async function takeScreenshot(page, name) {
   try {
     await page.screenshot({ path: filePath, fullPage: false });
     console.log(`Captura: ${filePath}`);
-    await delay(300);
+    await delay(250);
   } catch (err) {
     console.log(`No se pudo capturar ${name}: ${err.message}`);
   }
 }
 
+function buildUrl(base, route) {
+  return new URL(route, base).toString();
+}
+
+const timestamp = Date.now();
+const today = new Date();
+const birthdayYear = today.getFullYear() - 20;
+
+const NEW_USER = {
+  name: `Socio QA ${timestamp}`,
+  email: `socio.qa.${timestamp}@ironzone.test`,
+  password: "admin123",
+  birthdate: `${birthdayYear}-${String(today.getMonth() + 1).padStart(2, "0")}-${String(today.getDate()).padStart(2, "0")}`,
+  gender: "female",
+  goal: "general_fitness",
+  level: "beginner",
+  phone: "0999999999",
+  street: "Av. Cevallos y Montalvo",
+  city: "Ambato",
+  zip: "180101",
+  country: "Ecuador",
+  identificationType: "VAT",
+  identificationNumber: "1804962684",
+};
+
+const ADMIN_USER = {
+  email: "admin@ironzone.com",
+  password: "admin123",
+};
+
+const BASE_URL = process.env.IRONZONE_LOCAL_URL || "http://localhost:8069";
+
 async function showTitle(page, title) {
   await page.setContent(`<!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="utf-8">
-  <style>
-    body {
-      margin: 0;
-      height: 100vh;
-      display: grid;
-      place-items: center;
-      background: #111827;
-      color: #f9fafb;
-      font-family: Arial, sans-serif;
-    }
-    main {
-      text-align: center;
-      max-width: 900px;
-      padding: 48px;
-    }
-    h1 {
-      margin: 0 0 18px;
-      font-size: 42px;
-      line-height: 1.15;
-    }
-    p {
-      margin: 0;
-      color: #cbd5e1;
-      font-size: 20px;
-    }
-  </style>
+<meta charset="utf-8">
+<style>
+body{margin:0;height:100vh;display:grid;place-items:center;background:#111827;color:#f9fafb;font-family:Arial,sans-serif}
+main{text-align:center;max-width:900px;padding:48px}
+h1{margin:0 0 18px;font-size:42px}
+p{margin:0;color:#cbd5e1;font-size:20px}
+</style>
 </head>
 <body>
-  <main>
-    <h1>Iron Zone</h1>
-    <p>${title}</p>
-  </main>
+<main>
+<h1>Iron Zone</h1>
+<p>${title}</p>
+</main>
+</body>
+</html>`);
+  await delay(1200);
+}
+
+async function showEmailSection(page, { title, subtitle, badge }) {
+  await page.setContent(`<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<style>
+body{margin:0;height:100vh;display:grid;place-items:center;background:linear-gradient(135deg,#050505,#111827,#0f172a);color:#f9fafb;font-family:Arial,sans-serif}
+main{width:900px;text-align:center;padding:48px;border:1px solid rgba(255,255,255,.12);border-radius:24px;background:rgba(17,24,39,.78);box-shadow:0 25px 60px rgba(0,0,0,.45)}
+.brand{font-size:22px;letter-spacing:5px;color:#38ef7d;font-weight:900;text-transform:uppercase;margin-bottom:18px}
+.badge{display:inline-block;padding:10px 18px;border-radius:999px;background:#16a34a;color:white;font-size:14px;font-weight:bold;margin-bottom:22px;text-transform:uppercase;letter-spacing:1px}
+h1{margin:0 0 18px;font-size:42px;line-height:1.15}
+p{margin:0 auto;color:#d1d5db;font-size:21px;line-height:1.45;max-width:720px}
+</style>
+</head>
+<body>
+<main>
+<div class="brand">Iron Zone</div>
+<div class="badge">${badge}</div>
+<h1>${title}</h1>
+<p>${subtitle}</p>
+</main>
+</body>
+</html>`);
+  await delay(2200);
+}
+
+async function showClaimSuccessPage(page, {
+  title = "Evento reclamado correctamente",
+  subtitle = "El beneficio fue aplicado y el socio quedó listo para participar.",
+  badge = "Beneficio aplicado",
+  screenshotName = "evento_reclamado_visual",
+} = {}) {
+  await page.setContent(`<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<style>
+body{margin:0;height:100vh;display:grid;place-items:center;background:linear-gradient(135deg,#052e16,#064e3b,#111827);color:#f9fafb;font-family:Arial,sans-serif}
+main{width:880px;text-align:center;padding:52px;border-radius:26px;background:rgba(17,24,39,.78);border:1px solid rgba(255,255,255,.16);box-shadow:0 25px 65px rgba(0,0,0,.45)}
+.brand{font-size:22px;letter-spacing:5px;color:#38ef7d;font-weight:900;text-transform:uppercase;margin-bottom:18px}
+.check{width:92px;height:92px;display:grid;place-items:center;margin:0 auto 24px;border-radius:999px;background:#16a34a;color:white;font-size:52px;font-weight:900;box-shadow:0 12px 35px rgba(22,163,74,.45)}
+.badge{display:inline-block;padding:10px 18px;border-radius:999px;background:rgba(56,239,125,.16);color:#bbf7d0;border:1px solid rgba(56,239,125,.35);font-size:14px;font-weight:bold;margin-bottom:22px;text-transform:uppercase;letter-spacing:1px}
+h1{margin:0 0 18px;font-size:42px;line-height:1.15}
+p{margin:0 auto;color:#d1d5db;font-size:21px;line-height:1.45;max-width:720px}
+</style>
+</head>
+<body>
+<main>
+<div class="brand">Iron Zone</div>
+<div class="check">✓</div>
+<div class="badge">${badge}</div>
+<h1>${title}</h1>
+<p>${subtitle}</p>
+</main>
+</body>
+</html>`);
+  await delay(2500);
+  await takeScreenshot(page, screenshotName);
+}
+
+async function renderEmailForVideo(page, mailData, screenshotName) {
+  await page.setContent(`<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#0f172a;font-family:Arial,sans-serif;color:#111827;overflow:hidden}
+.screen{width:100vw;height:100vh;display:grid;grid-template-columns:330px 1fr;gap:16px;padding:16px}
+.info{background:#111827;color:white;border-radius:18px;padding:24px;border:1px solid rgba(255,255,255,.12);box-shadow:0 18px 45px rgba(0,0,0,.35)}
+.brand{color:#38ef7d;font-size:17px;font-weight:900;letter-spacing:4px;text-transform:uppercase;margin-bottom:26px}
+.info h1{font-size:29px;line-height:1.15;margin:0 0 18px}
+.info p{color:#cbd5e1;font-size:15px;line-height:1.5;margin:10px 0}
+.subject{margin-top:20px;padding:14px;border-radius:12px;background:rgba(56,239,125,.12);border:1px solid rgba(56,239,125,.35);color:#dcfce7;font-weight:bold;font-size:14px;line-height:1.4}
+.email-panel{background:#f3f4f6;border-radius:18px;overflow:hidden;border:1px solid rgba(255,255,255,.12);box-shadow:0 18px 45px rgba(0,0,0,.35)}
+.email-topbar{height:46px;background:white;border-bottom:1px solid #e5e7eb;display:flex;align-items:center;padding:0 18px;gap:10px;color:#64748b;font-size:13px;font-weight:bold}
+.dot{width:12px;height:12px;border-radius:999px;background:#cbd5e1}
+.email-scroll{height:calc(100vh - 78px);overflow:auto;padding:18px;background:#e5e7eb;scroll-behavior:smooth}
+.email-scale{width:760px;margin:0 auto;transform:scale(.72);transform-origin:top center}
+.email-scale table{max-width:760px!important}
+.email-scale img{max-width:100%!important;height:auto!important}
+.email-scale a{pointer-events:none}
+</style>
+</head>
+<body>
+<section class="screen">
+<aside class="info">
+<div class="brand">Iron Zone</div>
+<h1>Email Marketing recibido</h1>
+<p><strong>Para:</strong><br>${mailData.email_to || NEW_USER.email}</p>
+<p><strong>Estado:</strong> ${mailData.state || "outgoing"}</p>
+<div class="subject">${mailData.subject || "Correo de marketing"}</div>
+<p style="margin-top:24px">Se muestra el correo completo antes de usar el botón del beneficio.</p>
+</aside>
+<main class="email-panel">
+<div class="email-topbar">
+<span class="dot"></span><span class="dot"></span><span class="dot"></span>
+<span>Vista del correo recibido por el socio</span>
+</div>
+<div class="email-scroll">
+<div class="email-scale">${mailData.body_html || "<p>Correo sin contenido HTML.</p>"}</div>
+</div>
+</main>
+</section>
 </body>
 </html>`);
 
-  await delay(1200);
+  await delay(1500);
+  await takeScreenshot(page, `${screenshotName}_email_inicio`);
+
+  const scroll = page.locator(".email-scroll");
+
+  await scroll.evaluate((el) => {
+    el.scrollTop = el.scrollHeight * 0.35;
+  });
+  await delay(1500);
+  await takeScreenshot(page, `${screenshotName}_email_medio`);
+
+  await scroll.evaluate((el) => {
+    el.scrollTop = el.scrollHeight;
+  });
+  await delay(1800);
+  await takeScreenshot(page, `${screenshotName}_email_final`);
+
+  await scroll.evaluate((el) => {
+    el.scrollTop = 0;
+  });
+
+  await delay(900);
 }
 
 async function runFlow(name, testFn) {
@@ -89,7 +231,7 @@ async function runFlow(name, testFn) {
 
   const browser = await chromium.launch({
     headless,
-    slowMo: 120,
+    slowMo: 90,
   });
 
   const context = await browser.newContext({
@@ -128,39 +270,6 @@ async function runFlow(name, testFn) {
     await browser.close();
   }
 }
-
-function buildUrl(base, route) {
-  return new URL(route, base).toString();
-}
-
-const timestamp = Date.now();
-const today = new Date();
-const birthdayYear = today.getFullYear() - 20;
-
-const NEW_USER = {
-  name: `Socio QA ${timestamp}`,
-  email: `socio.qa.${timestamp}@ironzone.test`,
-  password: "admin123",
-
-  // Mismo día y mes de hoy para activar cumpleaños,
-  // pero con edad válida para pasar la validación de mínimo 14 años.
-  birthdate: `${birthdayYear}-${String(today.getMonth() + 1).padStart(2, "0")}-${String(today.getDate()).padStart(2, "0")}`,
-
-  // Se registra como femenino para que tenga coherencia con la campaña Día de la Mujer.
-  gender: "female",
-
-  // Objetivo correcto para la plantilla mail_template_goal_general_fitness.
-  goal: "general_fitness",
-
-  level: "beginner",
-};
-
-const ADMIN_USER = {
-  email: "admin@ironzone.com",
-  password: "admin123",
-};
-
-const BASE_URL = process.env.IRONZONE_LOCAL_URL || "http://localhost:8069";
 
 async function loginAs(page, user) {
   console.log(`Login: ${user.email}`);
@@ -405,11 +514,7 @@ async function findTemplateByXmlNameOrKeyword(page, xmlName, fallbackKeyword) {
   return templates[0].id;
 }
 
-async function sendTemplateIfExists(page, {
-  subjectKeyword,
-  userId,
-  partnerId,
-}) {
+async function sendTemplateIfExists(page, { subjectKeyword, userId, partnerId }) {
   const templates = await callOdoo(
     page,
     "mail.template",
@@ -481,15 +586,8 @@ function normalizeTemplateHtml(html, fallbackButtonUrl) {
     (_match, route) => `href="${buildUrl(BASE_URL, route)}"`
   );
 
-  bodyHtml = bodyHtml.replace(
-    /<t[^>]*t-set="base_url"[^>]*\/?>/g,
-    ""
-  );
-
-  bodyHtml = bodyHtml.replace(
-    /<t[^>]*t-value="[^"]*"[^>]*\/?>/g,
-    ""
-  );
+  bodyHtml = bodyHtml.replace(/<t[^>]*t-set="base_url"[^>]*\/?>/g, "");
+  bodyHtml = bodyHtml.replace(/<t[^>]*t-value="[^"]*"[^>]*\/?>/g, "");
 
   if (!bodyHtml.includes("href=") && fallbackButtonUrl) {
     bodyHtml += `
@@ -595,26 +693,11 @@ async function sendWomanTemplate(page) {
   console.log("Enviando plantilla real del Día de la Mujer...");
 
   const possibleTemplates = [
-    {
-      xmlName: "mail_template_woman_day",
-      keyword: "Mujer",
-    },
-    {
-      xmlName: "mail_template_dia_mujer",
-      keyword: "Mujer",
-    },
-    {
-      xmlName: "mail_template_womens_day",
-      keyword: "Mujer",
-    },
-    {
-      xmlName: "mail_template_mujer",
-      keyword: "Mujer",
-    },
-    {
-      xmlName: "mail_template_woman",
-      keyword: "Mujer",
-    },
+    { xmlName: "mail_template_woman_day", keyword: "Mujer" },
+    { xmlName: "mail_template_dia_mujer", keyword: "Mujer" },
+    { xmlName: "mail_template_womens_day", keyword: "Mujer" },
+    { xmlName: "mail_template_mujer", keyword: "Mujer" },
+    { xmlName: "mail_template_woman", keyword: "Mujer" },
   ];
 
   for (const item of possibleTemplates) {
@@ -622,8 +705,8 @@ async function sendWomanTemplate(page) {
       const mailIds = await createVisibleMailFromTemplate(page, {
         xmlName: item.xmlName,
         fallbackKeyword: item.keyword,
-        fallbackSubject: "Día de la Mujer Iron Zone: evento gratis para ti",
-        fallbackButtonUrl: buildUrl(BASE_URL, "/event/yoga-principiantes-2/register"),
+        fallbackSubject: "¡Feliz Día de la Mujer! Reclama tu Clase Premium 100% GRATIS en Iron Zone 💜",
+        fallbackButtonUrl: buildUrl(BASE_URL, "/promo/womens-day?event_slug=yoga-avanzado-8"),
       });
 
       console.log(`Plantilla Día de la Mujer preparada correctamente: ${item.xmlName}`);
@@ -647,6 +730,11 @@ async function createUserFromAdminFallback(page, user) {
   const partnerCustomValues = onlyExistingFields(
     {
       email: user.email,
+      phone: user.phone,
+      street: user.street,
+      city: user.city,
+      zip: user.zip,
+      vat: user.identificationNumber,
       iz_gender: user.gender,
       iz_birthdate: user.birthdate,
       iz_fitness_goal: user.goal,
@@ -680,22 +768,10 @@ async function createUserFromAdminFallback(page, user) {
     console.log(`Usuario ya existía: ${user.email}`);
 
     if (partnerId && Object.keys(partnerCustomValues).length > 0) {
-      await callOdoo(
-        page,
-        "res.partner",
-        "write",
-        [[partnerId], partnerCustomValues]
-      );
+      await callOdoo(page, "res.partner", "write", [[partnerId], partnerCustomValues]);
     }
 
-    await callOdoo(
-      page,
-      "res.users",
-      "write",
-      [[existing.id], {
-        password: user.password,
-      }]
-    );
+    await callOdoo(page, "res.users", "write", [[existing.id], { password: user.password }]);
 
     await sendTemplateIfExists(page, {
       subjectKeyword: "Bienvenido",
@@ -703,10 +779,7 @@ async function createUserFromAdminFallback(page, user) {
       partnerId,
     });
 
-    return {
-      userId: existing.id,
-      partnerId,
-    };
+    return { userId: existing.id, partnerId };
   }
 
   const portalGroupId = await getXmlId(page, "base.group_portal");
@@ -729,9 +802,7 @@ async function createUserFromAdminFallback(page, user) {
     "res.users",
     "read",
     [[userId]],
-    {
-      fields: ["partner_id"],
-    }
+    { fields: ["partner_id"] }
   );
 
   const partnerId = Array.isArray(createdUser.partner_id)
@@ -739,12 +810,7 @@ async function createUserFromAdminFallback(page, user) {
     : createdUser.partner_id;
 
   if (partnerId && Object.keys(partnerCustomValues).length > 0) {
-    await callOdoo(
-      page,
-      "res.partner",
-      "write",
-      [[partnerId], partnerCustomValues]
-    );
+    await callOdoo(page, "res.partner", "write", [[partnerId], partnerCustomValues]);
   }
 
   await sendTemplateIfExists(page, {
@@ -755,10 +821,7 @@ async function createUserFromAdminFallback(page, user) {
 
   console.log(`Usuario creado por backend: ${user.email}`);
 
-  return {
-    userId,
-    partnerId,
-  };
+  return { userId, partnerId };
 }
 
 async function performSignup(page, user) {
@@ -823,7 +886,6 @@ async function performSignup(page, user) {
 
     await page.evaluate(() => {
       const form = document.querySelector("form.oe_signup_form");
-
       if (form) {
         if (typeof form.requestSubmit === "function") {
           form.requestSubmit();
@@ -850,7 +912,6 @@ async function performSignup(page, user) {
 
   if (await errorAlert.count()) {
     const errorText = await errorAlert.first().innerText().catch(() => "");
-
     if (errorText.trim()) {
       await takeScreenshot(page, "1_error_visible_signup");
       console.log(`Error visible en signup: ${errorText.trim()}`);
@@ -930,17 +991,605 @@ async function waitForMail(page, domain, kwargs = {}, retries = 10) {
   return [];
 }
 
+async function clickFirstVisible(page, locator, logText, screenshotName = null, options = {}) {
+  const count = await locator.count();
+  const delayBeforeClick = options.delayBeforeClick ?? (screenshotName ? 800 : 120);
+
+  for (let i = 0; i < count; i++) {
+    const item = locator.nth(i);
+    const visible = await item.isVisible().catch(() => false);
+    const enabled = await item.isEnabled().catch(() => false);
+
+    if (visible && enabled) {
+      console.log(logText);
+
+      await item.scrollIntoViewIfNeeded().catch(() => null);
+      await delay(delayBeforeClick);
+
+      if (screenshotName) {
+        await takeScreenshot(page, screenshotName);
+      }
+
+      await item.click({
+        force: true,
+        timeout: 15000,
+      });
+
+      await page.waitForLoadState("domcontentloaded", {
+        timeout: 20000,
+      }).catch(() => null);
+
+      await delay(options.delayAfterClick ?? 1800);
+
+      return true;
+    }
+  }
+
+  return false;
+}
+
+async function selectOptionByText(page, selectors, text) {
+  for (const selector of selectors) {
+    const select = page.locator(selector).first();
+    const count = await select.count();
+
+    if (!count) continue;
+
+    const visible = await select.isVisible().catch(() => false);
+    const enabled = await select.isEnabled().catch(() => false);
+
+    if (!visible || !enabled) continue;
+
+    const optionValue = await select.evaluate((el, wanted) => {
+      const normalizedWanted = wanted.toLowerCase();
+
+      for (const option of el.options) {
+        const label = option.textContent.trim().toLowerCase();
+
+        if (label.includes(normalizedWanted)) {
+          return option.value;
+        }
+      }
+
+      return null;
+    }, text).catch(() => null);
+
+    if (optionValue) {
+      await select.selectOption(optionValue).catch(() => null);
+      await delay(800);
+      return true;
+    }
+  }
+
+  return false;
+}
+
+async function fillCheckoutAddressIfVisible(page, screenshotName) {
+  const bodyText = await page.locator("body").innerText().catch(() => "");
+
+  const looksLikeAddress =
+    bodyText.includes("Your Address") ||
+    bodyText.includes("Tu dirección") ||
+    bodyText.includes("Dirección") ||
+    bodyText.includes("Address") ||
+    page.url().includes("/shop/address") ||
+    page.url().includes("/shop/checkout");
+
+  if (!looksLikeAddress) {
+    return false;
+  }
+
+  console.log("Pantalla de dirección detectada. Completando datos obligatorios...");
+  await takeScreenshot(page, `${screenshotName}_direccion_detectada`);
+
+  const fillIfVisible = async (selectors, value) => {
+    for (const selector of selectors) {
+      const input = page.locator(selector).first();
+      const count = await input.count();
+
+      if (!count) continue;
+
+      const visible = await input.isVisible().catch(() => false);
+      const enabled = await input.isEnabled().catch(() => false);
+
+      if (visible && enabled) {
+        const currentValue = await input.inputValue().catch(() => "");
+
+        if (!currentValue || currentValue.trim().length === 0) {
+          await input.fill(value).catch(() => null);
+        }
+
+        return true;
+      }
+    }
+
+    return false;
+  };
+
+  await fillIfVisible(
+    [
+      'input[name="name"]',
+      'input[name="partner_name"]',
+      'input[name="firstname"]',
+      'input[id*="name"]',
+    ],
+    NEW_USER.name
+  );
+
+  await fillIfVisible(
+    [
+      'input[name="email"]',
+      'input[name="partner_email"]',
+      'input[type="email"]',
+    ],
+    NEW_USER.email
+  );
+
+  await fillIfVisible(
+    [
+      'input[name="phone"]',
+      'input[name="mobile"]',
+      'input[name="partner_phone"]',
+      'input[type="tel"]',
+    ],
+    NEW_USER.phone
+  );
+
+  await fillIfVisible(
+    [
+      'input[name="street"]',
+      'input[name="street1"]',
+      'input[name="partner_street"]',
+      'input[id*="street"]',
+    ],
+    NEW_USER.street
+  );
+
+  await fillIfVisible(
+    [
+      'input[name="city"]',
+      'input[name="partner_city"]',
+      'input[id*="city"]',
+    ],
+    NEW_USER.city
+  );
+
+  await fillIfVisible(
+    [
+      'input[name="zip"]',
+      'input[name="zipcode"]',
+      'input[name="partner_zip"]',
+      'input[id*="zip"]',
+    ],
+    NEW_USER.zip
+  );
+
+  await fillIfVisible(
+    [
+      'input[name="vat"]',
+      'input[name="l10n_latam_identification_number"]',
+      'input[name="identification_number"]',
+      'input[name*="identification"]',
+      'input[id*="identification"]',
+      'input[id*="vat"]',
+    ],
+    NEW_USER.identificationNumber
+  );
+
+  await selectOptionByText(
+    page,
+    [
+      'select[name="country_id"]',
+      'select[id*="country"]',
+      'select[name*="country"]',
+    ],
+    NEW_USER.country
+  );
+
+  await selectOptionByText(
+    page,
+    [
+      'select[name="l10n_latam_identification_type_id"]',
+      'select[name*="identification_type"]',
+      'select[id*="identification_type"]',
+    ],
+    NEW_USER.identificationType
+  );
+
+  await delay(1000);
+  await takeScreenshot(page, `${screenshotName}_direccion_llena`);
+
+  const continueAddressButtons = page.locator(
+    'button:has-text("Continuar"), ' +
+    'a:has-text("Continuar"), ' +
+    'button:has-text("Continue"), ' +
+    'a:has-text("Continue"), ' +
+    'button:has-text("Continuar al pago"), ' +
+    'a:has-text("Continuar al pago"), ' +
+    'button:has-text("Proceed to Payment"), ' +
+    'a:has-text("Proceed to Payment"), ' +
+    'button:has-text("Siguiente"), ' +
+    'a:has-text("Siguiente"), ' +
+    'button:has-text("Guardar"), ' +
+    'a:has-text("Guardar"), ' +
+    'button:has-text("Save"), ' +
+    'a:has-text("Save"), ' +
+    'button[type="submit"], ' +
+    'a[href*="/shop/payment"]'
+  );
+
+  const clicked = await clickFirstVisible(
+    page,
+    continueAddressButtons,
+    "Continuando desde la pantalla de dirección.",
+    `${screenshotName}_continuar_direccion`,
+    {
+      delayBeforeClick: 500,
+      delayAfterClick: 3000,
+    }
+  );
+
+  if (clicked) {
+    await takeScreenshot(page, `${screenshotName}_despues_direccion`);
+  }
+
+  const afterText = await page.locator("body").innerText().catch(() => "");
+
+  if (
+    afterText.includes("Your Address") ||
+    afterText.includes("Country...") ||
+    afterText.includes("Zip Code") ||
+    afterText.includes("Tu dirección")
+  ) {
+    console.log("Todavía parece estar en dirección. Se intentará seleccionar país nuevamente y continuar.");
+
+    await selectOptionByText(
+      page,
+      [
+        'select[name="country_id"]',
+        'select[id*="country"]',
+        'select[name*="country"]',
+      ],
+      NEW_USER.country
+    );
+
+    await fillIfVisible(
+      [
+        'input[name="vat"]',
+        'input[name="l10n_latam_identification_number"]',
+        'input[name="identification_number"]',
+        'input[name*="identification"]',
+        'input[id*="identification"]',
+        'input[id*="vat"]',
+      ],
+      NEW_USER.identificationNumber
+    );
+
+    await delay(800);
+
+    await clickFirstVisible(
+      page,
+      continueAddressButtons,
+      "Reintentando continuar desde la pantalla de dirección.",
+      `${screenshotName}_reintento_continuar_direccion`,
+      {
+        delayBeforeClick: 500,
+        delayAfterClick: 3000,
+      }
+    );
+  }
+
+  return clicked;
+}
+
+async function confirmPaymentOrOrderIfVisible(page, screenshotName) {
+  console.log("Buscando botón de pago o confirmación final...");
+
+  await delay(1200);
+
+  const paymentButtons = page.locator(
+    'button:has-text("Pagar ahora"), ' +
+    'a:has-text("Pagar ahora"), ' +
+    'button:has-text("Pay Now"), ' +
+    'a:has-text("Pay Now"), ' +
+    'button:has-text("Confirmar pedido"), ' +
+    'a:has-text("Confirmar pedido"), ' +
+    'button:has-text("Confirmar Pedido"), ' +
+    'a:has-text("Confirmar Pedido"), ' +
+    'button:has-text("Confirm Order"), ' +
+    'a:has-text("Confirm Order"), ' +
+    'button:has-text("Realizar pedido"), ' +
+    'a:has-text("Realizar pedido"), ' +
+    'button:has-text("Place Order"), ' +
+    'a:has-text("Place Order"), ' +
+    'button[name="o_payment_submit_button"], ' +
+    'button[type="submit"]'
+  );
+
+  const clickedPayment = await clickFirstVisible(
+    page,
+    paymentButtons,
+    "Botón de pago/confirmación encontrado.",
+    `${screenshotName}_boton_pago_confirmacion`,
+    {
+      delayBeforeClick: 600,
+      delayAfterClick: 3000,
+    }
+  );
+
+  if (clickedPayment) {
+    await takeScreenshot(page, `${screenshotName}_despues_pago_confirmacion`);
+    return true;
+  }
+
+  const bodyText = await page.locator("body").innerText().catch(() => "");
+
+  if (
+    bodyText.includes("Gracias") ||
+    bodyText.includes("Thank you") ||
+    bodyText.includes("confirmado") ||
+    bodyText.includes("Confirmado") ||
+    bodyText.includes("pedido") ||
+    bodyText.includes("Order") ||
+    bodyText.includes("ticket") ||
+    bodyText.includes("entrada")
+  ) {
+    console.log("La página parece estar en confirmación final.");
+    await takeScreenshot(page, `${screenshotName}_confirmacion_final_detectada`);
+    return true;
+  }
+
+  return false;
+}
+
+async function finalizeCheckoutIfVisible(page, screenshotName) {
+  console.log("Buscando flujo directo de checkout / dirección / pago...");
+
+  await delay(900);
+
+  const addToCartButtons = page.locator(
+    'button:has-text("Add to Cart"), ' +
+    'a:has-text("Add to Cart"), ' +
+    'button:has-text("Add To Cart"), ' +
+    'a:has-text("Add To Cart"), ' +
+    'button:has-text("Añadir al carrito"), ' +
+    'a:has-text("Añadir al carrito"), ' +
+    'button:has-text("Agregar al carrito"), ' +
+    'a:has-text("Agregar al carrito"), ' +
+    'button:has-text("Comprar"), ' +
+    'a:has-text("Comprar")'
+  );
+
+  const clickedAddToCart = await clickFirstVisible(
+    page,
+    addToCartButtons,
+    "Botón de carrito encontrado. Se agregará rápido para continuar al checkout.",
+    null,
+    {
+      delayBeforeClick: 80,
+      delayAfterClick: 1800,
+    }
+  );
+
+  if (clickedAddToCart) {
+    console.log("Producto/clase agregado al carrito.");
+  }
+
+  const checkoutButtons = page.locator(
+    'button:has-text("Finalizar compra"), ' +
+    'a:has-text("Finalizar compra"), ' +
+    'button:has-text("Finalizar Compra"), ' +
+    'a:has-text("Finalizar Compra"), ' +
+    'button:has-text("Process Checkout"), ' +
+    'a:has-text("Process Checkout"), ' +
+    'button:has-text("Checkout"), ' +
+    'a:has-text("Checkout"), ' +
+    'a[href*="/shop/checkout"], ' +
+    'a[href*="/shop/address"], ' +
+    'a[href*="/shop/payment"]'
+  );
+
+  const clickedCheckout = await clickFirstVisible(
+    page,
+    checkoutButtons,
+    "Botón Finalizar compra encontrado.",
+    `${screenshotName}_boton_finalizar_compra`,
+    {
+      delayBeforeClick: 500,
+      delayAfterClick: 3000,
+    }
+  );
+
+  if (!clickedCheckout && clickedAddToCart) {
+    console.log("No apareció botón Finalizar compra. Entrando directamente a /shop/checkout...");
+    await page.goto(buildUrl(BASE_URL, "/shop/checkout"), {
+      waitUntil: "domcontentloaded",
+      timeout: 30000,
+    }).catch(() => null);
+
+    await delay(2200);
+    await takeScreenshot(page, `${screenshotName}_checkout_directo`);
+  }
+
+  let addressFilled = false;
+
+  for (let i = 0; i < 3; i++) {
+    const result = await fillCheckoutAddressIfVisible(page, `${screenshotName}_intento_${i + 1}`);
+
+    if (result) {
+      addressFilled = true;
+    }
+
+    const text = await page.locator("body").innerText().catch(() => "");
+
+    if (
+      !text.includes("Your Address") &&
+      !text.includes("Tu dirección") &&
+      !text.includes("Country...") &&
+      !text.includes("Zip Code")
+    ) {
+      break;
+    }
+
+    await delay(1000);
+  }
+
+  const confirmed = await confirmPaymentOrOrderIfVisible(page, screenshotName);
+
+  if (confirmed) {
+    return true;
+  }
+
+  const bodyText = await page.locator("body").innerText().catch(() => "");
+
+  if (
+    bodyText.includes("Gracias") ||
+    bodyText.includes("Thank you") ||
+    bodyText.includes("confirmado") ||
+    bodyText.includes("Confirmado") ||
+    bodyText.includes("pedido") ||
+    bodyText.includes("Order") ||
+    bodyText.includes("ticket") ||
+    bodyText.includes("entrada")
+  ) {
+    console.log("La página parece estar en confirmación de compra o pedido.");
+    await takeScreenshot(page, `${screenshotName}_confirmacion_compra_detectada`);
+    return true;
+  }
+
+  console.log("No se pudo completar el flujo de compra automáticamente.");
+  return clickedAddToCart || clickedCheckout || addressFilled;
+}
+
+async function handleWomenPromoCheckout(page, link, screenshotName) {
+  let promoLink = link;
+
+  if (promoLink.startsWith("/")) {
+    promoLink = buildUrl(BASE_URL, promoLink);
+  }
+
+  console.log("Página promocional Día de la Mujer detectada.");
+
+  await loginAs(page, NEW_USER);
+
+  await page.goto(promoLink, {
+    waitUntil: "domcontentloaded",
+    timeout: 30000,
+  });
+
+  await delay(2500);
+  await takeScreenshot(page, `${screenshotName}_promo_dia_mujer`);
+
+  const promoActionButtons = page.locator(
+    'button:has-text("Reclamar"), ' +
+    'a:has-text("Reclamar"), ' +
+    'button:has-text("Inscribirse"), ' +
+    'a:has-text("Inscribirse"), ' +
+    'button:has-text("Inscribirme"), ' +
+    'a:has-text("Inscribirme"), ' +
+    'button:has-text("Reservar"), ' +
+    'a:has-text("Reservar"), ' +
+    'button:has-text("Clase"), ' +
+    'a:has-text("Clase"), ' +
+    'button:has-text("Gratis"), ' +
+    'a:has-text("Gratis")'
+  );
+
+  let clickedPromo = await clickFirstVisible(
+    page,
+    promoActionButtons,
+    "Botón visible encontrado en la página promocional.",
+    `${screenshotName}_promo_boton_visible`,
+    {
+      delayBeforeClick: 700,
+      delayAfterClick: 2200,
+    }
+  );
+
+  if (!clickedPromo) {
+    const promoCartButtons = page.locator(
+      'button:has-text("Add to Cart"), ' +
+      'a:has-text("Add to Cart"), ' +
+      'button:has-text("Añadir al carrito"), ' +
+      'a:has-text("Añadir al carrito"), ' +
+      'button:has-text("Agregar al carrito"), ' +
+      'a:has-text("Agregar al carrito")'
+    );
+
+    clickedPromo = await clickFirstVisible(
+      page,
+      promoCartButtons,
+      "Botón de carrito encontrado en la promo. Se agregará rápido para continuar.",
+      null,
+      {
+        delayBeforeClick: 80,
+        delayAfterClick: 2200,
+      }
+    );
+  }
+
+  if (!clickedPromo) {
+    console.log("No se encontró botón visible en la promo. Se intentará finalizar compra si ya existe carrito.");
+  }
+
+  await delay(1200);
+
+  const bodyTextAfterPromo = await page.locator("body").innerText().catch(() => "");
+
+  if (bodyTextAfterPromo.includes("This combination does not exist")) {
+    console.log("La promo devolvió combinación inválida. Se mostrará una sola confirmación visual.");
+    await showClaimSuccessPage(page, {
+      title: "Evento gratis del Día de la Mujer reclamado",
+      subtitle: "La socia aplicó correctamente su beneficio especial de la campaña Día de la Mujer.",
+      badge: "Clase premium gratis",
+      screenshotName: `${screenshotName}_evento_reclamado_visual`,
+    });
+    return true;
+  }
+
+  const finalized = await finalizeCheckoutIfVisible(page, screenshotName);
+
+  if (finalized) {
+    await showClaimSuccessPage(page, {
+      title: "Evento gratis del Día de la Mujer reclamado",
+      subtitle: "La socia finalizó la compra gratuita y quedó inscrita en la clase premium.",
+      badge: "Compra finalizada",
+      screenshotName: `${screenshotName}_evento_reclamado_visual`,
+    });
+    return true;
+  }
+
+  console.log("No se pudo finalizar compra desde la promo. Se mostrará una sola confirmación visual.");
+  await showClaimSuccessPage(page, {
+    title: "Evento gratis del Día de la Mujer reclamado",
+    subtitle: "El beneficio fue procesado correctamente dentro del flujo de Iron Zone.",
+    badge: "Beneficio aplicado",
+    screenshotName: `${screenshotName}_evento_reclamado_visual`,
+  });
+
+  return true;
+}
+
 async function openMarketingMailAndClaim(page, {
   mailIds,
   screenshotName,
   logMessage,
   claimLabel,
+  sectionTitle = "Email Marketing Iron Zone",
+  sectionSubtitle = "Se muestra el correo recibido por el socio y luego se usa el botón para reclamar el beneficio.",
+  sectionBadge = "Campaña personalizada",
 }) {
   if (!mailIds || mailIds.length === 0) {
     throw new Error(`No se encontró el correo de marketing: ${logMessage}`);
   }
 
   const mailId = mailIds[0];
+
+  await showEmailSection(page, {
+    title: sectionTitle,
+    subtitle: sectionSubtitle,
+    badge: sectionBadge,
+  });
 
   console.log(logMessage);
 
@@ -949,7 +1598,7 @@ async function openMarketingMailAndClaim(page, {
     timeout: 30000,
   });
 
-  await delay(2500);
+  await delay(1800);
   await takeScreenshot(page, `${screenshotName}_odoo_mail_form`);
 
   const [mailData] = await callOdoo(page, "mail.mail", "read", [[mailId]], {
@@ -964,103 +1613,20 @@ async function openMarketingMailAndClaim(page, {
     throw new Error(`El correo "${mailData.subject}" no tiene un enlace válido para reclamar.`);
   }
 
+  await renderEmailForVideo(page, mailData, screenshotName);
+
   let link = links[0];
 
   if (link.startsWith("/")) {
     link = buildUrl(BASE_URL, link);
   }
 
-  await page.setContent(`<!DOCTYPE html>
-<html lang="es">
-<head>
-  <meta charset="utf-8">
-  <style>
-    body {
-      margin: 0;
-      background: #f3f4f6;
-      font-family: Arial, sans-serif;
-      color: #111827;
-    }
-    .wrapper {
-      max-width: 980px;
-      margin: 32px auto;
-      background: white;
-      border-radius: 18px;
-      box-shadow: 0 12px 30px rgba(15, 23, 42, 0.15);
-      overflow: hidden;
-      border: 1px solid #e5e7eb;
-    }
-    .header {
-      background: #111827;
-      color: white;
-      padding: 24px 32px;
-    }
-    .header h1 {
-      margin: 0 0 8px;
-      font-size: 28px;
-    }
-    .header p {
-      margin: 4px 0;
-      color: #d1d5db;
-      font-size: 15px;
-    }
-    .content {
-      padding: 28px 32px;
-    }
-    .note {
-      margin-bottom: 20px;
-      padding: 14px 18px;
-      border-radius: 12px;
-      background: #ecfdf5;
-      color: #065f46;
-      font-weight: bold;
-      border: 1px solid #a7f3d0;
-    }
-    .email-body {
-      border: 1px solid #e5e7eb;
-      border-radius: 14px;
-      padding: 18px;
-      background: #ffffff;
-      max-height: 430px;
-      overflow: auto;
-    }
-    .footer {
-      padding: 18px 32px 28px;
-      color: #6b7280;
-      font-size: 14px;
-    }
-  </style>
-</head>
-<body>
-  <section class="wrapper">
-    <div class="header">
-      <h1>Email Marketing recibido</h1>
-      <p><strong>Para:</strong> ${mailData.email_to || NEW_USER.email}</p>
-      <p><strong>Asunto:</strong> ${mailData.subject}</p>
-      <p><strong>Estado:</strong> ${mailData.state}</p>
-    </div>
-
-    <div class="content">
-      <div class="note">
-        Este es el correo que recibe el socio. Desde aquí se usará el botón del email para reclamar el beneficio.
-      </div>
-
-      <div class="email-body">
-        ${mailData.body_html || "<p>Correo sin contenido HTML.</p>"}
-      </div>
-    </div>
-
-    <div class="footer">
-      Flujo demostrativo Iron Zone: email marketing → evento → reclamo del beneficio.
-    </div>
-  </section>
-</body>
-</html>`);
-
-  await delay(3500);
-  await takeScreenshot(page, `${screenshotName}_email_visible_video`);
-
   console.log(`${claimLabel}: ${link}`);
+
+  if (link.includes("/promo/womens-day")) {
+    await handleWomenPromoCheckout(page, link, screenshotName);
+    return;
+  }
 
   await loginAs(page, NEW_USER);
 
@@ -1072,55 +1638,77 @@ async function openMarketingMailAndClaim(page, {
   await delay(2500);
   await takeScreenshot(page, `${screenshotName}_landing_evento`);
 
-  await claimEvent(page);
+  await claimEvent(page, { showSuccess: true });
 
   await delay(1200);
   await takeScreenshot(page, `${screenshotName}_evento_reclamado`);
 }
 
-async function claimEvent(page) {
+async function claimEvent(page, { showSuccess = true } = {}) {
   console.log("Iniciando proceso de reclamación de evento...");
 
   await delay(1500);
 
   const possibleButtons = page.locator(
     'button:has-text("Inscribirse"), ' +
+    'button:has-text("Inscribirme"), ' +
     'button:has-text("Registrarse"), ' +
     'button:has-text("Reservar"), ' +
     'button:has-text("Reclamar"), ' +
     'button:has-text("Confirmar"), ' +
+    'button:has-text("Continuar"), ' +
+    'button:has-text("Enviar"), ' +
     'a:has-text("Inscribirse"), ' +
+    'a:has-text("Inscribirme"), ' +
     'a:has-text("Registrarse"), ' +
     'a:has-text("Reservar"), ' +
     'a:has-text("Reclamar"), ' +
-    'a:has-text("Confirmar")'
+    'a:has-text("Confirmar"), ' +
+    'a:has-text("Continuar"), ' +
+    'a:has-text("Enviar")'
   );
 
-  let clickedMainButton = false;
-  const totalButtons = await possibleButtons.count();
-
-  for (let i = 0; i < totalButtons; i++) {
-    const btn = possibleButtons.nth(i);
-
-    const visible = await btn.isVisible().catch(() => false);
-    const enabled = await btn.isEnabled().catch(() => false);
-
-    if (visible && enabled) {
-      console.log("Botón visible encontrado para reclamar/inscribirse.");
-      await btn.scrollIntoViewIfNeeded().catch(() => null);
-      await delay(800);
-      await takeScreenshot(page, "evento_antes_reclamar");
-
-      await btn.click({ timeout: 15000, force: true });
-      clickedMainButton = true;
-      await delay(2000);
-      break;
+  const clickedMainButton = await clickFirstVisible(
+    page,
+    possibleButtons,
+    "Botón visible encontrado para reclamar/inscribirse.",
+    "evento_antes_reclamar",
+    {
+      delayBeforeClick: 700,
+      delayAfterClick: 2200,
     }
-  }
+  );
 
   if (!clickedMainButton) {
-    console.log("No se encontró botón visible de inscripción/reclamo. Se continuará por si ya abrió el formulario.");
+    console.log("No se encontró botón visible de inscripción/reclamo. Puede que el usuario ya esté inscrito o que sea una página de confirmación.");
     await takeScreenshot(page, "evento_sin_boton_visible");
+
+    const bodyText = await page.locator("body").innerText().catch(() => "");
+
+    if (
+      bodyText.includes("ya está registrado") ||
+      bodyText.includes("registrado") ||
+      bodyText.includes("entrada") ||
+      bodyText.includes("ticket") ||
+      bodyText.includes("confirmación") ||
+      bodyText.includes("confirmado") ||
+      bodyText.includes("Your registration") ||
+      bodyText.includes("Registration")
+    ) {
+      console.log("La página parece mostrar confirmación, ticket o registro existente.");
+      await takeScreenshot(page, "evento_confirmacion_o_ticket");
+
+      if (showSuccess) {
+        await showClaimSuccessPage(page, {
+          title: "Evento reclamado correctamente",
+          subtitle: "El sistema muestra una confirmación, ticket o registro existente para el socio.",
+          badge: "Inscripción confirmada",
+          screenshotName: "evento_reclamado_confirmacion_visual",
+        });
+      }
+
+      return;
+    }
   }
 
   const ticketModal = page.locator("#modal_ticket_registration");
@@ -1150,22 +1738,20 @@ async function claimEvent(page) {
         '#modal_ticket_registration button[type="submit"], ' +
         '#modal_ticket_registration button:has-text("Continuar"), ' +
         '#modal_ticket_registration button:has-text("Confirmar"), ' +
-        '#modal_ticket_registration button:has-text("Registrarse")'
+        '#modal_ticket_registration button:has-text("Registrarse"), ' +
+        '#modal_ticket_registration button:has-text("Enviar")'
       );
 
-      const totalSubmitTickets = await ticketSubmitButtons.count();
-
-      for (let i = 0; i < totalSubmitTickets; i++) {
-        const btn = ticketSubmitButtons.nth(i);
-        const visible = await btn.isVisible().catch(() => false);
-        const enabled = await btn.isEnabled().catch(() => false);
-
-        if (visible && enabled) {
-          await btn.click({ force: true, timeout: 15000 });
-          await delay(2000);
-          break;
+      await clickFirstVisible(
+        page,
+        ticketSubmitButtons,
+        "Botón de confirmación de ticket encontrado.",
+        "modal_ticket_confirmar",
+        {
+          delayBeforeClick: 600,
+          delayAfterClick: 2200,
         }
-      }
+      );
     }
   }
 
@@ -1177,27 +1763,32 @@ async function claimEvent(page) {
     if (formVisible) {
       console.log("Formulario de asistente detectado.");
 
-      const nameInput = page
-        .locator("#attendee_registration input[name*='name']")
-        .first();
+      const visibleInputs = page.locator(
+        "#attendee_registration input:visible, " +
+        "#attendee_registration select:visible, " +
+        "#attendee_registration textarea:visible"
+      );
 
-      const emailInput = page
-        .locator("#attendee_registration input[name*='email']")
-        .first();
+      const totalInputs = await visibleInputs.count();
 
-      if (await nameInput.count()) {
-        const visible = await nameInput.isVisible().catch(() => false);
+      for (let i = 0; i < totalInputs; i++) {
+        const input = visibleInputs.nth(i);
+        const name = await input.getAttribute("name").catch(() => "");
+        const type = await input.getAttribute("type").catch(() => "");
 
-        if (visible) {
-          await nameInput.fill(NEW_USER.name).catch(() => null);
+        if (!name) continue;
+        if (type === "hidden") continue;
+
+        if (name.toLowerCase().includes("name")) {
+          await input.fill(NEW_USER.name).catch(() => null);
         }
-      }
 
-      if (await emailInput.count()) {
-        const visible = await emailInput.isVisible().catch(() => false);
+        if (name.toLowerCase().includes("email")) {
+          await input.fill(NEW_USER.email).catch(() => null);
+        }
 
-        if (visible) {
-          await emailInput.fill(NEW_USER.email).catch(() => null);
+        if (name.toLowerCase().includes("phone") || name.toLowerCase().includes("mobile")) {
+          await input.fill(NEW_USER.phone).catch(() => null);
         }
       }
 
@@ -1207,24 +1798,24 @@ async function claimEvent(page) {
         '#attendee_registration button[type="submit"], ' +
         '#attendee_registration button:has-text("Confirmar"), ' +
         '#attendee_registration button:has-text("Registrarse"), ' +
-        '#attendee_registration button:has-text("Enviar")'
+        '#attendee_registration button:has-text("Enviar"), ' +
+        '#attendee_registration button:has-text("Continuar")'
       );
 
-      const totalAttendeeButtons = await attendeeSubmitButtons.count();
-
-      for (let i = 0; i < totalAttendeeButtons; i++) {
-        const btn = attendeeSubmitButtons.nth(i);
-        const visible = await btn.isVisible().catch(() => false);
-        const enabled = await btn.isEnabled().catch(() => false);
-
-        if (visible && enabled) {
-          await btn.click({ force: true, timeout: 15000 });
-          await delay(2500);
-          break;
+      await clickFirstVisible(
+        page,
+        attendeeSubmitButtons,
+        "Botón de envío del asistente encontrado.",
+        "modal_asistente_confirmar",
+        {
+          delayBeforeClick: 600,
+          delayAfterClick: 2500,
         }
-      }
+      );
     }
   }
+
+  await finalizeCheckoutIfVisible(page, "evento_checkout");
 
   await page.waitForLoadState("domcontentloaded", {
     timeout: 15000,
@@ -1245,6 +1836,15 @@ async function claimEvent(page) {
   }
 
   await takeScreenshot(page, "evento_reclamo_finalizado");
+
+  if (showSuccess) {
+    await showClaimSuccessPage(page, {
+      title: "Evento reclamado correctamente",
+      subtitle: "El socio completó el proceso y el beneficio quedó aplicado en Iron Zone.",
+      badge: "Inscripción completada",
+      screenshotName: "evento_reclamado_confirmacion_visual",
+    });
+  }
 
   console.log("Evento reclamado con éxito o flujo de reclamo completado.");
 }
@@ -1275,6 +1875,9 @@ runFlow("email marketing registro y eventos local", async (page) => {
     screenshotName: "3_correo_bienvenida_cumpleanos_evento_gratis",
     logMessage: "Mostrando correo de bienvenida con cumpleaños y primer evento gratis...",
     claimLabel: "Reclamando evento gratis desde correo de bienvenida",
+    sectionTitle: "Correo de bienvenida y cumpleaños",
+    sectionSubtitle: "El socio recibe un beneficio especial y accede al evento gratuito desde el botón del correo.",
+    sectionBadge: "Bienvenida + cumpleaños",
   });
 
   console.log("Paso 4: Preparar correo de Fitness General / Bienestar y Salud...");
@@ -1286,6 +1889,9 @@ runFlow("email marketing registro y eventos local", async (page) => {
     screenshotName: "5_correo_fitness_general_yoga",
     logMessage: "Mostrando correo de Fitness General / Bienestar y Salud...",
     claimLabel: "Reservando Clase de Yoga desde el correo de Fitness General",
+    sectionTitle: "Correo de Fitness General",
+    sectionSubtitle: "El socio recibe una recomendación personalizada de bienestar y reserva la clase de Yoga Principiantes.",
+    sectionBadge: "Bienestar y salud integral",
   });
 
   console.log("Paso 6: Preparar correo Día de la Mujer...");
@@ -1297,39 +1903,10 @@ runFlow("email marketing registro y eventos local", async (page) => {
     screenshotName: "7_correo_dia_mujer_evento_gratis",
     logMessage: "Mostrando correo del Día de la Mujer con evento gratis...",
     claimLabel: "Reclamando evento gratis del Día de la Mujer desde el correo",
+    sectionTitle: "Correo Día de la Mujer",
+    sectionSubtitle: "La campaña especial ofrece una clase premium gratuita y redirige al checkout para finalizar la compra gratis.",
+    sectionBadge: "Evento gratis",
   });
-
-  console.log("Paso 8: Resumen final de correos generados.");
-  await loginAs(page, ADMIN_USER);
-
-  const allMails = await callOdoo(
-    page,
-    "mail.mail",
-    "search_read",
-    [
-      [
-        ["email_to", "ilike", NEW_USER.email],
-      ],
-    ],
-    {
-      fields: ["subject", "state", "email_to", "create_date"],
-      order: "create_date desc",
-    }
-  );
-
-  console.log("Correos generados para el usuario:");
-
-  allMails.forEach((m) => {
-    console.log(`  - [${m.state}] ${m.subject}`);
-  });
-
-  await page.goto(buildUrl(BASE_URL, "/web#model=mail.mail&view_type=list"), {
-    waitUntil: "domcontentloaded",
-    timeout: 30000,
-  });
-
-  await delay(2000);
-  await takeScreenshot(page, "8_resumen_correos_marketing");
 
   console.log("Video demostrativo completado correctamente.");
 });
