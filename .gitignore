@@ -10,14 +10,15 @@ __pycache__/
 .DS_Store
 Thumbs.db
 
-# Pruebas - Node.js dependencies
-Pruebas/**/node_modules/
+# Pruebas E2E - Node.js dependencies
+pruebas_e2e/**/node_modules/
 
-# Pruebas - Archivos generados / datos extraídos
-Pruebas/**/*_extraida.json
-Pruebas/**/*_extract*.json
+# Pruebas E2E - Archivos y evidencias generadas en runtime
+pruebas_e2e/**/*_extraida.json
+pruebas_e2e/**/*_extract*.json
+pruebas_e2e/**/evidencias/
 
-# Pruebas - Variables de entorno locales
-Pruebas/**/.env
+# Pruebas E2E - Variables de entorno locales
+pruebas_e2e/**/.env
 
 node_modules/
