@@ -1,91 +1,145 @@
-# Iron Zone - Odoo 18
+# Iron Zone — Gestión integral de gimnasio sobre Odoo 18
 
-Sistema academico para la gestion de un gimnasio y centro deportivo desarrollado sobre Odoo 18 y PostgreSQL 15 con Docker.
+Iron Zone es una solución empresarial para la gestión de un **gimnasio y centro deportivo**, construida sobre **Odoo 18** y **PostgreSQL 15** con **Docker**. Integra el sitio web público, la tienda online, las suscripciones y planes, las clases/eventos, las guías de ejercicios, el inventario, las ventas, la facturación y la localización ecuatoriana (SRI) en un único producto desplegable.
+
+> Reúne módulos nativos de Odoo y varios addons personalizados ubicados en `addons/`.
+
+---
 
 ## Tabla de contenidos
 
-- Descripcion general
-- Funcionalidades principales
-- Requisitos
-- Instalacion rapida
-- Configuracion inicial
-- Instalacion de modulos
-- Carga de datos de prueba
-- Credenciales de prueba
-- Como usar la aplicacion
-- Rutas principales
-- Estructura del repositorio
-- Modulos personalizados
-- Configuracion de pagos y correo
-- Documentacion del proyecto
-- Comandos utiles
-- Problemas comunes
+- [Propósito y problema que resuelve](#propósito-y-problema-que-resuelve)
+- [Módulos principales](#módulos-principales)
+- [Flujo funcional principal](#flujo-funcional-principal)
+- [Roles / actores](#roles--actores)
+- [Entidades principales del dominio](#entidades-principales-del-dominio)
+- [Tecnologías usadas](#tecnologías-usadas)
+- [Estructura del proyecto](#estructura-del-proyecto)
+- [Requisitos previos](#requisitos-previos)
+- [Instalación](#instalación)
+- [Configuración inicial en Odoo](#configuración-inicial-en-odoo)
+- [Instalación de módulos](#instalación-de-módulos)
+- [Carga de datos de prueba (seeds)](#carga-de-datos-de-prueba-seeds)
+- [Credenciales de prueba](#credenciales-de-prueba)
+- [Rutas principales](#rutas-principales)
+- [Pagos y correo](#pagos-y-correo)
+- [Pruebas](#pruebas)
+- [Validación y comandos útiles](#validación-y-comandos-útiles)
+- [Estado del proyecto](#estado-del-proyecto)
+- [Notas para despliegue o demostración](#notas-para-despliegue-o-demostración)
 
-## Descripcion general
+---
 
-Iron Zone integra procesos administrativos y operativos de un gimnasio:
+## Propósito y problema que resuelve
 
-- Sitio web publico.
-- Tienda online.
-- Suscripciones y planes.
-- Eventos o clases.
-- Guias de ejercicios.
-- Inventario.
-- Ventas.
-- Facturacion.
-- Email marketing y correos transaccionales.
-- Localizacion ecuatoriana para facturacion y validaciones.
+Un gimnasio gestiona, normalmente con herramientas dispersas: membresías y cobros recurrentes, catálogo de productos y suplementos, reserva de clases, contenido de entrenamiento, facturación y obligaciones tributarias locales. Iron Zone **centraliza esos procesos** en una sola plataforma Odoo:
 
-El proyecto usa modulos nativos de Odoo y varios addons personalizados ubicados en `addons/`.
+- Vende y publica **planes/membresías** y **productos** desde una tienda online.
+- Gestiona **suscripciones** y facturación periódica.
+- Publica **clases/eventos** y permite el registro de asistentes.
+- Ofrece un catálogo de **guías de ejercicios** con permisos por rol.
+- Administra **inventario, ventas y facturación** desde el backend.
+- Cumple con la **facturación electrónica de Ecuador (SRI)**: comprobantes, firma, retenciones y reportes.
 
-## Funcionalidades principales
+## Módulos principales
 
-### Sitio web
+Addons personalizados incluidos en `addons/`:
 
-- Pagina de inicio.
-- Pagina Nosotros.
-- Pagina Contacto.
-- Menu web personalizado.
-- Diseno visual oscuro para Iron Zone.
+| Módulo | Nombre en Odoo | Propósito |
+| --- | --- | --- |
+| `iz_website` | IZ Website | Personalización del sitio web, plantillas, footer, pasarela visual, correo y experiencia de usuario. |
+| `iz_backend_theme` | IZ Backend Theme | Tema moderno y ajustes internos para el backend de Iron Zone. |
+| `iz_subscription` | Iron Zone - Suscripciones | Suscripciones, productos recurrentes y facturación periódica. |
+| `iz_inventory` | IZ Inventory | Convenciones de inventario y stock para la tienda eCommerce. |
+| `iz_tasks` | Gestión de Tareas Iron Zone | Gestión y asignación de tareas con dashboard. |
+| `ironzone_exercise_guide` | Iron Zone - Guías de Ejercicios | Guías de ejercicios, máquinas, categorías, portal y permisos por rol. |
+| `l10n_ec_base` | Ecuador - Base Localization (NEC 2026) | Plan de cuentas, plantillas de impuestos y validación de identidad (SRI). |
+| `l10n_ec_edi` | Ecuador - Electronic Invoicing (SRI 2026) | Facturación electrónica, firma XAdES-BES y transmisión al SRI. |
+| `l10n_ec_sri` | Ecuador SRI Electronic Invoicing | Cumplimiento completo de facturación electrónica SRI (2025-2026). |
+| `l10n_ec_withholding` | Ecuador - Withholding (Retenciones) | Retenciones en facturas de proveedor, autorización SRI, regla de 5 días. |
+| `l10n_ec_reports` | Ecuador - Reports (ATS, Form 104) | Generación del XML del ATS (Anexo Transaccional Simplificado). |
 
-### Tienda y suscripciones
+Además, el proyecto se apoya en módulos nativos de Odoo: `website`, `website_sale`, `website_sale_stock`, `account`, `account_payment`, `sale_management`, `stock`, `purchase`, `event`, `website_event`, `hr`, `mass_mailing`, `appointment`, `calendar`, `payment_stripe`, `l10n_ec`, entre otros (ver `scripts/install_apps.sh`).
 
-- Publicacion de planes y productos.
-- Suscripciones mensuales, trimestrales y anuales.
-- Integracion con ventas y pagos.
-- Beneficios asociados a planes.
+## Flujo funcional principal
 
-### Eventos y clases
+1. Un **visitante** entra al sitio web público y navega por inicio, tienda, eventos y guías de ejercicios.
+2. Consulta **planes/membresías** y **productos**, y puede comprarlos o suscribirse desde la tienda (`/shop`).
+3. La compra/suscripción genera una **orden de venta** y, según configuración, su **facturación periódica**.
+4. El sistema emite la **factura** y, con la localización ecuatoriana, el **comprobante electrónico (SRI)**.
+5. El **cliente portal** consulta sus pedidos, facturas, suscripciones y accesos en `/my`.
+6. **Entrenadores** y **administradores** gestionan desde el backend las guías, clases/eventos, inventario y facturación.
+7. Los procesos de **email marketing** y correos transaccionales acompañan el ciclo de vida del cliente.
 
-- Publicacion de clases o eventos deportivos.
-- Relacion con instructores o entrenadores.
-- Registro de usuarios cuando aplica.
+## Roles / actores
 
-### Guias de ejercicios
+| Rol | Descripción |
+| --- | --- |
+| Visitante | Navega contenido público: tienda, eventos y guías publicadas. |
+| Cliente portal | Usuario registrado; consulta pedidos, facturas, suscripciones y accesos. |
+| Entrenador | Gestiona sus guías de ejercicios y consulta el portal como usuario final. |
+| Administrador | Administra aplicaciones, ventas, inventario, facturación, eventos, suscripciones y guías. |
 
-- Guias publicadas en el portal web.
-- Filtros por tipo, dificultad, grupo muscular y maquina.
-- Relacion con maquinas del gimnasio.
-- Imagen y video de referencia.
-- Permisos por rol: visitante, portal, entrenador y administrador.
+## Entidades principales del dominio
 
-### Backend administrativo
+- **Producto / Plan / Membresía** — catálogo de la tienda y suscripciones.
+- **Suscripción** — relación recurrente con facturación periódica.
+- **Evento / Clase** — actividades deportivas con registro de asistentes e instructores.
+- **Guía de ejercicio** — contenido con tipo, dificultad, grupo muscular y máquina asociada.
+- **Máquina / Categoría** — recursos del gimnasio relacionados con las guías.
+- **Cliente (res.partner)** — contactos y clientes del portal.
+- **Empleado / Entrenador (hr.employee)** — equipo del gimnasio.
+- **Orden de venta / Factura** — flujo comercial y contable.
+- **Comprobante electrónico / Retención (SRI)** — documentos de la localización ecuatoriana.
 
-- Gestion de ventas.
-- Gestion de inventario.
-- Facturacion.
-- Usuarios y permisos.
-- Configuracion tecnica de modulos.
+## Tecnologías usadas
 
-## Requisitos
+- **Odoo 18** (Python, framework ORM, QWeb, controladores web).
+- **PostgreSQL 15** como base de datos.
+- **Docker / Docker Compose** para el despliegue local.
+- **XML-RPC** para los seeds de datos de prueba.
+- **Stripe CLI** (opcional) para probar pagos en sandbox.
+- **Node.js + Playwright/Stagehand** para pruebas E2E (carpeta `pruebas_e2e`).
+- **GitHub Actions** para validación de manifests, XML y sintaxis (CI).
 
-- Docker Desktop instalado y corriendo.
-- Git.
-- Python 3.
-- Bash disponible para ejecutar scripts.
-- Node.js opcional, solo si se desean automatizar capturas o tareas de documentacion.
+## Estructura del proyecto
 
-## Instalacion rapida
+```text
+iron_zone_odoo_das/
+  addons/                      # Módulos personalizados de Iron Zone y localización EC
+    ironzone_exercise_guide/
+    iz_backend_theme/
+    iz_inventory/
+    iz_subscription/
+    iz_tasks/
+    iz_website/
+    l10n_ec_base/
+    l10n_ec_edi/
+    l10n_ec_reports/
+    l10n_ec_sri/
+    l10n_ec_withholding/
+  config/
+    odoo.conf                  # Configuración de Odoo
+  scripts/                     # Instalación, reset de BD y utilidades de correo
+  seeds/                       # Datos de prueba (XML-RPC) e imágenes asociadas
+    images/
+    run_seeds.sh
+  pruebas_e2e/                 # Pruebas E2E locales (Node.js + Playwright/Stagehand)
+  .github/                     # Workflows de CI/CD y validador del repo
+  docker-compose.yml
+  .env.example
+  README.md
+```
+
+## Requisitos previos
+
+- **Docker Desktop** instalado y en ejecución.
+- **Git**.
+- **Python 3** (para ejecutar los seeds).
+- **Bash** disponible para los scripts.
+- **Node.js 20+** (opcional, solo para las pruebas E2E de `pruebas_e2e`).
+
+## Instalación
 
 ```bash
 git clone <repo-url>
@@ -94,17 +148,11 @@ cp .env.example .env
 docker compose up -d
 ```
 
-Abrir:
+Abrir `http://localhost:8069` y esperar ~30 segundos tras levantar los contenedores.
 
-```text
-http://localhost:8069
-```
+## Configuración inicial en Odoo
 
-Esperar aproximadamente 30 segundos despues de levantar Docker.
-
-## Configuracion inicial
-
-Crear la base de datos desde el wizard de Odoo en `localhost:8069`.
+Crear la base de datos desde el wizard de Odoo en `localhost:8069`:
 
 | Campo | Valor |
 | --- | --- |
@@ -117,185 +165,69 @@ Crear la base de datos desde el wizard de Odoo en `localhost:8069`.
 | Country | Ecuador |
 | Demo Data | Desactivado |
 
-## Instalacion de modulos
+> Estos valores son los esperados por los scripts (`DB_NAME=iron_zone`). Si cambias el nombre de la base, ajusta las variables al ejecutar los scripts.
 
-Despues de crear la base de datos, ejecutar:
+## Instalación de módulos
+
+Tras crear la base de datos:
 
 ```bash
 bash scripts/install_apps.sh
 ```
 
-El script instala y actualiza modulos base y personalizados en la base `iron_zone`.
+El script instala y actualiza los módulos base y personalizados en la base `iron_zone` (lista completa en `scripts/install_apps.sh`).
 
-Modulos principales instalados:
+## Carga de datos de prueba (seeds)
 
-- `website`
-- `website_sale`
-- `website_sale_stock`
-- `account`
-- `account_payment`
-- `sale_management`
-- `stock`
-- `purchase`
-- `event`
-- `website_event`
-- `hr`
-- `mass_mailing`
-- `appointment`
-- `iz_website`
-- `iz_inventory`
-- `iz_backend_theme`
-- `iz_subscription`
-- `ironzone_exercise_guide`
-- `training_plans`
-- `l10n_ec_base`
-- `l10n_ec_edi`
-- `l10n_ec_sri`
-- `l10n_ec_withholding`
-- `l10n_ec_reports`
-
-## Carga de datos de prueba
-
-Ejecutar todos los seeds:
+Los seeds usan **XML-RPC** para poblar la instancia. Ejecutar todos:
 
 ```bash
 bash seeds/run_seeds.sh
 ```
 
-Ejecutar un seed especifico:
+Ejecutar uno específico:
 
 ```bash
 bash seeds/run_seeds.sh 10_exercise_guides
 ```
 
-Orden general de seeds:
+Orden general: configuración de empresa y SMTP → plantillas de correo → clientes → suscripciones → productos → ventas → facturación → empleados/entrenadores → eventos → email marketing → guías de ejercicios.
 
-1. Configuracion de empresa.
-2. Configuracion SMTP.
-3. Clientes.
-4. Planes y suscripciones.
-5. Productos.
-6. Ventas.
-7. Facturacion.
-8. Empleados y entrenadores.
-9. Eventos.
-10. Email marketing.
-11. Guias de ejercicios.
-
-Los seeds usan XML-RPC para comunicarse con Odoo.
+> Ejecuta los seeds **solo después** de instalar los módulos.
 
 ## Credenciales de prueba
 
-| Rol | Usuario | Contrasena |
+| Rol | Usuario | Contraseña |
 | --- | --- | --- |
 | Administrador | `admin` | `admin` |
 | Administrador alterno | `admin@ironzone.com` | `admin123` |
 | Entrenador | `carlos.mendez@ironzone.ec` | `admin123` |
 | Entrenador | `sofia.garcia@ironzone.ec` | `admin123` |
 | Cliente portal | `pruebasjos04@gmail.com` | `admin123` |
-| Cliente portal | `pruebasjos07@gmail.com` | `admin123` |
-| Cliente portal | `pruebasjos08@gmail.com` | `admin123` |
 | PostgreSQL | `odoo` | `odoo` |
 
-## Como usar la aplicacion
-
-### Usuario visitante
-
-1. Entrar a `http://localhost:8069`.
-2. Navegar por `Inicio`, `Tienda`, `Eventos`, `Nosotros`, `Guia de ejercicios` y `Contacto`.
-3. Consultar productos, planes, eventos y guias publicas.
-4. Usar el formulario de contacto si se requiere informacion adicional.
-
-### Cliente portal
-
-1. Ir a `Iniciar sesion`.
-2. Ingresar con un usuario portal, por ejemplo `pruebasjos04@gmail.com`.
-3. Entrar a `Mi cuenta`.
-4. Revisar pedidos, facturas, suscripciones y accesos disponibles.
-5. Consultar la tienda y las guias con sesion iniciada.
-
-### Entrenador
-
-1. Iniciar sesion con un usuario entrenador.
-2. Acceder al backend de Odoo.
-3. Gestionar sus propias guias de ejercicios.
-4. Consultar el portal web para visualizar las guias como usuario final.
-
-### Administrador
-
-1. Iniciar sesion con `admin / admin`.
-2. Acceder al backend.
-3. Administrar aplicaciones, ventas, inventario, facturacion, eventos, suscripciones y guias.
-4. Ejecutar scripts de instalacion o seeds cuando se requiera actualizar la base.
+> Credenciales de demostración local. No usar en producción.
 
 ## Rutas principales
 
-| Ruta | Descripcion |
+| Ruta | Descripción |
 | --- | --- |
 | `/` | Inicio del sitio web |
 | `/shop` | Tienda online |
 | `/event` | Eventos y clases |
-| `/aboutus` | Pagina Nosotros |
+| `/aboutus` | Página Nosotros |
 | `/contactus` | Contacto |
-| `/exercise-guides` | Catalogo de guias de ejercicios |
-| `/exercise-guides/<id>` | Detalle de una guia |
-| `/web/login` | Inicio de sesion |
+| `/exercise-guides` | Catálogo de guías de ejercicios |
+| `/exercise-guides/<id>` | Detalle de una guía |
+| `/web/login` | Inicio de sesión |
 | `/my` | Portal de cliente |
 | `/odoo` | Backend de Odoo |
-| `/odoo/apps` | Aplicaciones instaladas |
 
-## Estructura del repositorio
+## Pagos y correo
 
-```text
-iron_zone_odoo_das/
-  addons/
-    ironzone_exercise_guide/
-    iz_backend_theme/
-    iz_inventory/
-    iz_subscription/
-    iz_website/
-    l10n_ec_base/
-    l10n_ec_edi/
-    l10n_ec_reports/
-    l10n_ec_sri/
-    l10n_ec_withholding/
-    training_plans/
-  config/
-    odoo.conf
-  docs/
-  docs_notion/
-  scripts/
-    install_apps.sh
-    reset_local_db.ps1
-  seeds/
-    run_seeds.sh
-    config.py
-  docker-compose.yml
-  .env.example
-  README.md
-  CONTRIBUTING.md
-  CODE_OF_CONDUCT.md
-  SECURITY.md
-  CHANGELOG.md
-```
+### Stripe (sandbox)
 
-## Modulos personalizados
-
-| Modulo | Proposito |
-| --- | --- |
-| `iz_website` | Personalizacion del sitio web, plantillas, footer, paginas, correo y experiencia visual. |
-| `iz_backend_theme` | Ajustes visuales y grupos internos para el backend de Iron Zone. |
-| `iz_subscription` | Gestion de planes, beneficios y suscripciones. |
-| `iz_inventory` | Ajustes relacionados con inventario. |
-| `ironzone_exercise_guide` | Guias de ejercicios, maquinas, categorias, portal y permisos. |
-| `training_plans` | Planes de entrenamiento, si esta instalado y actualizado en la base. |
-| `l10n_ec_*` | Localizacion ecuatoriana, facturacion electronica, retenciones y reportes. |
-
-## Configuracion de pagos y correo
-
-### Stripe Sandbox
-
-Configurar variables en `.env` si se desea probar pagos:
+Configurar en `.env` si se desean probar pagos:
 
 ```text
 STRIPE_PUBLISHABLE_KEY=
@@ -303,164 +235,71 @@ STRIPE_SECRET_KEY=
 STRIPE_WEBHOOK_SECRET=
 ```
 
-Para ver el secreto de webhook generado por Stripe CLI:
-
-```bash
-docker logs iron_zone_stripe
-```
-
-Luego ejecutar:
-
-```bash
-bash seeds/run_seeds.sh 00_payment_providers
-```
-
-Si no existen credenciales de Stripe, el sistema mantiene ese proveedor deshabilitado o en modo seguro.
+El secreto de webhook generado por Stripe CLI puede verse con `docker logs iron_zone_stripe`. Luego ejecutar `bash seeds/run_seeds.sh 00_payment_providers`. Sin credenciales, el proveedor permanece deshabilitado.
 
 ### SMTP
 
-Configurar variables en `.env`:
+Configurar en `.env` (`SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASSWORD`, `SMTP_FROM`, `SMTP_ENCRYPTION`) y ejecutar `bash seeds/run_seeds.sh 00_smtp_config`. Verificar en *Ajustes → Técnico → Correo electrónico → Correo saliente*.
 
-```text
-SMTP_HOST=
-SMTP_PORT=
-SMTP_USER=
-SMTP_PASSWORD=
-SMTP_FROM=
-SMTP_ENCRYPTION=
-```
+## Pruebas
 
-Ejecutar:
+El repositorio incluye varios niveles de validación:
 
-```bash
-bash seeds/run_seeds.sh 00_smtp_config
-```
+- **Validación estática (CI)** — `.github/scripts/validate_repo.py` compila el Python de `addons/`, `scripts/` y `seeds/`, valida los `__manifest__.py` y parsea todos los XML. Se ejecuta automáticamente en GitHub Actions y también localmente:
+  ```bash
+  python .github/scripts/validate_repo.py
+  ```
+- **Tests de Odoo** — pruebas unitarias/funcionales dentro de los addons (`iz_subscription/tests`, `l10n_ec_base/tests`, `l10n_ec_sri/tests`). Para ejecutarlas con la instancia levantada:
+  ```bash
+  docker compose run --rm odoo odoo -d iron_zone -u <modulo> --test-enable --stop-after-init
+  ```
+- **Pruebas E2E locales (UI)** — escenarios que validan la app local (`localhost:8069`) con Node.js + Playwright/Stagehand en `pruebas_e2e/`:
+  ```bash
+  cd pruebas_e2e
+  npm ci
+  npm run test:clases          # registro en clases grupales
+  npm run test:guias           # navegación de guías de ejercicios
+  npm run test:suscripciones   # compra/suscripción en la tienda
+  ```
+  > La ruta `pruebas_e2e` está fijada en el workflow de CI; no la renombres sin actualizar `.github/workflows/ci.yml`.
+- **Pruebas de correo** — `scripts/run_test.ps1` (PowerShell) ejecuta `scripts/test_marketing_emails.py` dentro del contenedor de Odoo.
 
-Verificacion en Odoo:
-
-```text
-Ajustes -> Tecnico -> Correo electronico -> Correo saliente
-```
-
-## Documentacion del proyecto
-
-Documentacion principal para Notion:
-
-```text
-docs_notion/
-```
-
-Resumen de entrega:
-
-```text
-docs/DOCUMENTACION_ENTREGA.md
-```
-
-Archivos complementarios del repositorio:
-
-- `README.md`
-- `CONTRIBUTING.md`
-- `CODE_OF_CONDUCT.md`
-- `SECURITY.md`
-- `CHANGELOG.md`
-
-## Comandos utiles
-
-Levantar contenedores:
+## Validación y comandos útiles
 
 ```bash
+# Estado del repositorio
+git status
+
+# Buscar residuales antes de subir cambios
+find . -type d -name "__pycache__" -not -path '*/.git/*'
+find . -name "*.pyc" -not -path '*/.git/*'
+
+# Validar sintaxis de Python (todo el repo)
+python -m compileall addons scripts seeds
+
+# Validación completa del repo (manifests + XML + Python)
+python .github/scripts/validate_repo.py
+
+# Levantar / detener / logs
 docker compose up -d
-```
-
-Detener contenedores:
-
-```bash
 docker compose down
-```
-
-Reiniciar Odoo:
-
-```bash
-docker restart iron_zone_odoo
-```
-
-Ver logs:
-
-```bash
 docker compose logs -f odoo
-```
+docker restart iron_zone_odoo
 
-Entrar a PostgreSQL:
-
-```bash
+# Acceso a PostgreSQL
 docker exec -it iron_zone_db psql -U odoo -d iron_zone
 ```
 
-Comandos utiles dentro de PostgreSQL:
+## Estado del proyecto
 
-```sql
-\dt
-SELECT name FROM res_partner LIMIT 10;
-SELECT name FROM product_template LIMIT 10;
-\q
-```
+- **Funcional / demostrable en local.** Pensado para despliegue y demostración.
+- CI activo (validación de manifests, XML y sintaxis JS/Python).
+- La localización ecuatoriana (SRI/EDI) cuenta con documentación extensa en `addons/l10n_ec_sri/docs/` — **requiere verificación** contra el estado real de transmisión al SRI antes de uso productivo.
 
-## Problemas comunes
+## Notas para despliegue o demostración
 
-### Error de actualizacion concurrente
-
-Mensaje:
-
-```text
-could not serialize access due to concurrent update
-```
-
-Causa probable:
-
-- Dos procesos intentaron actualizar modulos al mismo tiempo.
-- Odoo estaba arrancando mientras se ejecutaba `install_apps.sh`.
-- Quedo un proceso previo de instalacion activo.
-
-Solucion:
-
-1. Evitar abrir otra actualizacion de modulos.
-2. Reiniciar Odoo.
-3. Esperar unos segundos.
-4. Ejecutar nuevamente `bash scripts/install_apps.sh`.
-
-### Menus duplicados en website
-
-Causa probable:
-
-- Dos modulos crearon el mismo `website.menu`.
-
-Solucion:
-
-- Mantener la configuracion del menu centralizada en `iz_website`.
-- Actualizar modulos con `bash scripts/install_apps.sh`.
-
-### Errores de cedula o RUC
-
-La localizacion ecuatoriana puede validar documentos. Para pruebas usar una cedula ecuatoriana valida, por ejemplo:
-
-```text
-1804888764
-```
-
-Para RUC, agregar `001` al final de una cedula valida.
-
-### Productos en Odoo 18
-
-En Odoo 18, los seeds siguen esta convencion:
-
-- Almacenable: `type="consu"` + `is_storable=True`.
-- Consumible: `type="consu"` + `is_storable=False`.
-- Servicio: `type="service"`.
-
-## Notas finales
-
-- `.env` no se versiona.
-- Usar `.env.example` como plantilla.
-- No subir credenciales reales.
-- Ejecutar seeds solo despues de instalar los modulos.
-- Mantener la documentacion actualizada cuando cambie el sistema.
+- `.env` **no** se versiona; usa `.env.example` como plantilla y no subas credenciales reales.
+- Ejecuta los seeds solo después de instalar los módulos.
+- Para pruebas con la localización ecuatoriana, usa una cédula válida (ej. `1804888764`); para RUC, añade `001` al final de una cédula válida.
+- Convención de productos en Odoo 18: almacenable `type="consu"` + `is_storable=True`; consumible `type="consu"` + `is_storable=False`; servicio `type="service"`.
+- Si aparece `could not serialize access due to concurrent update`, evita actualizaciones simultáneas, reinicia Odoo y vuelve a ejecutar `bash scripts/install_apps.sh`.

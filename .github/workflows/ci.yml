@@ -51,11 +51,11 @@ jobs:
           fi
 
       - name: Validate E2E dependency lockfile
-        working-directory: Pruebas/Modulo 2
+        working-directory: pruebas_e2e
         run: npm ci
 
       - name: Check E2E JavaScript syntax
-        working-directory: Pruebas/Modulo 2
+        working-directory: pruebas_e2e
         shell: bash
         run: |
           shopt -s nullglob
